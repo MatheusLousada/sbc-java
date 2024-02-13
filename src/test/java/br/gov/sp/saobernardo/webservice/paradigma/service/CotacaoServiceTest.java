@@ -1,0 +1,527 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.CondicaoDePagamentoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EnderecoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.SituacaoEmpresa;
+import br.gov.sp.saobernardo.webservice.classes.modelos.SituacaoUsuario;
+import br.gov.sp.saobernardo.webservice.classes.modelos.TipoEmpresa;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UnidadeDeMedidaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UsuarioModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.ConfirmacaoNegociacaoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoItemEnderecoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoItemModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoItemParticipanteModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoItemTaxaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoParticipanteModel;
+import br.gov.sp.saobernardo.webservice.classes.utils.Conversores;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.ProdutoBuilder;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.UnidadeDeMedidaBuilder;
+
+/**
+ * Este web service pode, como sugestão, ser executado depois do(s) web
+ * service(s) de envio de :
+ * 
+ * • empresa
+ * 
+ * • unidade de medida
+ * 
+ * • categoria de produto
+ * 
+ * • produto
+ * 
+ * • usuário
+ * 
+ * • condição de pagamento
+ */
+
+@Ignore
+public class CotacaoServiceTest {
+
+	/** Obtido no site http://www.geradordecnpj.org/ */
+	// private static final String CNPJ_DE_TESTE = "02069476000104";
+	private static final String CNPJ_PREFEITURA = "46523239000147";
+	private static final String PRIMEIRA = "1";
+
+	/*
+	 * private static final String CATEGORIA_7560_IMPRESSOS_NAO_OFICIAIS =
+	 * "7560";
+	 */
+
+	/** Devido categoria de produto ter um */
+	private static final String MENSAGEM_DE_SUCESSO = "executada com sucesso para a chave";
+
+	// private static final Logger logger =
+	// Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+
+	private CotacaoService sujeito;
+
+	private EmpresaModel empresa;
+	private UnidadeDeMedidaModel unidadeDeMedida;
+	private CategoriaModel categoriaProduto;
+	private ProdutoModel produto;
+	private CondicaoDePagamentoModel condicaoDePagamento;
+	private UsuarioModel usuario;
+	private CotacaoModel cotacao1;
+	private CotacaoItemModel itemCotacao;
+
+	private Map<String, LogDeRetornoDaGravacao> logs;
+
+	private ArrayList<String> quaisLogs;
+
+	@Before
+	public void antes() {
+		sujeito = new CotacaoService(WSDLs.WSDL_COTACAO_PRODUCAO);
+		logs = new HashMap<String, LogDeRetornoDaGravacao>();
+		quaisLogs = new ArrayList<String>();
+		quaisLogs.add("produto");
+		quaisLogs.add("CategoriaProduto");
+		quaisLogs.add("CondicaoDePagamento");
+	}
+
+	// @Test
+	public void deveObterTodasAsCotacoesFeitaPeloSiteParadigma() {
+		List<CotacaoModel> retorno = sujeito.retornarCotacaoOrcamento();
+		assertNotNull(retorno);
+		Assert.assertEquals(1, retorno.size());
+	}
+
+	@Test
+	public void deveEnviarUmaCotacaoAoWBC() {
+
+		preparaEnvioCotacao();
+		enviaCadastros();
+
+		LogDeRetornoDaGravacao log;
+
+		assertEquals(quaisLogs.size(), logs.size());
+		for (String esteLog : quaisLogs) {
+			log = logs.get(esteLog);
+			Assert.assertNotEquals("", log.getData());
+			Assert.assertNotEquals("", log.getDescricao());
+			Assert.assertNotEquals("", log.getToken());
+			System.out.println(esteLog + " : " + log.getDescricao());
+			assertNotNull(log.getDescricao());
+			assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf(MENSAGEM_DE_SUCESSO) > 0);
+		}
+
+		CotacaoModel retorno = sujeito.grava(cotacao1);
+
+		System.out.println(retorno.getLogDaGravacao().getDescricao());
+		assertNotNull(categoriaProduto.getDescricao());
+		assertNotNull(produto.getDescricao());
+		assertNotNull(cotacao1.getCodigoCotacaoERP());
+		assertNotNull(retorno);
+
+		assertNotNull(empresa.getNomeEmpresa());
+		assertNotNull(unidadeDeMedida.getDescricao());
+		assertNotNull(usuario.getNomeUsuario());
+		assertNotNull(condicaoDePagamento.getDescricaoCondicaoPagamento());
+
+		assertNotNull("", logs);
+
+		String esteLog = "retorno";
+		log = retorno.getLogDaGravacao();
+		Assert.assertNotEquals("", log.getData());
+		Assert.assertNotEquals("", log.getDescricao());
+		Assert.assertNotEquals("", log.getToken());
+		assertNotNull(log.getDescricao());
+		System.out.println(esteLog);
+		assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf(MENSAGEM_DE_SUCESSO) > 0);
+
+	}
+
+	// @Test
+	@Ignore("Parece que o metodo nao traz nenhuma cotacao")
+	public void deveObterUmaCotacaoFeitaPeloSiteParadigma() {
+		// CotacaoModel cotacao = new CotacaoModel();
+		// cotacao.setCodigoCotacaoWbc("90075/2016");
+
+		ConfirmacaoNegociacaoModel confirmacaoNegociacaoModel = new ConfirmacaoNegociacaoModel();
+		confirmacaoNegociacaoModel.setCodigoProcessoWbc("90075/2016");
+		confirmacaoNegociacaoModel.setIdTipoProcesso(ConfirmacaoNegociacaoModel.TIPO_PROCESSO_COTACAO);
+
+		CotacaoModel habilitacao = sujeito.habilitarRetornarCotacao(confirmacaoNegociacaoModel);
+		Assert.assertNotNull(habilitacao.getLogDaGravacao().getData());
+		// Assert.assertNotEquals("",
+		// habilitacao.getLogDaGravacao().getToken());
+
+		// String descricao = habilitacao.getLogDaGravacao().getDescricao();
+		// Assert.assertNotEquals("", descricao);
+		// assertNotNull(descricao);
+		// assertTrue("Sem sucesso :" + descricao,
+		// descricao.indexOf(MENSAGEM_DE_SUCESSO) > 0);
+
+		List<CotacaoModel> retorno = sujeito.retornarCotacaoOrcamento();
+		assertNotNull(retorno);
+		Assert.assertEquals(1, retorno.size());
+	}
+
+	// @Test
+	@Ignore("Testar apenas o envio de uma cotação")
+	public void deveEnviarMaisDeUmaCotacao() {
+		preparaEnvioCotacao();
+		enviaCadastros();
+
+		for (String esteLog : quaisLogs) {
+			LogDeRetornoDaGravacao log = logs.get(esteLog);
+			Assert.assertNotEquals("", log.getData());
+			Assert.assertNotEquals("", log.getDescricao());
+			Assert.assertNotEquals("", log.getToken());
+			assertNotNull(log.getDescricao());
+			assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf(MENSAGEM_DE_SUCESSO) > 0);
+		}
+		List<CotacaoModel> cotacoes = new ArrayList<CotacaoModel>();
+
+		cotacoes.add(cotacao1);
+
+		List<CotacaoModel> retorno = sujeito.grava(cotacoes);
+
+		assertNotNull(categoriaProduto.getDescricao());
+		assertNotNull(produto.getDescricao());
+		assertNotNull(cotacao1.getCodigoCotacaoERP());
+		assertNotNull(retorno);
+		Assert.assertNotEquals(0, retorno.size());
+		assertEquals(1, retorno.size());
+
+		assertNotNull(empresa.getNomeEmpresa());
+		assertNotNull(unidadeDeMedida.getDescricao());
+		assertNotNull(usuario.getNomeUsuario());
+		assertNotNull(condicaoDePagamento.getDescricaoCondicaoPagamento());
+
+		assertNotNull("", logs);
+
+		assertEquals(quaisLogs.size(), logs.size());
+
+		for (CotacaoModel r : retorno) {
+			String key = "retorno" + r.getCodigoCotacaoERP();
+			quaisLogs.add(key);
+			logs.put(key, r.getLogDaGravacao());
+		}
+
+		for (String esteLog : quaisLogs) {
+			LogDeRetornoDaGravacao log = logs.get(esteLog);
+			Assert.assertNotEquals("", log.getData());
+			Assert.assertNotEquals("", log.getDescricao());
+			Assert.assertNotEquals("", log.getToken());
+			assertNotNull(log.getDescricao());
+			assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf(MENSAGEM_DE_SUCESSO) > 0);
+		}
+
+	}
+
+	/* Metodos Auxiliares */
+
+	private void preparaEnvioCotacao() {
+		empresa = montaEmpresa();
+		unidadeDeMedida = montaUnidadeDeMedida();
+		categoriaProduto = montaCategoriaDeProduto();
+		produto = montaProduto();
+		usuario = montaUsuario();
+		// montaMoeda();
+		condicaoDePagamento = montaCondicaoDePagamento();
+		cotacao1 = montaCotacao(PRIMEIRA);
+
+	}
+
+	private String montaMoeda() {
+		return "1";
+
+	}
+
+	private CotacaoModel montaCotacao(String idTesteCotacao) {
+		CotacaoModel cotacao = criaCotacaoPadrao();
+		Conversores conv = new Conversores(sujeito.getServiceName());
+
+		String numeroDoProcesso = "20170728" + idTesteCotacao;
+		cotacao.setCodigoCotacaoERP(numeroDoProcesso);
+
+		cotacao.setDescricaoCotacao("Teste Cotacao PMSBC " + numeroDoProcesso);
+		cotacao.setCnpj(CNPJ_PREFEITURA);
+		cotacao.setCodigoCotacaoERP(numeroDoProcesso);
+		cotacao.setCodigoUsuario(usuario.getCodigoUsuario());
+
+		cotacao.setDataFinal(conv.converteParaXMLGregorianCalendar(20171231L));
+		cotacao.setDataInicial(conv.converteParaXMLGregorianCalendar(20170531L));
+
+		List<CotacaoItemModel> arrayOfCotacaoItem = montaListaItensCotacao();
+		cotacao.setCotacaoItem(arrayOfCotacaoItem);
+
+		List<CotacaoParticipanteModel> ParticipantesDaCotacao = montaListaParticipantesCotacao();
+		cotacao.setCotacaoParticipante(ParticipantesDaCotacao);
+
+		cotacao.setDescricaoTermoParticipacao(montaDescricaoTermo());
+
+		return cotacao;
+	}
+
+	private String montaDescricaoTermo() {
+		StringBuilder termo = new StringBuilder();
+		termo.append("Declaro, expressamente, sob as penas da lei que:");
+		termo.append(
+				"1. Me responsabilizo pela autenticidade e procedência dos bens e qualidade dos serviços que cotar;");
+		termo.append("2. No valor unitário estão inclusos todos os impostos, inclusive as despesas com frete.");
+		termo.append("3. Estou ciente que a presente cotação de preço não configura proposta de fornecimento.");
+		return termo.toString();
+	}
+
+	/** Apenas concentra os valores default */
+	private CotacaoModel criaCotacaoPadrao() {
+		CotacaoModel cotacao = new CotacaoModel();
+		cotacao.setRestrita(CotacaoModel.COTACAO_NAO_RESTRITA);
+		cotacao.setExigirTermo(CotacaoModel.ACEITA_TERMO_DE_PARTICIPACAO);
+		cotacao.setCodigoSituacao(CotacaoModel.SITUACAO_PROCESSO_EM_CONFIGURACAO);
+		cotacao.setTipoNegociacao(CotacaoModel.TIPO_NEGOCIACAO_ORCAMENTO);
+		cotacao.setCodigoMoeda(montaMoeda());
+		cotacao.setCodigoFretePreferencia(CotacaoModel.FRETE_CIF);
+
+		return cotacao;
+	}
+
+	private List<CotacaoParticipanteModel> montaListaParticipantesCotacao() {
+		List<CotacaoParticipanteModel> participantes = new ArrayList<CotacaoParticipanteModel>();
+
+		CotacaoParticipanteModel participante = new CotacaoParticipanteModel();
+		participante.setCodigoEmpresa(empresa.getCodigoEmpresa());
+		participante.setParticipacao(CotacaoParticipanteModel.PARTICIPACAO_HABILITADA);
+		participante.setHomologado(CotacaoParticipanteModel.HOMOLOGACAO_HOMOLOGADO);
+		participantes.add(participante);
+
+		return participantes;
+	}
+
+	private List<CotacaoItemModel> montaListaItensCotacao() {
+		List<CotacaoItemModel> listaDeItens = new ArrayList<CotacaoItemModel>();
+		listaDeItens.add(montaItemCotacao());
+		return listaDeItens;
+	}
+
+	private CotacaoItemModel montaItemCotacao() {
+		itemCotacao = new CotacaoItemModel();
+		itemCotacao.setValorReferencia(new BigDecimal("10"));
+		itemCotacao.setQuantidadeItem(new BigDecimal(10));
+
+		itemCotacao.setCotacaoItemEndereco(adicionaEnderecos(20170201L, 10D));
+		itemCotacao.setCotacaoItemParticipante(adicionaParticipantes());
+		itemCotacao.setCotacaoItemTaxa(adicionaTaxaAoItem());
+
+		// Aplicacao: FIXO NO MODELO
+		// Situacao: FIXO NO MODELO
+		itemCotacao.setCodigoClasse(produto.getCategoria().getCodigo());
+		itemCotacao.setCodigoCondicaoPagamento(condicaoDePagamento.getCodigoCondicaoPagamento());
+		itemCotacao.setCodigoItemEmpresa(empresa.getCnpj());
+
+		itemCotacao.setCodigoProdutoERP(produto.getCodigo());
+
+		itemCotacao.setCodigoUnidadeMedida(unidadeDeMedida.getCodigo());
+		itemCotacao.setDescricaoItem(produto.getDescricao());
+		itemCotacao.setJustificativa("Somente teste");
+		itemCotacao.setCodigoCotacaoWBC("");
+
+		return itemCotacao;
+	}
+
+	private List<CotacaoItemEnderecoModel> adicionaEnderecos(long dataEntrega, double qtdPrevista) {
+		List<CotacaoItemEnderecoModel> itensEnderecos = new ArrayList<CotacaoItemEnderecoModel>();
+		CotacaoItemEnderecoModel cotacaoItemEndereco = new CotacaoItemEnderecoModel();
+		cotacaoItemEndereco.setQtdPrevistaEntrega(qtdPrevista);
+		cotacaoItemEndereco.setSequenciaDeEntregaItemEndereco(1);
+
+		cotacaoItemEndereco.setCodigoEmpresaCobrancaEndereco(empresa.getCodigoEmpresa());
+		cotacaoItemEndereco.setCodigoEmpresaEntregaEndereco(empresa.getCodigoEmpresa());
+		cotacaoItemEndereco.setCodigoEmpresaFaturamentoEndereco(empresa.getCodigoEmpresa());
+		cotacaoItemEndereco.setDataPrevistaEntrega(dataEntrega);
+		itensEnderecos.add(cotacaoItemEndereco);
+		return itensEnderecos;
+	}
+
+	private List<CotacaoItemParticipanteModel> adicionaParticipantes() {
+		List<CotacaoItemParticipanteModel> listaParticipantes = new ArrayList<CotacaoItemParticipanteModel>();
+		CotacaoItemParticipanteModel participante = new CotacaoItemParticipanteModel();
+		participante.setCodigoEmpresa(empresa.getCodigoEmpresa());
+		participante.setCodigoItem(1);
+		listaParticipantes.add(participante);
+
+		return listaParticipantes;
+	}
+
+	private List<CotacaoItemTaxaModel> adicionaTaxaAoItem() {
+		List<CotacaoItemTaxaModel> cotacaoItemTaxa;
+		CotacaoItemTaxaModel taxaItemCotacao;
+		cotacaoItemTaxa = new ArrayList<CotacaoItemTaxaModel>();
+		taxaItemCotacao = new CotacaoItemTaxaModel();
+		taxaItemCotacao.setTaxaInclusa(0);
+		taxaItemCotacao.setCodigoItem(1L);
+		taxaItemCotacao.setCodigoTaxaWBC(1);
+		/*
+		 * taxaItemCotacao.setCodigoItem(Integer.valueOf(produto.getCodigo()));
+		 */
+		cotacaoItemTaxa.add(taxaItemCotacao);
+
+		return cotacaoItemTaxa;
+	}
+
+	private ProdutoModel montaProduto() {
+
+		/*
+		 * produto.setUnidadesDeMedida(lista); produto.setCodigo("TESTE9001");
+		 * produto.setCodigoEmpresa(CNPJ_PREFEITURA);
+		 * 
+		 * produto.setCategoria(categoria); produto.setDescricao(
+		 * "TESTE de produto TESTE"); produto.setDetalhe(
+		 * "Somente um teste simples");
+		 */
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo("6145");
+		categoria.setCodigoPai("61");
+		categoria.setDescricao("6145 - CONDUTORES, FIOS E CABOS ELETRICOS");
+
+		UnidadeDeMedidaModel um = montaUnidadeDeMedida();
+		List<UnidadeDeMedidaModel> lista = new ArrayList<UnidadeDeMedidaModel>();
+		lista.add(um);
+
+		ProdutoBuilder pb = new ProdutoBuilder().comCodigo("4C014010077").comCodigoEmpresa(CNPJ_PREFEITURA)
+				.comCategoria(categoria).comDescricao("CABO FLEXIVEL DE COBRE ELETROLITICO, 750V, BITOLA").comDetalhe("Somente um teste simples")
+				.comUnidadeDeMedida(um);
+		return pb.build();
+
+	}
+
+	private void enviaCadastros() {
+		// buscaEmpresa();
+		enviaUnidadeDeMedida();
+		enviaCategoriaDeProduto();
+		enviaProduto();
+		enviaUsuario();
+		enviaCondicaoDePagamento();
+	}
+
+	@SuppressWarnings("unused")
+	private EmpresaModel buscaEmpresa() {
+		EmpresaService empresaService = new EmpresaService(WSDLs.WSDL_EMPRESA_DESENV_HMG);
+		return empresaService.retornarEmpresaPorCnpj(CNPJ_PREFEITURA);
+	}
+
+	private CondicaoDePagamentoModel montaCondicaoDePagamento() {
+		CondicaoDePagamentoModel condicaoDePagamento = new CondicaoDePagamentoModel();
+		condicaoDePagamento.setCodigoCondicaoPagamento("2");
+		condicaoDePagamento.setCodigoEmpresa(empresa.getCodigoEmpresa());
+		condicaoDePagamento.setDescricaoCondicaoPagamento("15 DIAS FORA QUINZENA");
+		return condicaoDePagamento;
+	}
+
+	private UsuarioModel montaUsuario() {
+		UsuarioModel usuario = new UsuarioModel();
+		usuario.setCodigoEmpresa(PRIMEIRA);
+		usuario.setCodigoUsuario("suportepta");
+		usuario.setEmailContato("teste@teste.sem.valor.net");
+		usuario.setNomeUsuario("suportepta");
+		usuario.setSituacaoUsuario(new SituacaoUsuario(1));
+		return usuario;
+	}
+
+	private CategoriaModel montaCategoriaDeProduto() {
+		categoriaProduto = new CategoriaModel();
+		categoriaProduto.setCodigo("45");
+		categoriaProduto.setCodigoPai("61");
+		categoriaProduto.setDescricao("6145 - CONDUTORES, FIOS E CABOS ELETRICOS");
+		return categoriaProduto;
+	}
+
+	private UnidadeDeMedidaModel montaUnidadeDeMedida() {
+		UnidadeDeMedidaBuilder umb = new UnidadeDeMedidaBuilder();
+		unidadeDeMedida = umb.comCodigo("01120").build();
+		LogDeRetornoDaGravacao logDaGravacao = new LogDeRetornoDaGravacao();
+		unidadeDeMedida.setLogDaGravacao(logDaGravacao);
+
+		return unidadeDeMedida;
+
+	}
+
+	private EmpresaModel montaEmpresa() {
+
+		/** return buscaEmpresa(); Buscar no Banco quando estiver funcionando */
+
+		SituacaoEmpresa situacao = new SituacaoEmpresa(EmpresaModel.SITUACAO_ATIVA);
+		TipoEmpresa tipoEmpresa = new TipoEmpresa(EmpresaModel.TIPO_VENDEDORA);
+		EmpresaModel empresa = new EmpresaModel();
+
+		empresa.setCnpj(CNPJ_PREFEITURA);
+
+		empresa.setNomeEmpresa("TESTE Alexandre e Jefferson");
+		empresa.setNomeFantasia("Teste");
+		empresa.setCodigoEmpresa("9001");
+		empresa.setSituacao(situacao);
+		empresa.setTipoEmpresa(tipoEmpresa);
+
+		EnderecoModel endereco = new EnderecoModel();
+		endereco.setCep("09700000");
+		endereco.setDescricao("rua teste 99");
+		endereco.setBairro("assuncao");
+		endereco.setCidade("São Bernardo do Campo");
+		endereco.setUf("SP");
+		endereco.setSiglaPais("BR");
+
+		return empresa;
+
+	}
+
+	private void enviaUnidadeDeMedida() {
+		List<UnidadeDeMedidaModel> listaDeEnvio = new ArrayList<UnidadeDeMedidaModel>();
+		listaDeEnvio.add(unidadeDeMedida);
+		UnidadeDeMedidaService unidadeMedidaService = new UnidadeDeMedidaService(WSDLs.WSDL_UNIDADE_MEDIDA_DESENV_HMG);
+		unidadeMedidaService.grava(listaDeEnvio);
+	}
+
+	private void enviaProduto() {
+		ProdutoService produtoService = new ProdutoService(WSDLs.WSDL_PRODUTO_DESENV_HMG,
+				WSDLs.WSDL_UNIDADE_MEDIDA_DESENV_HMG, WSDLs.WSDL_PRODUTO_X_UNIDADE_MEDIDA_DESENV_HMG);
+		ProdutoModel produtoEnviado = produtoService.grava(produto);
+		logs.put("produto", produtoEnviado.getLogDaGravacao());
+
+	}
+
+	private void enviaCategoriaDeProduto() {
+		CategoriaService categoriaProdutoService = new CategoriaService(WSDLs.WSDL_CATEGORIA_DESENV_HMG);
+		CategoriaModel retornoOperacao = categoriaProdutoService.grava(categoriaProduto);
+		logs.put("CategoriaProduto", retornoOperacao.getLogDaGravacao());
+	}
+
+	private void enviaUsuario() {
+		/**
+		 * UsuarioService usuarioService = new
+		 * UsuarioService(WSDLs.WSDL_USUARIO_DESENV_HMG); List
+		 * <UsuarioModel> retornoOperacao = usuarioService.grava(usuario); for
+		 * (UsuarioModel registro : retornoOperacao) { logs.put("Usuario",
+		 * registro.getLogDaGravacao()); }
+		 */
+	}
+
+	private void enviaCondicaoDePagamento() {
+
+		CondicaoDePagamentoService condicaoService = new CondicaoDePagamentoService(
+				WSDLs.WSDL_CONDICAO_PAGAMENTO_DESENV_HMG);
+		CondicaoDePagamentoModel retornoOperacao = condicaoService.grava(condicaoDePagamento);
+		logs.put("CondicaoDePagamento", retornoOperacao.getLogDaGravacao());
+	}
+
+}

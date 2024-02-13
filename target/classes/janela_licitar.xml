@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<panel columns="1" gap="3">
+	<tabbedpane name="tabbedPanes" selected="0" weightx="1" weighty="1">
+		<tab text="Empresa" icon="/img/company.gif" name="tabEmpresas">		
+			<panel columns="1" top="4" left="4" bottom="4" right="4" gap="4">
+				<tabbedpane name="tabbedPaneEmpresas" selected="0" weightx="1" weighty="1">
+					<tab text="Listagem" name="tabListagemFornecedores">
+	  					<panel columns="4" top="4" left="4" bottom="4" right="4" gap="4">
+							<separator colspan="4" />
+						<button text="Listar Fornecedores" alignment="center" tooltip="Listar Fornecedores" action="listarFornecedores" icon="/conf/img/refresh.gif" />
+							<separator colspan="4" />
+						</panel>
+					</tab>
+				</tabbedpane>
+			</panel>
+		</tab>
+	</tabbedpane>
+</panel>

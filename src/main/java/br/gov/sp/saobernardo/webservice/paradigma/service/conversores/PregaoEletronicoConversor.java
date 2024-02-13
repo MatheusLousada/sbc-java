@@ -1,0 +1,224 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ArrayOfComissaoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ArrayOfPregaoEletronicoItemDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ArrayOfPregaoEletronicoLoteDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ComissaoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.PregaoEletronicoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.PregaoEletronicoItemDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.PregaoEletronicoLoteDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.WbtLogDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoComissaoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoItemModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoLoteModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoModel;
+import br.gov.sp.saobernardo.webservice.classes.utils.Conversores;
+import br.gov.sp.saobernardo.webservice.paradigma.service.ServicesName;
+
+public class PregaoEletronicoConversor
+		implements DePara<PregaoEletronicoModel, PregaoEletronicoDTO>, DeParaLog<PregaoEletronicoModel, WbtLogDTO> {
+
+	private Conversores conversor;
+	private PregaoEletronicoLoteConversor convLote;
+	private PregaoEletronicoComissaoConversor convComissao;
+	private PregaoEletronicoItemConversor convItem;
+
+	public PregaoEletronicoConversor() {
+		super();
+		conversor = new Conversores(
+				new QName(ServicesName.PREGAO_ELETRONICO.getUrl(), ServicesName.PREGAO_ELETRONICO.getServico()));
+		convLote = new PregaoEletronicoLoteConversor();
+		convComissao = new PregaoEletronicoComissaoConversor();
+		convItem = new PregaoEletronicoItemConversor();
+	}
+
+	@Override
+	public PregaoEletronicoModel converteLogParaModel(WbtLogDTO wbtLogDTO) {
+		PregaoEletronicoModel pregao = new PregaoEletronicoModel();
+		// pregao.setCodigo(wbtLogDTO.getSCdOrigem().getValue());
+		LogDeRetornoDaGravacao logDaGravacao = new LogDeRetornoDaGravacao();
+		logDaGravacao.setData(wbtLogDTO.getTDtLog().toString());
+		logDaGravacao.setToken(wbtLogDTO.getSNrToken().getValue());
+		logDaGravacao.setDescricao(wbtLogDTO.getSDsLog().getValue());
+		pregao.setLogDaGravacao(logDaGravacao);
+		return pregao;
+	}
+
+	@Override
+	public PregaoEletronicoModel converteParaModel(PregaoEletronicoDTO dto) {
+
+		convComissao = new PregaoEletronicoComissaoConversor();
+		convItem = new PregaoEletronicoItemConversor();
+
+		PregaoEletronicoModel pregao = new PregaoEletronicoModel();
+
+		pregao.setValorTempoDisputa(dto.getNVlTempoDisputa().getValue());
+		pregao.setValorProrrogaCondicao(dto.getNVlProrrogaCondicao().getValue());
+		pregao.setValorProrroga(dto.getNVlProrroga().getValue());
+		pregao.setTipoApuracao(dto.getNIdTipoApuracao());
+		pregao.setRestrito(dto.getBFlRestrito());
+		pregao.setRequerCRC(dto.getBFlRequerCRC().getValue());
+		pregao.setQuantosItensPagina(dto.getNQtItensPagina());
+		pregao.setPublicarEdital(dto.getBFlPublicarEdital());
+		pregao.setPropostaModelo(dto.getNIdPropostaModelo());
+		pregao.setPropostaMarca(dto.getNIdPropostaMarca());
+		pregao.setProcedenciaProposta(dto.getNIdPropostaProcedencia());
+		pregao.setPermiteChatBilateral(dto.getBFlChatBilateral());
+		pregao.setObservacao(dto.getSDsObservacao());
+		pregao.setObrigarDeclaracaoVendedor(dto.getBFlObrigarDeclaracaoVendedor().getValue());
+		pregao.setNumeroSuperSimples(dto.getNIdSuperSimples());
+		pregao.setNumeroPropostaAnexo(dto.getNIdPropostaAnexo());
+		pregao.setNumeroProcessoDisplay(dto.getSNrProcessoDisplay());
+		pregao.setNumeroEdital(dto.getSNrEdital());
+		pregao.setNumeroCasasDecimais(dto.getNNrCasasDecimais());
+		pregao.setNegociacaoAnexo(dto.getNIdAnexoNegociacao().getValue());
+		pregao.setMostraReferencia(dto.getBFlMostrarReferencia().getValue());
+		pregao.setModalidade(dto.getNIdModalidade());
+
+		pregao.setExigeCapacitacao(dto.getBFlExigeCapacitacao());
+		pregao.setDescricaoTermo(dto.getSDsTermo().getValue());
+		pregao.setDescricaoObjeto(dto.getSDsObjeto());
+		pregao.setDataInicialProposta(dto.getTDtInicialProposta());
+		pregao.setDataInicialDisputa(dto.getTDtInicialDisputa());
+		pregao.setDataFinalProposta(dto.getTDtFinalProposta());
+		pregao.setCodigoUsuarioCriador(dto.getSCdUsuarioCriador());
+		pregao.setCodigoTemplate((int) dto.getNCdTemplate());
+		pregao.setCodigoSituacao((int) dto.getNCdSituacao());
+		pregao.setCodigoPregaoTipo(dto.getNCdPregaoTipo());
+		pregao.setCodigoPrazoEntrega(dto.getSCdPrazoEntrega());
+		pregao.setCodigoMoeda(Integer.valueOf(dto.getSCdMoeda()));
+
+		pregao.setCodigoCondicaoPagamento(Integer.parseInt(dto.getSCdCondicaoPagamento()));
+		pregao.setCodigoComprador(dto.getSCdComprador());
+		pregao.setAutoEncerramento(dto.getNIdAutoEncerramento().getValue());
+		pregao.setAplicaLei123(dto.getBFlAplicaLei123().getValue());
+		pregao.setAceiteTermo(dto.getBFlTermo());
+
+		ArrayOfPregaoEletronicoLoteDTO lotesDto = dto.getLstPregaoEletronicoLoteDTO().getValue();
+
+		List<PregaoEletronicoLoteModel> lotes = new ArrayList<PregaoEletronicoLoteModel>();
+		for (PregaoEletronicoLoteDTO loteDto : lotesDto.getPregaoEletronicoLoteDTO()) {
+			// lotes.add(converteParaPregaoEletronicoLoteModel(loteDto));
+			lotes.add(convLote.converteParaModel(loteDto));
+
+		}
+		pregao.setLstPregaoEletronicoLote(lotes);
+
+		List<PregaoEletronicoComissaoModel> pregoes = new ArrayList<PregaoEletronicoComissaoModel>();
+
+		ArrayOfComissaoDTO comissoesDto = dto.getLstPregaoEletronicoComissao().getValue();
+		for (ComissaoDTO e : comissoesDto.getComissaoDTO()) {
+			// pregoes.add(converteParaPregaoEletronicoComissaoModel(e));
+			pregoes.add(convComissao.converteParaModel(e));
+		}
+
+		pregao.setLstPregaoEletronicoComissao(pregoes);
+		List<PregaoEletronicoItemModel> itens = new ArrayList<PregaoEletronicoItemModel>();
+		for (PregaoEletronicoItemDTO v : dto.getLstPregaoEletronicoItemDTO().getPregaoEletronicoItemDTO()) {
+			// itens.add(converteParaPregaoEletronicoItemModel(v));
+			itens.add(convItem.converteParaModel(v));
+		}
+		pregao.setLstPregaoEletronicoItem(itens);
+
+		return pregao;
+	}
+
+	@Override
+	public PregaoEletronicoDTO converteParaDTO(PregaoEletronicoModel pregao) {
+		PregaoEletronicoDTO dto = new PregaoEletronicoDTO();
+
+		dto.setBFlChatBilateral(pregao.getPermiteChatBilateral());
+		dto.setBFlExigeCapacitacao(pregao.getExigeCapacitacao());
+		dto.setBFlPublicarEdital(pregao.getPublicarEdital());
+		dto.setBFlRestrito(pregao.getRestrito());
+		dto.setBFlTermo(pregao.getAceiteTermo());
+		dto.setNCdPregaoTipo(pregao.getCodigoPregaoTipo());
+		dto.setNCdSituacao(pregao.getCodigoSituacao());
+		dto.setNCdTemplate(pregao.getCodigoTemplate());
+		dto.setNIdModalidade(pregao.getModalidade());
+		dto.setNIdPropostaAnexo(pregao.getNumeroPropostaAnexo());
+		dto.setNIdPropostaMarca(pregao.getPropostaMarca());
+		dto.setNIdPropostaModelo(pregao.getPropostaModelo());
+		dto.setNIdPropostaProcedencia(pregao.getProcedenciaProposta());
+		dto.setNIdSuperSimples(pregao.getNumeroSuperSimples());
+		dto.setNIdTipoApuracao(pregao.getTipoApuracao());
+		dto.setNNrCasasDecimais(pregao.getNumeroCasasDecimais());
+		dto.setNQtItensPagina(pregao.getQuantosItensPagina());
+		dto.setSCdComprador(pregao.getCodigoComprador());
+		dto.setSCdCondicaoPagamento(String.valueOf(pregao.getCodigoCondicaoPagamento()));
+		dto.setSCdMoeda(String.valueOf(pregao.getCodigoMoeda()));
+		dto.setSCdPrazoEntrega(pregao.getCodigoPrazoEntrega());
+		dto.setSCdUsuarioCriador(pregao.getCodigoUsuarioCriador());
+		dto.setSDsObjeto(pregao.getDescricaoObjeto());
+		dto.setSDsObservacao(pregao.getObservacao());
+		dto.setSNrEdital(pregao.getNumeroEdital());
+		dto.setSNrProcessoDisplay(pregao.getNumeroProcessoDisplay());
+		dto.setTDtFinalProposta(pregao.getDataFinalProposta());
+		dto.setTDtInicialDisputa(pregao.getDataInicialDisputa());
+		dto.setTDtInicialProposta(pregao.getDataInicialProposta());
+
+		dto.setSDsTermo(conversor.converteParaJAXBElement(pregao.getDescricaoTermo()));
+		dto.setSDsTermo(conversor.converteParaJAXBElement(pregao.getDescricaoTermo()));
+		dto.setBFlAplicaLei123(conversor.converteParaJAXBElement(pregao.getAplicaLei123()));
+		dto.setBFlMostrarReferencia(conversor.converteParaJAXBElement(pregao.getMostraReferencia()));
+		dto.setBFlObrigarDeclaracaoVendedor(conversor.converteParaJAXBElement(pregao.getObrigarDeclaracaoVendedor()));
+		dto.setBFlRequerCRC(conversor.converteParaJAXBElement(pregao.getRequerCRC()));
+		dto.setNIdAnexoNegociacao(conversor.converteParaJAXBElement(pregao.getNegociacaoAnexo()));
+		dto.setNIdAutoEncerramento(conversor.converteParaJAXBElement(pregao.getAutoEncerramento()));
+
+		dto.setNVlProrroga(conversor.converteParaJAXBElement(pregao.getValorProrroga()));
+		dto.setNVlProrrogaCondicao(conversor.converteParaJAXBElement(pregao.getValorProrrogaCondicao()));
+		dto.setNVlTempoDisputa(conversor.converteParaJAXBElement(pregao.getValorTempoDisputa()));
+
+		// FIXME Qual campo deve ser usado aqui ?
+		// dto.setBFlPermitirLance(conversor.converteParaJAXBElement( pregao.get
+		// )) ;
+
+		List<PregaoEletronicoComissaoModel> pregaoComissoesModel = pregao.getLstPregaoEletronicoComissao();
+
+		pregaoComissoesModel = null == pregaoComissoesModel ? new ArrayList<PregaoEletronicoComissaoModel>()
+				: pregaoComissoesModel;
+
+		ArrayOfComissaoDTO arrayComissaoDTO = new ArrayOfComissaoDTO();
+
+		for (PregaoEletronicoComissaoModel comissao : pregaoComissoesModel) {
+			// arrayComissaoDTO.getComissaoDTO().add(converteParaComissaoDTO(comissao));
+			arrayComissaoDTO.getComissaoDTO().add(convComissao.converteParaDTO(comissao));
+		}
+
+		dto.setLstPregaoEletronicoComissao(conversor.converteParaJAXBElement(arrayComissaoDTO));
+
+		List<PregaoEletronicoLoteModel> pregaoLote = pregao.getLstPregaoEletronicoLote();
+		pregaoLote = null == pregaoLote ? new ArrayList<PregaoEletronicoLoteModel>() : pregaoLote;
+
+		ArrayOfPregaoEletronicoLoteDTO arrayLoteDTO = new ArrayOfPregaoEletronicoLoteDTO();
+		for (PregaoEletronicoLoteModel lote : pregaoLote) {
+			// arrayLoteDTO.getPregaoEletronicoLoteDTO().add(converteParaLoteDTO(lote));
+			arrayLoteDTO.getPregaoEletronicoLoteDTO().add(convLote.converteParaDTO(lote));
+		}
+		dto.setLstPregaoEletronicoLoteDTO(conversor.converteParaJAXBElement(arrayLoteDTO));
+
+		// FIXME Qual campo deve ser usado aqui?
+		// dto.setTDtPublicacao(conversor.converteParaJAXBElement(
+		// pregao.getPublicarEdital() )) ;
+
+		List<PregaoEletronicoItemModel> itensPregao = pregao.getLstPregaoEletronicoItem();
+		itensPregao = null == itensPregao ? new ArrayList<PregaoEletronicoItemModel>() : itensPregao;
+		ArrayOfPregaoEletronicoItemDTO arrayItemDTO = new ArrayOfPregaoEletronicoItemDTO();
+		for (PregaoEletronicoItemModel item : itensPregao) {
+			// arrayItemDTO.getPregaoEletronicoItemDTO().add(converteParaPregaoEletronicoItemDTO(item));
+			arrayItemDTO.getPregaoEletronicoItemDTO().add(convItem.converteParaDTO(item));
+		}
+
+		dto.setLstPregaoEletronicoItemDTO(arrayItemDTO);
+
+		return dto;
+	}
+
+}

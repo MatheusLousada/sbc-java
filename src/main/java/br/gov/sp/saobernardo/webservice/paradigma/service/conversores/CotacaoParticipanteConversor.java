@@ -1,0 +1,26 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.CotacaoParticipanteDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoParticipanteModel;
+
+public class CotacaoParticipanteConversor implements DePara<CotacaoParticipanteModel, CotacaoParticipanteDTO> {
+
+	@Override
+	public CotacaoParticipanteModel converteParaModel(CotacaoParticipanteDTO dto) {
+		CotacaoParticipanteModel participante = new CotacaoParticipanteModel();
+		participante.setCodigoEmpresa(dto.getSCdEmpresa());
+		// participante.setHomologado(CotacaoParticipanteModel.HOMOLOGACAO_HOMOLOGADO
+		// );
+		participante.setParticipacao(dto.getNStParticipacao());
+		return participante;
+	}
+
+	@Override
+	public CotacaoParticipanteDTO converteParaDTO(CotacaoParticipanteModel participante) {
+		CotacaoParticipanteDTO dto = new CotacaoParticipanteDTO();
+		dto.setNStParticipacao(participante.getParticipacao());
+		dto.setSCdEmpresa(participante.getCodigoEmpresa());
+		return dto;
+	}
+
+}

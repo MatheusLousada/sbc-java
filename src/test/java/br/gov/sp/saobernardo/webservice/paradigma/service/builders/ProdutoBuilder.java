@@ -1,0 +1,91 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.builders;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UnidadeDeMedidaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.ConstantesTest;
+
+public class ProdutoBuilder {
+
+	private String codigo;
+	private String empresa;
+	private CategoriaModel categoria;
+	private String descricao;
+	private String detalhe;
+	private UnidadeDeMedidaModel unidadeDeMedida;
+
+	public ProdutoBuilder comCodigo(String codigo) {
+		this.codigo = codigo;
+		return this;
+	}
+
+	public ProdutoBuilder comCodigoEmpresa(String codigoEmpresa) {
+		this.empresa = codigoEmpresa;
+		return this;
+	}
+
+	public ProdutoBuilder comCategoria(CategoriaModel codigoCategoria) {
+		this.categoria = codigoCategoria;
+		return this;
+	}
+
+	public ProdutoBuilder comDescricao(String descricao) {
+		this.descricao = descricao;
+		return this;
+	}
+
+	public ProdutoBuilder comDetalhe(String detalhe) {
+		this.detalhe = detalhe;
+		return this;
+	}
+
+	public ProdutoBuilder comUnidadeDeMedida(UnidadeDeMedidaModel unidadeDeMedida) {
+		this.unidadeDeMedida = unidadeDeMedida;
+		return this;
+	}
+
+	public ProdutoModel build() {
+		ProdutoModel produto = new ProdutoModel();
+		if (null == codigo) {
+			this.codigo = "TESTE9001";
+		}
+		produto.setCodigo(codigo);
+
+		if (null == empresa) {
+
+			this.empresa = ConstantesTest.CNPJ_PREFEITURA;
+		}
+		produto.setCodigoEmpresa(this.empresa);
+
+		if (null == this.categoria) {
+			this.categoria = new CategoriaModel();
+			this.categoria.setCodigo(ConstantesTest.CATEGORIA_7560_IMPRESSOS_NAO_OFICIAIS);
+		}
+		produto.setCategoria(this.categoria);
+
+		if (null == descricao) {
+			descricao = "TESTE de produto TESTE";
+		}
+		produto.setDescricao(descricao);
+
+		if (null == detalhe) {
+			detalhe = "Somente um teste simples";
+		}
+		produto.setDetalhe(detalhe);
+
+		if (null == unidadeDeMedida) {
+			UnidadeDeMedidaBuilder umb = new UnidadeDeMedidaBuilder();
+			unidadeDeMedida = umb.comCodigo("01003").build();
+		}
+		List<UnidadeDeMedidaModel> unidades = new ArrayList<UnidadeDeMedidaModel>();
+		unidades.add(unidadeDeMedida);
+		produto.setUnidadesDeMedida(unidades);
+		
+		return produto;
+
+	}
+
+}

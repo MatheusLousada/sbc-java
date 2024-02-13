@@ -1,0 +1,19 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos;
+
+public enum TipoDeEndereco {
+
+	MATRIZ(0), COBRANCA(1), ENTREGA(2),
+	/** 27 NOV 2019 Nao usar mais este como endereco de correspondencia. Instrucao do Sr. Claudio Silva*/
+	FATURAMENTO(3);
+	
+	private long codigo;
+	
+	private TipoDeEndereco(long codigo) {
+		this.codigo = codigo;
+	}
+	
+	public long getCodigo() {
+		return codigo;
+	}
+	
+}

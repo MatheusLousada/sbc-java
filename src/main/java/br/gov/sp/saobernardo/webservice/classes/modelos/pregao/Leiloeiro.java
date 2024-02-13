@@ -1,0 +1,83 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.pregao;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Leiloeiro {
+
+	private List<PregaoEletronicoItemLanceModel> lancesAceitos;
+
+	public Leiloeiro() {
+		lancesAceitos = new ArrayList<PregaoEletronicoItemLanceModel>();
+	}
+
+	public List<PregaoEletronicoItemLanceModel> obtemMenoresLances( List<PregaoEletronicoItemLanceModel> lancesOriginais) {
+
+		for (PregaoEletronicoItemLanceModel lance : lancesOriginais) {
+			aceitaLance(lance);
+		}
+
+		if (null == buscaVencedorEm(lancesAceitos) && null != buscaVencedorEm(lancesOriginais)) {
+			PregaoEletronicoItemLanceModel novoLanceVencedor = buscaVencedorEm(lancesOriginais);
+			substituiNosLancesAceitos(novoLanceVencedor);
+		}
+
+		ordenaLances();
+		return lancesAceitos;
+	}
+
+	private void substituiNosLancesAceitos(PregaoEletronicoItemLanceModel lanceVencedor) {
+		for (PregaoEletronicoItemLanceModel lance : lancesAceitos) {
+			if (lanceVencedor.getCodigoEmpresa().equals(lance.getCodigoEmpresa())) {
+				lancesAceitos.set(lancesAceitos.indexOf(lance), lanceVencedor);
+			}
+		}
+	}
+
+	private PregaoEletronicoItemLanceModel buscaVencedorEm(List<PregaoEletronicoItemLanceModel> lances) {
+		for (PregaoEletronicoItemLanceModel lance : lances) {
+			if (lance.getVencedor() == PregaoEletronicoItemLanceModel.LANCE_VENCEDOR) {
+				return lance;
+			}
+		}
+		return null;
+	}
+
+	private boolean isMenorLanceAteAgora(PregaoEletronicoItemLanceModel lanceNovo, PregaoEletronicoItemLanceModel lanceAnterior) {
+		return lanceAnterior.getValorLance().compareTo(lanceNovo.getValorLance()) > 0;
+	}
+
+	private void aceitaLance(PregaoEletronicoItemLanceModel lanceNovo) {
+		boolean fornecedorEfetuouLance = false;
+
+		List<PregaoEletronicoItemLanceModel> lancesJaAceitos = new ArrayList<PregaoEletronicoItemLanceModel>();
+		lancesJaAceitos.addAll(lancesAceitos);
+
+		for (int i = 0; i <= lancesJaAceitos.size() - 1; i++) {
+			if (lanceNovo.getCodigoEmpresa().equals(lancesJaAceitos.get(i).getCodigoEmpresa())) {
+				fornecedorEfetuouLance = true;
+				if (isMenorLanceAteAgora(lanceNovo, lancesJaAceitos.get(i)))
+					lancesAceitos.set(i, lanceNovo);
+			}
+		}
+
+		if (!fornecedorEfetuouLance) {
+			lancesAceitos.add(lanceNovo);
+		}
+
+	}
+
+	private void ordenaLances() {
+		Collections.sort(lancesAceitos, new Comparator<PregaoEletronicoItemLanceModel>() {
+
+			@Override
+			public int compare(PregaoEletronicoItemLanceModel obj1, PregaoEletronicoItemLanceModel obj2) {
+				return obj2.getValorLance().compareTo(obj1.getValorLance());
+			}
+
+		});
+	}
+
+}

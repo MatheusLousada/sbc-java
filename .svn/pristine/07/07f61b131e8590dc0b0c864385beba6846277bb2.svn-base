@@ -1,0 +1,166 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public class CompraDiretaItemModel {
+
+	/**
+	 * String 20 Não obrigatório. Código do lote no cliente. Indica a qual lote
+	 * o item está relacionado.
+	 */
+	private String codigoLoteLegado;
+
+	/** String 20 Não obrigatório. Código do item no cliente. */
+	private String codigoItemLegado;
+
+	/**
+	 * Int 3 Número da sequência em que o item aparecerá na negociação. O
+	 * primeiro item deve iniciar com o número 1.
+	 */
+	private Integer codigoItemSequencial;
+
+	/** Decimal 16,4 Somatório das quantidades das entregas do item. */
+	private BigDecimal dQtItem;
+
+	/** Decimal 16,4 Valor de referência do item. */
+	private BigDecimal dVlReferencia;
+
+	/**
+	 * Int 2 Situação do item: 1 – Ativo
+	 */
+	private static final int SITUACAO_ITEM_ATIVO = 1;
+
+	private CompraDiretaItemSituacao situacaoCompra;
+
+	/** String 4000 Descrição do item. */
+	private String sDsItem;
+
+	/** String 10 Código da unidade de medida. */
+	private String sCdUnidadeMedida;
+
+	/** String 10 Código do produto. */
+	private String sCdProduto;
+
+	/** String 10 Código da categoria de produto. */
+	private String sCdClasse;
+
+	/** Array de compraDiretaItemEndereco Lista das entregas do item. */
+	List<CompraDiretaItemEnderecoModel> lstCompraDiretaItemEndereco;
+
+	/**
+	 * Array de CompraDiretaItemTaxaDTO Lista de taxas do item
+	 */
+	List<CompraDiretaItemTaxaModel> lstCompraDiretaItemTaxaDTO;
+
+	List<CompraDiretaItemLanceModel> lances;
+
+	public String getcodigoLoteLegado() {
+		return codigoLoteLegado;
+	}
+
+	public void setCodigoLoteLegado(String sCdLoteLegado) {
+		this.codigoLoteLegado = sCdLoteLegado;
+	}
+
+	public String getCodigoItemLegado() {
+		return codigoItemLegado;
+	}
+
+	public void setCodigoItemLegado(String codigoItemLegado) {
+		this.codigoItemLegado = codigoItemLegado;
+	}
+
+	public Integer getCodigoItemSequencial() {
+		return codigoItemSequencial;
+	}
+
+	public void setCodigoItemSequencial(Integer codigoItemSequencial) {
+		this.codigoItemSequencial = codigoItemSequencial;
+	}
+
+	public BigDecimal getQuantidadeItem() {
+		return dQtItem;
+	}
+
+	public void setQuantidadeItem(BigDecimal dQtItem) {
+		this.dQtItem = dQtItem;
+	}
+
+	public BigDecimal getValorReferencia() {
+		return dVlReferencia;
+	}
+
+	public void setValorReferencia(BigDecimal valorReferencia) {
+		this.dVlReferencia = valorReferencia;
+	}
+
+	public int getSituacaoItem() {
+		return SITUACAO_ITEM_ATIVO;
+	}
+
+	public CompraDiretaItemSituacao getSituacaoCompra() {
+		return situacaoCompra;
+	}
+
+	public void setSituacaoCompra(CompraDiretaItemSituacao situacaoCompra) {
+		this.situacaoCompra = situacaoCompra;
+	}
+
+	public String getDescricaoItem() {
+		return sDsItem;
+	}
+
+	public void setDescricaoItem(String sDsItem) {
+		this.sDsItem = sDsItem;
+	}
+
+	public String getCodigoUnidadeMedida() {
+		return sCdUnidadeMedida;
+	}
+
+	public void setCodigoUnidadeMedida(String codigoUnidadeMedida) {
+		this.sCdUnidadeMedida = codigoUnidadeMedida;
+	}
+
+	public String getCodigoProduto() {
+		return sCdProduto;
+	}
+
+	public void setCodigoProduto(String sCdProduto) {
+		this.sCdProduto = sCdProduto;
+	}
+
+	public String getCodigoClasse() {
+		return sCdClasse;
+	}
+
+	public void setCodigoClasse(String sCdClasse) {
+		this.sCdClasse = sCdClasse;
+	}
+
+	public List<CompraDiretaItemEnderecoModel> getListaCompraDiretaItemEndereco() {
+		return lstCompraDiretaItemEndereco;
+	}
+
+	public void setListaCompraDiretaItemEndereco(List<CompraDiretaItemEnderecoModel> listaCompraDiretaItemEndereco) {
+		this.lstCompraDiretaItemEndereco = listaCompraDiretaItemEndereco;
+	}
+
+	public List<CompraDiretaItemTaxaModel> getListaCompraDiretaItemTaxaDTO() {
+		return lstCompraDiretaItemTaxaDTO;
+	}
+
+	public void setListaCompraDiretaItemTaxaDTO(List<CompraDiretaItemTaxaModel> listaCompraDiretaItemTaxaDTO) {
+		this.lstCompraDiretaItemTaxaDTO = listaCompraDiretaItemTaxaDTO;
+	}
+
+	public List<CompraDiretaItemLanceModel> getLances() {
+		return lances;
+	}
+
+	public void setLances(List<CompraDiretaItemLanceModel> lances) {
+		this.lances = lances;
+	}
+
+}

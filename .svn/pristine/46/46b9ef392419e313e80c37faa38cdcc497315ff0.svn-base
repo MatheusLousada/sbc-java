@@ -1,0 +1,203 @@
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <RetornarCotacaoOrcamentoResponse xmlns="http://tempuri.org/">
+         <RetornarCotacaoOrcamentoResult xmlns:a="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+            <a:CotacaoDTO>
+               <a:bFlPermissaoEmpresaClic>1</a:bFlPermissaoEmpresaClic>
+               <a:bFlRestrita>0</a:bFlRestrita>
+               <a:bFlTermo>1</a:bFlTermo>
+               <a:bFlVisivelClic>0</a:bFlVisivelClic>
+               <a:lstCotacaoItemDTO>
+                  <a:CotacaoItemDTO>
+                     <a:bFlCalculaReferencia>0</a:bFlCalculaReferencia>
+                     <a:dQtItem>200.0000</a:dQtItem>
+                     <a:dVlReferencia>14.3733</a:dVlReferencia>
+                     <a:lstCotacaoItemEnderecoDTO>
+                        <a:CotacaoItemEnderecoDTO>
+                           <a:dQtEntrega>200</a:dQtEntrega>
+                           <a:nSqItemEndereco>0</a:nSqItemEndereco>
+                           <a:sCdCobrancaEndereco i:nil="true"/>
+                           <a:sCdEmpresaCobrancaEndereco>46523239000147</a:sCdEmpresaCobrancaEndereco>
+                           <a:sCdEmpresaEntregaEndereco>46523239000147</a:sCdEmpresaEntregaEndereco>
+                           <a:sCdEmpresaFaturamentoEndereco>46523239000147</a:sCdEmpresaFaturamentoEndereco>
+                           <a:sCdEntregaEndereco i:nil="true"/>
+                           <a:sCdFaturamentoEndereco i:nil="true"/>
+                           <a:sCdItemRequisicaoEmpresa i:nil="true"/>
+                           <a:sCdRequisicaoEmpresa i:nil="true"/>
+                           <a:tDtEntrega>2016-04-16T00:00:00</a:tDtEntrega>
+                        </a:CotacaoItemEnderecoDTO>
+                     </a:lstCotacaoItemEnderecoDTO>
+                     <a:lstCotacaoItemParticipanteDTO>
+                        <a:CotacaoItemParticipanteDTO>
+                           <a:bFlHomologado>1</a:bFlHomologado>
+                           <a:nCdItem>5713</a:nCdItem>
+                           <a:sCdEmpresa>09437210000116</a:sCdEmpresa>
+                        </a:CotacaoItemParticipanteDTO>
+                        <a:CotacaoItemParticipanteDTO>
+                           <a:bFlHomologado>1</a:bFlHomologado>
+                           <a:nCdItem>5713</a:nCdItem>
+                           <a:sCdEmpresa i:nil="true"/>
+                        </a:CotacaoItemParticipanteDTO>
+                     </a:lstCotacaoItemParticipanteDTO>
+                     <a:lstCotacaoItemTaxaDTO>
+                        <a:CotacaoItemTaxaDTO>
+                           <a:bFlIncluso>1</a:bFlIncluso>
+                           <a:nCdItem>5713</a:nCdItem>
+                           <a:nCdTaxa>1</a:nCdTaxa>
+                        </a:CotacaoItemTaxaDTO>
+                        <a:CotacaoItemTaxaDTO>
+                           <a:bFlIncluso>1</a:bFlIncluso>
+                           <a:nCdItem>5713</a:nCdItem>
+                           <a:nCdTaxa>2</a:nCdTaxa>
+                        </a:CotacaoItemTaxaDTO>
+                     </a:lstCotacaoItemTaxaDTO>
+                     <a:lstCotacaoPropostaDTO>
+                        <a:CotacaoPropostaDTO>
+                           <a:dPcDesconto>3.0000</a:dPcDesconto>
+                           <a:dVlLiquido>19.4000</a:dVlLiquido>
+                           <a:dVlProposta>19.4000</a:dVlProposta>
+                           <a:dVlUnitario>20.0000</a:dVlUnitario>
+                           <a:lstCotacaoPropostaEnderecoDTO>
+                              <a:CotacaoPropostaEnderecoDTO>
+                                 <a:dQtFornecimento>200.0000</a:dQtFornecimento>
+                                 <a:dQtPorUnidade i:nil="true"/>
+                                 <a:dQtUnidade i:nil="true"/>
+                                 <a:dVlFrete>0</a:dVlFrete>
+                                 <a:nCdPropostaEndereco>197300</a:nCdPropostaEndereco>
+                                 <a:nSqItemEndereco>0</a:nSqItemEndereco>
+                                 <a:sCdTransportadora i:nil="true"/>
+                                 <a:sCdUnidadeFornecimento i:nil="true"/>
+                                 <a:sNmTransportadora i:nil="true"/>
+                                 <a:tDtFornecimento>2016-04-16T00:00:00</a:tDtFornecimento>
+                              </a:CotacaoPropostaEnderecoDTO>
+                           </a:lstCotacaoPropostaEnderecoDTO>
+                           <a:lstCotacaoPropostaTaxaDTO>
+                              <a:CotacaoPropostaTaxaDTO>
+                                 <a:bFlIncluso>1</a:bFlIncluso>
+                                 <a:dPcTaxa>0.0000</a:dPcTaxa>
+                                 <a:nCdTaxa>1</a:nCdTaxa>
+                              </a:CotacaoPropostaTaxaDTO>
+                              <a:CotacaoPropostaTaxaDTO>
+                                 <a:bFlIncluso>1</a:bFlIncluso>
+                                 <a:dPcTaxa>0.0000</a:dPcTaxa>
+                                 <a:nCdTaxa>2</a:nCdTaxa>
+                              </a:CotacaoPropostaTaxaDTO>
+                           </a:lstCotacaoPropostaTaxaDTO>
+                           <a:lstPropostaRequisicaoDTO/>
+                           <a:nCdProposta>19730</a:nCdProposta>
+                           <a:nCdSituacao>1</a:nCdSituacao>
+                           <a:nIdVencedor>0</a:nIdVencedor>
+                           <a:nNrRanking>2</a:nNrRanking>
+                           <a:sCdCondicaoPagamento>2</a:sCdCondicaoPagamento>
+                           <a:sCdEmpresa>09437210000116</a:sCdEmpresa>
+                           <a:sCdFrete>C</a:sCdFrete>
+                           <a:sCdIva i:nil="true"/>
+                           <a:sCdMarca i:nil="true"/>
+                           <a:sCdNmb>2710.19.32</a:sCdNmb>
+                           <a:sCdUsuario i:nil="true"/>
+                           <a:sDsMotivoDesclassificado i:nil="true"/>
+                           <a:sDsObservacao>OLEO PARA CAMBIO SAE-90, NIVEL DE DESEMPENHO APIGL-5, EM TAMBORES COM 200 LITROS. MARCA: LUBRAX TRM.5.90, IPIRANGA IPIRGEROL SP-90 OU SIMILAR. LOCAL PARA ENTREGA: AV. CAMINHO DO MAR, 2795 RUDGE RAMOS - SAO BERNARDO DO CAMPO - S.P. A  DESCONTO 3%</a:sDsObservacao>
+                           <a:tDtAlteracao>2016-03-17T12:39:11</a:tDtAlteracao>
+                           <a:tDtProposta>2016-03-17T12:39:11</a:tDtProposta>
+                           <a:tDtValidade>2016-05-17T00:00:00</a:tDtValidade>
+                        </a:CotacaoPropostaDTO>
+                        <a:CotacaoPropostaDTO>
+                           <a:dPcDesconto>0</a:dPcDesconto>
+                           <a:dVlLiquido>9.3465</a:dVlLiquido>
+                           <a:dVlProposta>9.3465</a:dVlProposta>
+                           <a:dVlUnitario>9.3465</a:dVlUnitario>
+                           <a:lstCotacaoPropostaEnderecoDTO>
+                              <a:CotacaoPropostaEnderecoDTO>
+                                 <a:dQtFornecimento>200.0000</a:dQtFornecimento>
+                                 <a:dQtPorUnidade i:nil="true"/>
+                                 <a:dQtUnidade i:nil="true"/>
+                                 <a:dVlFrete>0</a:dVlFrete>
+                                 <a:nCdPropostaEndereco>197340</a:nCdPropostaEndereco>
+                                 <a:nSqItemEndereco>0</a:nSqItemEndereco>
+                                 <a:sCdTransportadora i:nil="true"/>
+                                 <a:sCdUnidadeFornecimento i:nil="true"/>
+                                 <a:sNmTransportadora i:nil="true"/>
+                                 <a:tDtFornecimento>2016-04-16T00:00:00</a:tDtFornecimento>
+                              </a:CotacaoPropostaEnderecoDTO>
+                           </a:lstCotacaoPropostaEnderecoDTO>
+                           <a:lstCotacaoPropostaTaxaDTO>
+                              <a:CotacaoPropostaTaxaDTO>
+                                 <a:bFlIncluso>1</a:bFlIncluso>
+                                 <a:dPcTaxa>0.0000</a:dPcTaxa>
+                                 <a:nCdTaxa>1</a:nCdTaxa>
+                              </a:CotacaoPropostaTaxaDTO>
+                              <a:CotacaoPropostaTaxaDTO>
+                                 <a:bFlIncluso>1</a:bFlIncluso>
+                                 <a:dPcTaxa>0.0000</a:dPcTaxa>
+                                 <a:nCdTaxa>2</a:nCdTaxa>
+                              </a:CotacaoPropostaTaxaDTO>
+                           </a:lstCotacaoPropostaTaxaDTO>
+                           <a:lstPropostaRequisicaoDTO/>
+                           <a:nCdProposta>19734</a:nCdProposta>
+                           <a:nCdSituacao>1</a:nCdSituacao>
+                           <a:nIdVencedor>1</a:nIdVencedor>
+                           <a:nNrRanking>1</a:nNrRanking>
+                           <a:sCdCondicaoPagamento>2</a:sCdCondicaoPagamento>
+                           <a:sCdEmpresa i:nil="true"/>
+                           <a:sCdFrete>C</a:sCdFrete>
+                           <a:sCdIva i:nil="true"/>
+                           <a:sCdMarca i:nil="true"/>
+                           <a:sCdNmb i:nil="true"/>
+                           <a:sCdUsuario i:nil="true"/>
+                           <a:sDsMotivoDesclassificado i:nil="true"/>
+                           <a:sDsObservacao i:nil="true"/>
+                           <a:tDtAlteracao>2016-03-17T14:10:27</a:tDtAlteracao>
+                           <a:tDtProposta>2016-03-17T14:10:27</a:tDtProposta>
+                           <a:tDtValidade>2016-04-17T00:00:00</a:tDtValidade>
+                        </a:CotacaoPropostaDTO>
+                     </a:lstCotacaoPropostaDTO>
+                     <a:nCdAplicacao>1</a:nCdAplicacao>
+                     <a:nCdSituacao>3</a:nCdSituacao>
+                     <a:sCdClasse>9140</a:sCdClasse>
+                     <a:sCdCondicaoPagamento>2</a:sCdCondicaoPagamento>
+                     <a:sCdCotacao>1517</a:sCdCotacao>
+                     <a:sCdItemEmpresa i:nil="true"/>
+                     <a:sCdItemWbc>5713</a:sCdItemWbc>
+                     <a:sCdItemWbcPai i:nil="true"/>
+                     <a:sCdMarca i:nil="true"/>
+                     <a:sCdProduto i:nil="true"/>
+                     <a:sCdUnidadeMedida>01060</a:sCdUnidadeMedida>
+                     <a:sDsItem>6N032010024 - OLEO PARA CAMBIO SAE-90, NIVEL DE DESEMPENHO API-</a:sDsItem>
+                     <a:sDsJustificativa i:nil="true"/>
+                     <a:sDsObservacao i:nil="true"/>
+                  </a:CotacaoItemDTO>
+               </a:lstCotacaoItemDTO>
+               <a:lstCotacaoMoedaDTO/>
+               <a:lstCotacaoParticipanteDTO>
+                  <a:CotacaoParticipanteDTO>
+                     <a:nStParticipacao>2</a:nStParticipacao>
+                     <a:sCdEmpresa>09437210000116</a:sCdEmpresa>
+                  </a:CotacaoParticipanteDTO>
+                  <a:CotacaoParticipanteDTO>
+                     <a:nStParticipacao>3</a:nStParticipacao>
+                     <a:sCdEmpresa i:nil="true"/>
+                  </a:CotacaoParticipanteDTO>
+               </a:lstCotacaoParticipanteDTO>
+               <a:nCdSituacao>7</a:nCdSituacao>
+               <a:nIdTipoNegociacao>0</a:nIdTipoNegociacao>
+               <a:sCdCotacaoERP>90075/2016</a:sCdCotacaoERP>
+               <a:sCdCotacaoWbc>1517</a:sCdCotacaoWbc>
+               <a:sCdCotacaoWbcPai i:nil="true"/>
+               <a:sCdEmpresa>46523239000147</a:sCdEmpresa>
+               <a:sCdEmpresaRequisicao i:nil="true"/>
+               <a:sCdFrete>C</a:sCdFrete>
+               <a:sCdMoeda>1</a:sCdMoeda>
+               <a:sCdUsuario i:nil="true"/>
+               <a:sDsCotacao>MATERIAL AUTOMOTIVO</a:sDsCotacao>
+               <a:sDsTermo>Declaro, expressamente, sob as penas da lei que:
+1. Me responsabilizo pela autenticidade e procedência dos bens e qualidade dos serviços que cotar;
+2. No valor unitário estão inclusos todos os impostos, inclusive as despesas com frete.
+3. Estou ciente que a presente cotação de preço não configura proposta de fornecimento.</a:sDsTermo>
+               <a:tDtCadastro>2016-03-16T15:02:29.473</a:tDtCadastro>
+               <a:tDtFinal>2016-03-24T17:00:00</a:tDtFinal>
+               <a:tDtInicial>2016-03-16T15:30:00</a:tDtInicial>
+            </a:CotacaoDTO>
+         </RetornarCotacaoOrcamentoResult>
+      </RetornarCotacaoOrcamentoResponse>
+   </s:Body>
+</s:Envelope>

@@ -1,0 +1,115 @@
+
+/*
+12/MAR/2020
+
+Rita Idler informou que as licitacoes do tipo CE ( Compra Direta ) 
+nao estao com as cotacoes sendo importadas corretamente
+*/
+
+
+Select sq.* from orcom.secom_quadro sq where sq.requisicao like '2020%459';
+--COTAÇÕES
+--            Processo 00459/2020 - 0 item - AQUISIÇÃO DE MATERIAIS - ROLO PARA PINTURA - ESPÁTULA DE AÇO        -- Agendada ( Ainda nao aconteceu )
+--            Processo 00447/2020 - 0 item - BOBINA DE PAPEL PARA COPIADORA XEROX                                -- Em andamento, nao foi encerrada
+--            Processo 00454/2020 - 6 item - AQUISIÇÃO DE MATERIAL - CHAVE DE FENDA, CHAVE GRIFO E CHAVE PHILIPS -- ENCERRADA - Ja gerou quadro de precos
+-- CE 47/2020 Processo 00225/2020 - 1 item - Consegui rastrear dentro do SECOM e do AUDESP - PILOTO
+--            Processo 00523/2020 - 0 item - É uma CE com quadro de precos que veio de RC e nao do SECOM   reqisicao 215/2020 
+--
+Select * from orcom.secom_requisicao
+where requisicao > 202000000
+order by requisicao desc
+;
+
+Select * from orcom.edit3 where processo = 202000225;
+
+
+Select sq.* from orcom.secom_quadro sq 
+where sq.requisicao IN ( 202000459, 202000447, 202000454, 202000225, 202000523 )
+--where sq.requisicao = 202000242
+order by sq.item, sq.sequencia
+;
+Select numero1, tipo1, processo, CODIGO_LICITACAO  from orcom.clici where processo = 202000459;
+
+-- sqlOrcamento
+Select decode( e3.tipo1, 'CO', e3.num_doc, t.CGC_CPF ) as cnpj, 
+       trunc( e3.VL_UNI, 2 ) as valor,
+       trunc( decode( e3.quanti, 0, ee.quanti, e3.QUANTI ), 5 ) as quantidade, 
+       decode( e3.quanti, 0, ee.unimat, e3.UNIMAT ) as unidade,
+       to_char( to_date( e3.dt_valid, 'yyyymmdd' ), 'yyyy-mm-dd' ) as dia,
+       e3.item
+  from orcom.edit3 e3
+  join orcom.clici c on e3.TIPO1 = c.TIPO1 and e3.NUMERO1 = c.NUMERO1 
+  left outer join orcom.tforn t on e3.R_SOCIAL = t.R_SOCIAL
+  left join ( SELECT e2.tipo1, e2.numero1, e2.item, e2.quanti, e2.unimat 
+                FROM orcom.edit2 e2 
+               WHERE tipoE = 'D' and linha = 1 ) ee ON e3.item = ee.item and c.numero1 = ee.numero1 and c.tipo1 = ee.tipo1
+ WHERE e3.processo = 202000456
+ --WHERE e3.processo = 202000225
+   --AND e3.ITEM = 1
+   AND decode( e3.tipo1, 'CO', e3.num_doc, t.CGC_CPF ) is not null 
+ ORDER BY e3.r_social, e3.item
+;
+  
+-- Selecionando orcamento de SECOM_QUADRO
+Select s.cnpj -- e3.tipo1, 'CO', e3.num_doc, t.CGC_CPF ) as cnpj, 
+       , trunc( s.valor/10000, 2 ) as valor
+       , trunc( s.quantidade/10000, 5 ) as quantidade
+       , s.unidade as unidade,
+       to_char( to_date( s.dta_emissao, 'yyyymmdd' ), 'yyyy-mm-dd' ) as dia,
+       s.item,
+       s.requisicao
+       
+  from orcom.secom_quadro s
+  --join orcom.edit3 e3 ON s.requisicao = e3.processo and e3.
+  --join orcom.clici c on e3.TIPO1 = c.TIPO1 and e3.NUMERO1 = c.NUMERO1 
+  --left outer join orcom.tforn t on e3.R_SOCIAL = t.R_SOCIAL
+  --left join ( SELECT e2.tipo1, e2.numero1, e2.item, e2.quanti, e2.unimat 
+   --             FROM orcom.edit2 e2 
+  --             WHERE tipoE = 'D' and linha = 1 ) ee ON e3.item = ee.item and c.numero1 = ee.numero1 and c.tipo1 = ee.tipo1
+-- WHERE s.requisicao = 202000225
+ WHERE s.requisicao = 202000456
+   --AND e3.ITEM = 1
+  -- AND decode( e3.tipo1, 'CO', e3.num_doc, t.CGC_CPF ) is not null 
+ ORDER BY s.requisicao desc, s.item, s.cnpj
+  ;  
+  
+  
+Select e3.tipo1, e3.VL_UNI, e3.quanti, e3.UNIMAT, e3.dt_valid, e3.item
+  from orcom.edit3 e3
+ where e3.processo = 202000225
+   and e3.ITEM = 1
+  order by e3.r_social, e3.item
+  ;
+  
+  SELECT e2.tipo1, e2.numero1, e2.item, e2.quanti, e2.unimat 
+                FROM orcom.edit2 e2 
+               WHERE tipoE = 'D' and linha = 1
+               ;
+-- Verificar se tem AF emitida
+Select * from orcom.caufo where processo = 202000459
+;
+Select * from orcom.edit3 where processo = 202000459
+;
+
+/*
+REM INSERTING into ORCOM.CAUFO
+SET DEFINE OFF;
+DELETE FROM orcom.caufo where processo = 202000459;commit;
+Insert into ORCOM.CAUFO (APC_CONTAS,ASICONV,ASSUNTO,ASSUNTO2,BCO_CTA,BCO_SIG,COD_AGEN,COD_APL1,COD_APL2,COD_BCO,COND_PGTO,DATA,DATA_CHG,DESTINO1,DESTINO2,DESTINO3,DIGITOAG,DIGITOCT,DT_AUDESP,DT_CANC,DT_CONF,DT_ENC,DT_ENVIO,DT_FIM,DT_INI,DT_PRO,DT_PUBLIC,DT_RES,DT_VENC,DTREPASSE,ENTREGA,ESTADO,ESTADOAF,FINALIZA,FT_RECURSO,FUNDAMENTO,INT_EXT,ITEM,ITENCAN,LEI_ESPEC,LETRACF,LOCAL_ENTR,MAIS_CPF,NLEI,NPC_CONTAS,NSICONV,NUM_CONTA,NUMERO1,NUMEROACF,NUMEROAUD,NUMEROOS,NUMTIPO2,OBS,ORD_TFORN,ORDENADORA,P_TRIBUNAL,PARECER,PARECER2,PEDIDO,PERCAD,PRESTACAO,PROCESSO,REAJUSTE,RESCISAO,SEGMENTO,SEGURO,SIGLAPROC,STA_ATUAL,STA_AUDESP,TERMO,TIP_CONTA,TIPO1,TIPOACF,TIPOPROC,TIPOPROC2,TIPORP,TMAV,TP_AJUSTE,TP_CF,TP_LEG,USUARIO,V_GARANTIA,VALOR,VERBA,VL_CONTRA,VL_CUST,VL_INVES,TIPO_CONTA,SETOR3,COD_BCO2,COD_AGEN2,TIPO_CONTA2,NUM_CONTA2,DIGITOCT2,DIGITOAG2,DIGITOAGCT2,DIGITOAGCT,FT_RECURSOB,FT_RECURSOB2,COD_BCO3,COD_AGEN3,TIPO_CONTA3,NUM_CONTA3,DIGITOCT3,DIGITOAG3,DIGITOAGCT3,FT_RECURSOB3,DT_XML,RUA_ATIVIDADE,CID_ATIVIDADE,EST_ATIVIDADE,ENCARGOS,CI_NOME,CI_CPF,GARANTIA,ARTIGO,TP_DIVIDA,CTA_CONTABIL1,CTA_CONTABIL2,CTA_CONTABIL3,CTA_CONTABIL4,RUBRICA1,RUBRICA2,RUBRICA3,RUBRICA4,NUM_PRODIGI,DIGITADO_AUDESP,CODIGO_AJUSTE,DT_AUDESP_IV,BID_CONTROLE,C_GARANTIA,P_GARANTIA,VISITAINLOCO,GESTOR_HA,GESTOR_MATRICULA,GESTOR_DIGITO,GESTOR_CPF,GESTOR_NOME,GESTOR_CARGO,FINANCEIRA_EXIGENCIA,FINANCEIRA_CLAUSULA,PENAL_EXIGENCIA,PENAL_CLAUSULA,PUBLICACAO_HOUVE,OBRA_RELAMBIENTAL,OBRA_ARTIGOESTADUAL,OBRA_ALVARA,OBRA_RODOVIASANEA,OBRA_LEVANTAFISICO,OBRA_CRITERIOARTIGO6,OBRA_PADRONIZACAO,OBRA_RESPONSAVELART,OBRA_EXISTELICENCA,DT_AUDESP_IV_XML,PRAZO_ANALISE,RESULTADO_CONCLUSIVO,TP_AJUSTE2,CONDICAO_ENTREGA,STA_AUDESP_IV_XML,ITEM_AFX,RP_EXCECAO,ITEM_CANCELADO_1,ITEM_CANCELADO_2,ITEM_CANCELADO_3,ITEM_CANCELADO_4,ITEM_CANCELADO_5,GARANTIA_DTFIM) values ('0','0',' ',' ',' ',' ',' ','0','0',' ','15DFQ','20200318','0','SA-221-1',' ',' ',' ',' ','0','0','20200325','0','0','0','0','0','0','0','20200409','0','15DIAS',' ','3',' ','0',' ',' ','2','0','0',' ','01',' ','0','0','0',' ','202000078','202000889','0','0','0',' ','35660','0',' ','0','0','0',' ',' ','202000459',' ','0',' ',' ',' ',' ','0','0','0','CE','A','PC',' ',' ','0','0','0','0','0','0','1260,8',' ','0','0','0',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','0','0',' ',' ',' ',' ',' ',' ',' ','0','0',' ',' ',' ',' ',' ',' ',' ',' ',' ','0','0','0','0','0','0','0','0','0',' ','0','0',' ',' ','0',' ','N','0','0',' ',' ',' ','N',' ','S','MULTAS PREVISTAS NO EDITAL','S',' ',' ',' ',' ',' ',' ',' ',' ',' ','0',' ',' ',' ',' ',' ','0',null,'0','0','0','0','0','0');
+commit;
+*/
+
+ SELECT EMPRESA,MATERIAL,MATRICULA,REQUISICAO, trim( to_char(VALOR) ) valor, trim( to_char(QUANTIDADE) ) quantidade,CNPJ,MEDIA,TIPO_ITEM,ITEM,MARCA,UNIDADE,ESTADO,MESTOTAL,MESNOANO,TIPODOC,SEQUENCIA,DTA_EMISSAO,OBSERVACAO 
+ FROM 
+    ORCOM.SECOM_QUADRO 
+ WHERE 
+    REQUISICAO like '20%01699%'
+    and item =6
+     ORDER BY ITEM, SEQUENCIA 
+ ;
+ describe orcom.secom_quadro;
+  SELECT * 
+ FROM 
+    ORCOM.TFORN 
+ WHERE 
+    CGC_CPF = '15056433000136' ;

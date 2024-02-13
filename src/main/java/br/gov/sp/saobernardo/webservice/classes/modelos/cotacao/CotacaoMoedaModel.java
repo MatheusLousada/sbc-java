@@ -1,0 +1,119 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.cotacao;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import br.gov.sp.saobernardo.webservice.classes.utils.Validadores;
+
+public class CotacaoMoedaModel {
+	/**
+	 * sCdMoeda
+	 * 
+	 * String 50
+	 * 
+	 * Codigo da moeda
+	 */
+	private String codigoMoeda;
+
+	/**
+	 * tDtCotacao
+	 * 
+	 * DateTime
+	 * 
+	 * Data da cotacao da moeda
+	 */
+
+	private XMLGregorianCalendar dataCotacao;
+
+	/**
+	 * dVlIndice
+	 * 
+	 * Decimal 16,4
+	 * 
+	 * Valor da cotacao
+	 */
+	private Double valorCotacao;
+
+	/**
+	 * nNrCasasDecimais
+	 * 
+	 * Int 1
+	 * 
+	 * Numero de casas decimais para a moeda
+	 */
+	private int casasDecimais;
+
+	/**
+	 * bFlAtivo
+	 * 
+	 * Int 1
+	 * 
+	 * Se a moeda esta ativa.
+	 */
+	private int moedaAtiva;
+
+	/**
+	 * nCdSituacao
+	 * 
+	 * Int 1
+	 * 
+	 * Situacao da cotacao moeda.
+	 */
+	private int codigoSituacao;
+
+	private Validadores validador;
+	
+
+	public CotacaoMoedaModel() {
+		super();
+		validador = new Validadores();
+	}
+
+	public String getCodigoMoeda() {
+		return codigoMoeda;
+	}
+
+	public void setCodigoMoeda(String codigoMoeda) {
+		this.codigoMoeda = validador.maxLen( codigoMoeda, 50 );
+	}
+
+	public XMLGregorianCalendar getDataCotacao() {
+		return dataCotacao;
+	}
+
+	public void setDataCotacao(XMLGregorianCalendar dataCotacao) {
+		this.dataCotacao = dataCotacao;
+	}
+
+	public Double getValorCotacao() {
+		return valorCotacao;
+	}
+
+	public void setValorCotacao(Double valorCotacao) {
+		this.valorCotacao = valorCotacao;
+	}
+
+	public int getCasasDecimais() {
+		return casasDecimais;
+	}
+
+	public void setCasasDecimais(int casasDecimais) {
+		this.casasDecimais = casasDecimais;
+	}
+
+	public int getMoedaAtiva() {
+		return moedaAtiva;
+	}
+
+	public void setMoedaAtiva(int moedaAtiva) {
+		this.moedaAtiva = moedaAtiva;
+	}
+
+	public int getCodigoSituacao() {
+		return codigoSituacao;
+	}
+
+	public void setCodigoSituacao(int codigoSituacao) {
+		this.codigoSituacao = codigoSituacao;
+	}
+
+}

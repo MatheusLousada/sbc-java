@@ -1,0 +1,44 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.depara;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import br.gov.sp.saobernardo.orcom.cforx.CFORXBean;
+import br.gov.sp.saobernardo.webservice.classes.modelos.AgenciaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.log.ArquivoDeLog;
+
+public class DeParaDadosAgencia {
+
+	private Map<String, String> mapa;
+	private ArquivoDeLog log;
+	
+	public DeParaDadosAgencia(ArquivoDeLog log) throws SecurityException, IOException {
+		this.log = log;
+		mapa = new HashMap<String, String>();
+		mapa.put("COD_AGEN",    "numero");
+		mapa.put("DIGITOAG",    "digito");
+		//mapa.put("DIGITOAG_WS", "digito");
+	}
+
+	public void populaDados(AgenciaModel de, CFORXBean para)
+			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Class<? extends CFORXBean> classeCFORXBEAN = para.getClass();
+
+		for (Map.Entry<String, String> entry : mapa.entrySet()) {
+			Class<? extends AgenciaModel> classe = de.getClass();
+			Field campo = classe.getDeclaredField(entry.getValue());
+			campo.setAccessible(true);
+
+			Field campoCFORXBEAN = classeCFORXBEAN.getDeclaredField(entry.getKey());
+			campoCFORXBEAN.setAccessible(true);
+			Object valorDe = campo.get(de);
+			Object valorPara = campoCFORXBEAN.get(para);
+			log.adiciona( "Campo:" + campoCFORXBEAN.getName() + ": de [" + valorPara + "] para [" + valorDe + "]" );
+			if (valorDe != null && !valorPara.equals(valorDe)) {
+				campoCFORXBEAN.set(para, valorDe);
+			}
+		}
+	}
+}

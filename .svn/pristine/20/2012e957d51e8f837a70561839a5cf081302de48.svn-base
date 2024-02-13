@@ -1,0 +1,38 @@
+package br.gov.sp.saobernardo.webservice.paradigma.controller;
+
+//import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoC7121Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos.Prefeitura;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.ContextoImportacao;
+public class TestaPregaoEletronicoRetornaCNPJ {
+
+	@Test
+	//Ignore
+	public void deveTrazerOsCnpjsDosFornecedores() throws Exception {
+		String pregao = "PE 139/2015";
+		String processo = "50034/2015 - PE 139";
+		/*
+		 * "61692422000160" "07620849000107" "05005873000100" "05362071000158"
+		 * "02477571000147" "61051942000193" "13841510000133"
+		 */
+		ContextoImportacao ci = new ContextoImportacao(Ambientes.PARADIGMA_PRODUCAO, Ambientes.ORCOM_DESENVOLVIMENTO,
+				false, new Prefeitura());
+		final AtualizacaoC7121Controller controller = new AtualizacaoC7121Controller(ci);
+		List<String> sujeitos = controller.retornaCNPJDasEmpresas(pregao, processo);
+
+		assertNotEquals("A lista de cnpjs nao deveria estar vazia", 0, sujeitos.size());
+		assertEquals("Deveria ter 7 elementos", 7, sujeitos.size());
+		assertThat("Deveria conter um CNPJ especifico", sujeitos, hasItem("61051942000193"));
+
+	}
+}

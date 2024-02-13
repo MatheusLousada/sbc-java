@@ -1,0 +1,96 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:par="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:ProcessarPregaoEletronico>
+         <!--Optional:-->
+         <tem:lstPregaoEletronicoDTO>
+            <!--Zero or more repetitions:-->
+            <par:PregaoEletronicoDTO>
+			   <par:bFlAplicaLei123>1</par:bFlAplicaLei123>
+               <par:bFlChatBilateral>1</par:bFlChatBilateral>
+               <par:bFlExigeCapacitacao>2</par:bFlExigeCapacitacao>
+               <par:bFlMostrarReferencia>0</par:bFlMostrarReferencia>
+               <par:bFlObrigarDeclaracaoVendedor>2</par:bFlObrigarDeclaracaoVendedor>
+               <par:bFlPermitirLance i:nil="true"/>
+               <par:bFlPublicarEdital>2</par:bFlPublicarEdital>
+               <par:bFlRequerCRC>0</par:bFlRequerCRC>
+               <par:bFlRestrito>0</par:bFlRestrito>
+               <par:bFlTermo>1</par:bFlTermo>               
+               <par:lstPregaoEletronicoComissao>
+                  <!--Zero or more repetitions:-->
+                  <par:ComissaoDTO>
+                     <par:nIdPerfil>7</par:nIdPerfil>
+                     <par:sCdUsuario>suportepta</par:sCdUsuario>
+                  </par:ComissaoDTO>
+               </par:lstPregaoEletronicoComissao>
+               <par:lstPregaoEletronicoItemDTO>                  
+                       <par:PregaoEletronicoItemDTO>
+                     <par:dQtItem>15000.0000</par:dQtItem>
+                     <par:dVlReferencia>8.0952</par:dVlReferencia>
+                     <par:lstPregaoEletronicoItemEnderecoDTO>
+                        <par:PregaoEletronicoItemEnderecoDTO>
+                           <par:dQtItem>15000.0000</par:dQtItem>
+                           <par:sCdEmpresaCobrancaEndereco>3</par:sCdEmpresaCobrancaEndereco>
+                           <par:sCdEmpresaEntregaEndereco>3</par:sCdEmpresaEntregaEndereco>
+                           <par:sCdEmpresaFaturamentoEndereco>3</par:sCdEmpresaFaturamentoEndereco>
+                        </par:PregaoEletronicoItemEnderecoDTO>
+                     </par:lstPregaoEletronicoItemEnderecoDTO>
+                     <par:lstPregaoEletronicoItemLanceDTO/>
+                     <par:nCdItemSequencial>1</par:nCdItemSequencial>
+                     <par:nStItem>1</par:nStItem>
+                     <par:sCdClasse>6531</par:sCdClasse>
+                     <par:sCdItemLegado i:nil="true"/>
+                     <par:sCdLoteLegado i:nil="true"/>
+                     <par:sCdProduto>2523</par:sCdProduto>
+                     <par:sCdUnidadeMedida>00690</par:sCdUnidadeMedida>
+                     <par:sDsItem>CEFTRIAXONA SODICA 1G(IM),FRASCO-AMPOLA, PO PARA</par:sDsItem>
+                  </par:PregaoEletronicoItemDTO>
+               </par:lstPregaoEletronicoItemDTO> 
+                 <par:nCdPregaoTipo>0</par:nCdPregaoTipo>
+               <par:nCdSituacao>0</par:nCdSituacao>
+               <par:nCdTemplate>18000</par:nCdTemplate>
+               <par:nIdAnexoNegociacao>0</par:nIdAnexoNegociacao>
+               <par:nIdAutoEncerramento>1</par:nIdAutoEncerramento>
+               <par:nIdModalidade>1</par:nIdModalidade>
+               <par:nIdPropostaAnexo>0</par:nIdPropostaAnexo>
+               <par:nIdPropostaMarca>1</par:nIdPropostaMarca>
+               <par:nIdPropostaModelo>0</par:nIdPropostaModelo>
+               <par:nIdPropostaProcedencia>1</par:nIdPropostaProcedencia>
+               <par:nIdSuperSimples>0</par:nIdSuperSimples>
+               <par:nIdTipoApuracao>1</par:nIdTipoApuracao>
+               <par:nNrCasasDecimais>4</par:nNrCasasDecimais>
+               <par:nQtItensPagina>0</par:nQtItensPagina>
+               <par:nVlProrroga i:nil="true"/>
+               <par:nVlProrrogaCondicao i:nil="true"/>
+               <par:nVlTempoDisputa>15</par:nVlTempoDisputa>
+               <par:sCdComprador>3</par:sCdComprador>
+               <par:sCdCondicaoPagamento>2</par:sCdCondicaoPagamento>
+               <par:sCdMoeda>1</par:sCdMoeda>
+               <par:sCdPrazoEntrega>2</par:sCdPrazoEntrega>
+               <par:sCdUsuarioCriador>suportepta</par:sCdUsuarioCriador>
+               <par:sDsObjeto>TST-PARADIGMA</par:sDsObjeto>
+               <par:sDsObservacao>&lt;span style="font-weight:bold;">
+1ª) Para visualizar os dados gerais do item clicar na descrição resumida;
+&lt;br>
+2ª) Antes de enviar sua proposta consulte e Edital e verifique a documentação exigida para a Habilitação no certame;
+&lt;/span></par:sDsObservacao>
+               <par:sDsTermo><![CDATA[Declaro, expressamente, sob as penas da lei que:<BR>
+1. inexiste qualquer fato superveniente ao meu registro cadastral que me impeça de contratar com o Município, nos termos do disposto no § 2º do artigo 32 da Lei Federal nº 8.666, de 21 de junho de 1993;<BR>
+2. conheço e aceito o REGULAMENTO DO SECOM/SBC - Dispensa de Licitação, Convite e Pregão;<BR>
+3. atendo às exigências de habilitação previstas no Edital;<BR>
+4. não me utilizo, em qualquer fase do processo produtivo e/ou prestação de serviço, de mão-de-obra de menores de 18 (dezoito) anos de idade em trabalho noturno, perigoso ou insalubre, bem como de menores de 16 (dezesseis) anos de idade, em qualquer trabalho, salvo na condição de aprendiz, a partir de 14 (catorze) anos);<BR>
+5. me responsabilizo pela autenticidade e procedência dos bens e qualidade dos serviços que cotar;<BR>
+6. se possuir cem ou mais empregados, dois a cinco por cento desses cargos serão preenchidos por beneficiários reabilitados, ou pessoas portadoras de deficiência, conforme preceitua o artigo 93 da Lei Federal nº 8.213, de 24 de julho de 1991 e Portaria nº 4.677, de 29 de julho de 1998; e, por fim que<BR>
+7. atendo as exigências, principalmente quanto às condições para pagamentos indicadas pelo Município;<BR>
+8. que cumpre as Normas de Trabalho Decente da Organização Internacional do Trabalho e do Ministério do Trabalho e Emprego, conforme preceitua a Lei Municipal nº 6.078 de 03 de novembro de 2010.<BR>]]></par:sDsTermo>
+               <par:sNrEdital>PE 2301/2017</par:sNrEdital>
+               <par:sNrProcessoDisplay>PE 2301/2017</par:sNrProcessoDisplay>
+               <par:tDtFinalProposta>2017-01-29T09:00:00</par:tDtFinalProposta>
+               <par:tDtInicialDisputa>2017-01-30T09:00:00</par:tDtInicialDisputa>
+               <par:tDtInicialProposta>2017-01-28T10:00:00</par:tDtInicialProposta>
+               <par:tDtPublicacao i:nil="true"/>
+            </par:PregaoEletronicoDTO>
+         </tem:lstPregaoEletronicoDTO>
+      </tem:ProcessarPregaoEletronico>
+   </soapenv:Body>
+</soapenv:Envelope>

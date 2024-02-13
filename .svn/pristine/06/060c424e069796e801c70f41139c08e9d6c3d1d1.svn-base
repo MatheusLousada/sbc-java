@@ -1,0 +1,12 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos;
+
+public class Agencia extends Orgaos {
+	public static final String NOME = "ARSB";
+	public static final int ORGAO = 3;
+	public static final String DESCRICAO = "AGÊNCIA REGULADORA DO MUNICÍPIO DE SÃO BERNARDO DO CAMPO";
+
+	public Agencia() {
+		super(ORGAO, DESCRICAO, NOME);
+	}
+
+}

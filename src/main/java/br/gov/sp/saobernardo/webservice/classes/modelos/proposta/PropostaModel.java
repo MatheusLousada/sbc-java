@@ -1,0 +1,26 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.proposta;
+
+import java.math.BigDecimal;
+
+public class PropostaModel {
+
+	private String codigo;
+	private BigDecimal valor;
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
+	}
+
+}

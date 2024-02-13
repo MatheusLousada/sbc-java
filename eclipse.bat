@@ -1,0 +1,1 @@
+CALL mvn eclipse:clean eclipse:eclipse -U -DarchetypeArtifactId=maven-archetype-quickstart -DAMBIENTE=desenvolvimento 

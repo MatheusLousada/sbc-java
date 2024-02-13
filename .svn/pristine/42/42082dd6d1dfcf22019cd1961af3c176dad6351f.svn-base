@@ -1,0 +1,88 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ArrayOfHabilitarPregaoEletronicoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.ArrayOfPregaoEletronicoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.HabilitarPregaoEletronicoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.IPregaoEletronico;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.PregaoEletronico;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.PregaoEletronicoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.pregaoeletronico.RetornoDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.Constantes;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.pregao.PregaoEletronicoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.conversores.PregaoEletronicoConversor;
+
+public class PregaoEletronicoService implements ServiceGrava<PregaoEletronicoModel> {
+
+	private static final Logger logger = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+	private IPregaoEletronico servico;
+	private QName serviceName;
+	private PregaoEletronicoConversor convPE;
+
+	public PregaoEletronicoService(WSDLs wsdls) {
+		try {
+			URL wsdlURL = new URL(wsdls.getValue());
+			ServicesName nomeServico = ServicesName.PREGAO_ELETRONICO;
+			serviceName = new QName(nomeServico.getUrl(), nomeServico.getServico());
+			PregaoEletronico ss = new PregaoEletronico(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingIPregaoEletronico();
+			convPE = new PregaoEletronicoConversor();
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, ex.toString(), ex);
+			System.console().writer().println(ex.getStackTrace());
+		}
+	}
+
+	@Override
+	public PregaoEletronicoModel grava(PregaoEletronicoModel pregao) {
+		ArrayOfPregaoEletronicoDTO listaPregoesDTO = new ArrayOfPregaoEletronicoDTO();
+		listaPregoesDTO.getPregaoEletronicoDTO().add(convPE.converteParaDTO(pregao));
+		RetornoDTO retorno = servico.processarPregaoEletronico(listaPregoesDTO);
+		return convPE.converteLogParaModel(retorno.getLstWbtLogDTO().getWbtLogDTO().get(0));
+
+	}
+
+	@Override
+	public List<PregaoEletronicoModel> grava(List<PregaoEletronicoModel> pregoes) {
+		List<PregaoEletronicoModel> retorno = new ArrayList<PregaoEletronicoModel>();
+		for (PregaoEletronicoModel pregao : pregoes) {
+			retorno.add(this.grava(pregao));
+		}
+		return retorno;
+	}
+
+	public List<PregaoEletronicoModel> retornarPregaoEletronico() {
+		ArrayOfPregaoEletronicoDTO retorno = servico.retornarPregaoEletronico();
+		List<PregaoEletronicoModel> pe = new ArrayList<PregaoEletronicoModel>();
+		for (PregaoEletronicoDTO peDTO : retorno.getPregaoEletronicoDTO()) {
+			pe.add(convPE.converteParaModel(peDTO));
+		}
+		return pe;
+	}
+
+	public PregaoEletronicoModel habilitaRetornoPregaoEletronico(PregaoEletronicoModel pregao) {
+		ArrayOfHabilitarPregaoEletronicoDTO lstHabilitarPregaoEletronicoDTO = new ArrayOfHabilitarPregaoEletronicoDTO();
+
+		HabilitarPregaoEletronicoDTO e = new HabilitarPregaoEletronicoDTO();
+		PregaoEletronicoDTO dto = convPE.converteParaDTO(pregao);
+		e.setSCdComprador(Constantes.CNPJ_PREFEITURA);
+		e.setSNrProcessoDisplay(dto.getSNrProcessoDisplay());
+		e.setSNrEdital(dto.getSNrEdital());
+		lstHabilitarPregaoEletronicoDTO.getHabilitarPregaoEletronicoDTO().add(e);
+
+		RetornoDTO habilitarRetornarPregaoEletronico = servico
+				.habilitarRetornarPregaoEletronico(lstHabilitarPregaoEletronicoDTO);
+		return convPE.converteLogParaModel(habilitarRetornarPregaoEletronico.getLstWbtLogDTO().getWbtLogDTO().get(0));
+	}
+
+	public QName getServiceName() {
+		return serviceName;
+	}
+}

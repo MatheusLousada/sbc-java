@@ -1,0 +1,25 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos;
+
+/** Código da situação do usuário */
+public class SituacaoUsuario {
+
+	/**
+	 * ATIVO(1), INATIVO(2), BLOQUEADO_POR_EXCESSO__DE_TENTATIVA__DE_LOGIN(3);
+	 */
+
+	private int situacao;
+
+	public SituacaoUsuario(int situacao) {
+		if (situacao >= 1 || situacao <= 3) {
+			this.situacao = situacao;
+		} else {
+			throw new RuntimeException("Situacao de Usuario invalida : " + situacao);
+		}
+
+	}
+
+	public int getSituacao() {
+		return situacao;
+	}
+
+}

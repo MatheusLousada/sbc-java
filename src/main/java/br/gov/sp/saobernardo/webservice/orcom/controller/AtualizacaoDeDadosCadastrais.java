@@ -1,0 +1,19 @@
+package br.gov.sp.saobernardo.webservice.orcom.controller;
+
+import java.util.logging.Logger;
+
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+
+public class AtualizacaoDeDadosCadastrais {
+	
+	public static void main(String[] args) {
+		AtualizacaoCFORXController controller;
+		
+		try {
+			controller = new AtualizacaoCFORXController(Ambientes.PARADIGMA_DESENVOLVIMENTO, Ambientes.ORCOM_DESENVOLVIMENTO, false);
+			controller.atualizaDadosCadastraisDeCnpj("13348127000148");
+		} catch (Exception e) {
+			Logger.getAnonymousLogger().log( java.util.logging.Level.SEVERE, "Atualizando dados cadastrais de cnpj",e.getCause() );
+		}
+	}
+}

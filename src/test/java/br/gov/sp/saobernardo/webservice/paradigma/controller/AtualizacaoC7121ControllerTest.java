@@ -1,0 +1,93 @@
+package br.gov.sp.saobernardo.webservice.paradigma.controller;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoItemLanceModel;
+import br.gov.sp.saobernardo.webservice.orcom.controller.AtualizacaoC7121Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+
+public class AtualizacaoC7121ControllerTest {
+
+	private static final String SILVANIA_MARIA_DURANTE = "SILVANIA MARIA DURANTE";
+	private static final String DECATTI_ABC_COMERCIAL_LTDA_ME = "DECATTI ABC COMERCIAL LTDA ME";
+	private static final String MUTE_LABEN_COMERCIAL_LTDA_EPP = "MUTE LABEN COMERCIAL LTDA EPP";
+	private AtualizacaoC7121Controller sujeito;
+	private List<PregaoEletronicoItemLanceModel> listaDeLancesOriginais;
+
+	@Before
+	public void before() throws Exception   {
+		sujeito = new AtualizacaoC7121Controller(Ambientes.ORCOM_DESENVOLVIMENTO, Ambientes.ORCOM_DESENVOLVIMENTO, false);
+		listaDeLancesOriginais = new ArrayList<PregaoEletronicoItemLanceModel>();
+		listaDeLancesOriginais.addAll(Arrays.asList(criaLance(SILVANIA_MARIA_DURANTE, 1900, true, false),
+				criaLance(SILVANIA_MARIA_DURANTE, 1200, true, false),
+				criaLance(SILVANIA_MARIA_DURANTE, 1195, true, false),
+				criaLance(SILVANIA_MARIA_DURANTE, 1190, true, true),
+				criaLance(SILVANIA_MARIA_DURANTE, 499, false, false),
+				criaLance(SILVANIA_MARIA_DURANTE, 3000, false, false),
+
+				criaLance(MUTE_LABEN_COMERCIAL_LTDA_EPP, 309, false, false),
+				criaLance(MUTE_LABEN_COMERCIAL_LTDA_EPP, 309, false, false),
+				criaLance(MUTE_LABEN_COMERCIAL_LTDA_EPP, 310, false, false),
+				criaLance(MUTE_LABEN_COMERCIAL_LTDA_EPP, 320, false, false),
+
+				criaLance(DECATTI_ABC_COMERCIAL_LTDA_ME, 310, false, false),
+				criaLance(DECATTI_ABC_COMERCIAL_LTDA_ME, 315, false, false),
+				criaLance(DECATTI_ABC_COMERCIAL_LTDA_ME, 329, false, false)
+
+		));
+	}
+
+	@Ignore
+	@Test
+	public void deveTrazerOsMenoresLancesDeCadaFornecedor() {
+
+		List<PregaoEletronicoItemLanceModel> menoresLancesValidos = sujeito
+				.pegaUltimoLanceDeCadaFornecedor(listaDeLancesOriginais);
+
+		for (PregaoEletronicoItemLanceModel lance : menoresLancesValidos) {
+			System.out.println(lance.getValorLance());
+		}
+
+		assertEquals(new BigDecimal(1190), menoresLancesValidos.get(0).getValorLance());
+		assertEquals(new BigDecimal(310), menoresLancesValidos.get(1).getValorLance());
+		assertEquals(new BigDecimal(309), menoresLancesValidos.get(2).getValorLance());
+	}
+
+	@Ignore
+	@Test
+	public void deveHaverLanceVencedor() {
+		List<PregaoEletronicoItemLanceModel> menoresLancesValidos = sujeito
+				.pegaUltimoLanceDeCadaFornecedor(listaDeLancesOriginais);
+
+		boolean teveVencedor = false;
+
+		for (PregaoEletronicoItemLanceModel lance : menoresLancesValidos) {
+			if (lance.getVencedor() == 1) {
+				teveVencedor = Boolean.TRUE;
+			}
+		}
+
+		assertTrue(teveVencedor);
+	}
+
+	private PregaoEletronicoItemLanceModel criaLance(String codigoEmpresa, int valor, boolean lanceValido,
+			boolean vencedor) {
+		PregaoEletronicoItemLanceModel lance = new PregaoEletronicoItemLanceModel();
+		lance.setCodigoEmpresa(codigoEmpresa);
+		lance.setValorLance(new BigDecimal(valor));
+		lance.setLanceValido(lanceValido);
+		lance.setVencedor(vencedor ? 1 : 0);
+		return lance;
+	}
+
+}

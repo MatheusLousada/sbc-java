@@ -1,0 +1,223 @@
+package br.gov.sp.saobernardo.webservice.paradigma.gui;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import br.gov.sp.saobernardo.orcom.c7708.C7708Bean;
+import br.gov.sp.saobernardo.orcom.cforx.CFORXBean;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.TipoPessoa;
+
+/**
+ * Imprime uma saida que imita a tela CFORX
+ * 
+ * @author 41476
+ * @since 27/JAN/2020
+ */
+public class FichaCForx {
+
+	private static final int LARGURA_LINHA = 140;
+	private CFORXBean empresa = null;
+
+	public FichaCForx(CFORXBean empresa) {
+		this.empresa = empresa;
+	}
+
+	public FichaCForx(C7708Bean submit) {
+		this.empresa = new CFORXBean();
+		empresa.setORD_TFORN(                         submit.getORD_TFORN()   );
+		//empresa.setATIVOC(                            submit.getATIVOC());
+		empresa.setR_SOCIAL(                          submit.getR_SOCIAL() );
+		empresa.setR_SOCIAL2(                         submit.getR_SOCIAL2());
+		//empresa.setN_PESQ(                            submit.getN_PESQ());
+		//empresa.setSUPRIMENTO(                        submit.getSUPRIMENTO());
+		empresa.setCGC_CPF(                           submit.getCGC_CPF() );
+		
+		//empresa.setINSC_EST(                          submit.getINSC_EST());
+		//empresa.setINSC_MUN(                          submit.getINSC_MUN());
+		//empresa.setTP_FC(                             submit.getTP_FC());
+		//empresa.setME_EPP()                            submit.getME_EPP());
+		//empresa.setCOD_BCO(                           submit.getCOD_BCO());
+		//empresa.setCOD_AGEN(                          submit.getCOD_AGEN());
+		//empresa.setDIGITOAG(                          submit.getDIGITOAG());
+		//empresa.setTIPO_CONTA(                        submit.getTIPO_CONTA());
+		//empresa.setCTA_ALFA(                          submit.getCTA_ALFA());
+		//empresa.setDIGITOCT(                          submit.getDIGITOCT());
+		//empresa.setDIGITOCT2(                         submit.getDIGITOCT2());
+		//empresa.setTP_IDENT(                          submit.getTP_IDENT());
+		//empresa.setCODOCUP(                           submit.getCODOCUP());
+		//empresa.setDATA_NASCIMENTO(                   submit.getDATA_NASCIMENTO());
+		//empresa.setAPOSENTADO(                        submit.getAPOSENTADO());
+		//empresa.setDESC1_5(                           submit.getDESC1_5());
+		empresa.setTIPOLOG(                           submit.getTIPOLOG() );
+		empresa.setNOMELOG(                           submit.getNOMELOG() );
+		empresa.setNUMMATRIZ(                         submit.getNUMMATRIZ());
+		empresa.setBAIRROLOG(                         submit.getBAIRROLOG());
+		empresa.setCOMPMATRIZ(                        submit.getCOMPMATRIZ());
+		empresa.setCIDLOG(                            submit.getCIDLOG());
+		empresa.setCEPLOG(                            submit.getCEPLOG());
+		empresa.setTIPOLOGC(                          submit.getTIPOLOGC() );
+		empresa.setNOMELOGC(                          submit.getNOMELOGC() );
+		empresa.setNUMCORR(                           submit.getNUMCORR());
+		empresa.setBAIRROLOGC(                        submit.getBAIRROLOGC());
+		empresa.setCOMPCORR(                          submit.getCOMPCORR() );
+		empresa.setCIDLOGC(                          submit.getCIDLOGC());
+		empresa.setCEPLOGC(                          submit.getCEPLOGC());
+		//empresa.setEMAILCORR(                         submit.getEMAILCORR());
+		//empresa.setEMAILCORR2(                        submit.getEMAILCORR2());
+		//empresa.setSITECORR(                          submit.getSITECORR());		
+	}
+
+	public String tela() {
+
+		Map<Integer, String> linhas = new HashMap<Integer, String>();
+		int linha = -1;
+		linhas.put(++linha, "");
+
+		// Pessoa Fisica ou Juridica?
+		boolean isPJuridica = TipoPessoa.PESSOA_JURIDICA.getTipo().equals( empresa.getTP_IDENT() );
+		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("#ID", empresa.getORD_TFORN());
+		map.put("#ATIVO", empresa.getATIVOC());
+		map.put("#RSOCIAL", empresa.getR_SOCIAL() + empresa.getR_SOCIAL2());
+		map.put("#SITE#", empresa.getSITECORR());
+		map.put("#NPESQ", empresa.getN_PESQ());
+		map.put("#S#", empresa.getSUPRIMENTO());
+		map.put("#CNPJ", (isPJuridica ? spaces(14) :empresa.getCGC_CPF()));
+		map.put("#CPF", ( isPJuridica ? empresa.getCGC_CPF() : spaces(11)));
+		map.put("#IE", empresa.getINSC_EST());
+		map.put("#IM", empresa.getINSC_MUN());
+		map.put("#FC", empresa.getTP_FC());
+		map.put("#ME", empresa.getME_EPP());
+		map.put("#BC", empresa.getCOD_BCO());
+		map.put("#AGENC", empresa.getCOD_AGEN());
+		map.put("#AD", empresa.getDIGITOAG());
+		map.put("#TC", empresa.getTIPO_CONTA());
+		map.put("#CONTA", empresa.getCTA_ALFA());
+		map.put("#D1", empresa.getDIGITOCT());
+		map.put("#D2", empresa.getDIGITOCT2());
+		map.put("#TI", empresa.getTP_IDENT());
+		map.put("#CODOCUP", empresa.getCODOCUP());
+		map.put("99/99/9999", empresa.getDATA_NASCIMENTO());
+		map.put("#AP", empresa.getAPOSENTADO());
+		map.put("#DESCRICAO", empresa.getDESC1_5());
+		map.put("#ENDERECO_MATRIZ", empresa.getTIPOLOG() + " " + empresa.getNOMELOG() + ", " + empresa.getNUMMATRIZ()
+				+ " - " + empresa.getBAIRROLOG() + " - " + empresa.getCOMPMATRIZ() + " - " + empresa.getCIDLOG());
+		map.put("#CEPMATR", empresa.getCEPLOG());
+		map.put("#ENDERECO_CORRES", empresa.getTIPOLOGC() + " " + empresa.getNOMELOGC() + ", " + empresa.getNUMCORR()
+				+ " - " + empresa.getBAIRROLOGC() + " - " + empresa.getCOMPCORR() + " - " + empresa.getCIDLOGC());
+		map.put("#CEPCORR", empresa.getCEPLOGC());
+		map.put("#EMAIL1", empresa.getEMAILCORR());
+		map.put("#EMAIL2", empresa.getEMAILCORR2());
+
+		// 1 2 3 4 5 6 7 8 9 10 11 12
+		// 123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+		StringBuilder tela = new StringBuilder();
+		StringBuilder separador = new StringBuilder("-");
+		while (separador.length() < LARGURA_LINHA) {
+			separador.append("-");
+		}
+		tela.append("\n");
+		tela.append(ajustaNaFicha(" ", separador.toString(), " "));
+		tela.append(ajustaNaFicha("|", " CFORX - Cadastro de Fornecedor/Credor", "|"));
+		tela.append(ajustaNaFicha("|", separador.toString(), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Codigo Orcom [#ID] ativo [#ATIVO]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Razao Social [#RSOCIAL]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Descr [#DESCRICAO]", map), "|"));
+		tela.append(ajustaNaFicha("|", separador.toString(), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Npesq [#NPESQ]  Suprimento [#S#]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" CNPJ [#CNPJ] CPF [#CPF]  Ins Est [#IE]  Ins Mun[#IM] Tipo [#FC] ME/EPP [#ME]", map), "|"));
+		//tela.append(ajustaNaFicha("|", colocaValor("", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Bco [#BC] Agencia [#AGENC]-[#AD] TP [#TC]  cta [#CONTA]-[#D1] [#D2] Tp Identificao [#TI]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Autonomo: Cod.Ocup[#CODOCUP] D. Nasc[99/99/9999] Aposentado [#AP]", map), "|"));
+		tela.append(ajustaNaFicha("|", separador.toString(), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Endereços", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Matriz          [#CEPMATR] [#ENDERECO_MATRIZ]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Correspondencia [#CEPCORR] [#ENDERECO_CORRES]", map), "|"));
+		tela.append(ajustaNaFicha("|", separador.toString(), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Email1 [#EMAIL1]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Email2 [#EMAIL2]", map), "|"));
+		tela.append(ajustaNaFicha("|", colocaValor(" Site   [#SITE#]", map), "|"));
+		tela.append(ajustaNaFicha(" ", separador.toString(), " "));
+
+		return tela.toString();
+
+
+	}
+
+	private String colocaValor(String string, Map<String, String> map) {
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			String s = entry.getKey();
+			if (string.indexOf(s) > -1) {
+				string = string.replaceAll(s, entry.getValue());
+			}
+		}
+		return string;
+	}
+
+	private String ajustaNaFicha(String esquerda, String linha, String direita) {
+		return String.format("  %s%s%s%n", esquerda, padRight(linha, LARGURA_LINHA), direita);
+	}
+
+	private String spaces(int size) {
+		return padRight(" ", size);
+	}
+
+	private String padRight(String s, int size) {
+		return padRight(s, size, ' ');
+	}
+
+	@SuppressWarnings("unused")
+	private String padLeft(String s, int size) {
+		return padLeft(s, size, ' ');
+	}
+
+	/**
+	 * Right pad a string with the specified character
+	 * 
+	 * @see <a href=
+	 *      "https://www.quickprogrammingtips.com/java/how-to-pad-a-string-in-java.html"
+	 *      >Padding a string</a>
+	 * @param s
+	 * @param size
+	 * @param pad
+	 * @return
+	 */
+	private String padRight(String s, int size, char pad) {
+		StringBuilder builder = new StringBuilder(s);
+		while (builder.length() < size) {
+			builder.append(pad);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Left pad a string with the specified character
+	 * 
+	 * @see <a href=
+	 *      "https://www.quickprogrammingtips.com/java/how-to-pad-a-string-in-java.html"
+	 *      >Padding a string</a>
+	 * @param s
+	 * @param size
+	 * @param pad
+	 * @return
+	 */
+	private String padLeft(String s, int size, char pad) {
+		StringBuilder builder = new StringBuilder(s);
+		builder = builder.reverse(); 
+		while (builder.length() < size) {
+			builder.append(pad); 
+		}
+		return builder.reverse().toString(); // reverse again!
+	}
+
+	/*private String colocarValor(String tela, String mask, String valor) {
+		return colocarValor(tela, mask, valor, valor.length());
+	}
+
+	private String colocarValor(String tela, String mask, String valor, int size) {
+		return tela.replaceAll(mask, valor);
+	}*/
+
+}

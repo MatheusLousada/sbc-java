@@ -1,0 +1,450 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.CondicaoDePagamentoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.CotacaoMoedaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EnderecoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.SituacaoEmpresa;
+import br.gov.sp.saobernardo.webservice.classes.modelos.TipoEmpresa;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UnidadeDeMedidaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoComissaoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoItemEnderecoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoItemLanceModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoItemModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoLoteModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.pregao.PregaoEletronicoModel;
+import br.gov.sp.saobernardo.webservice.classes.utils.Conversores;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.ProdutoBuilder;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.UnidadeDeMedidaBuilder;
+
+@Ignore
+public class PregaoEletronicoServiceTest {
+
+	/*** Obtido no site http://www.geradordecnpj.org/ */
+	private static final String CNPJ_FALSO_PARA_TESTES = "13328409000183";
+
+	private static final String PRIMEIRA = "1";
+	private static final String SEGUNDA = "2";
+
+	private PregaoEletronicoService sujeito;
+	private List<PregaoEletronicoModel> pregoes;
+	private Conversores conv;
+	private Map<String, LogDeRetornoDaGravacao> logs;
+	private CondicaoDePagamentoModel condicaoDePagamento;
+
+	@Before
+	public void antes() throws Exception {
+		sujeito = new PregaoEletronicoService(WSDLs.WSDL_PREGAO_ELETRONICO_PRODUCAO);
+		conv = new Conversores(sujeito.getServiceName());
+		logs = new HashMap<String, LogDeRetornoDaGravacao>();
+		condicaoDePagamento = montaCondicaoDePagamento();
+	}
+
+	//@Test
+	public void deveRetornarTodosPregoesEletronicos() {
+		PregaoEletronicoModel pregao = new PregaoEletronicoModel();
+
+		List<PregaoEletronicoModel> retorno = sujeito.retornarPregaoEletronico();
+		assertNotNull(retorno);
+
+		assertEquals("Deve trazer um ou mais pregaos", 1, retorno.size());
+		for (PregaoEletronicoModel p : retorno) {
+			if (pregao.getNumeroEdital().equals(p.getNumeroEdital())) {
+
+				assertEquals("Deve ser o mesmo pregao ", pregao.getNumeroProcessoDisplay(),
+						p.getNumeroProcessoDisplay());
+			}
+		}
+	}
+
+	@Test
+	public void deveGravarUmPregaoEletronico() {
+
+		enviosAuxiliares();
+
+		PregaoEletronicoModel retorno = sujeito.grava(montaPregao(PRIMEIRA));
+		assertNotNull(retorno);
+
+		System.out.println("Retorno :" + retorno.getLogDaGravacao().getDescricao());
+
+		List<String> quaisLogs = new ArrayList<String>();
+		quaisLogs.add("CondicaoDePagamento");
+		quaisLogs.add("Moeda");
+		quaisLogs.add("retorno");
+
+		logs.put("retorno", retorno.getLogDaGravacao());
+
+		assertEquals(quaisLogs.size(), logs.size());
+
+		LogDeRetornoDaGravacao log;
+		for (String esteLog : quaisLogs) {
+			log = logs.get(esteLog);
+			Assert.assertNotEquals("", log.getData());
+			Assert.assertNotEquals("", log.getDescricao());
+			Assert.assertNotEquals("", log.getToken());
+			assertNotNull(log.getDescricao());
+		}
+
+		log = retorno.getLogDaGravacao();
+		assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf("sucesso") > 0);
+
+	}
+
+	@Test
+	/**
+	 * Retornar pregao eletronico ira sempre trazer TODOS os pregoes existentes.
+	 * Portanto poderá vir mais de um
+	 */
+	@Ignore("Os dados serão retornados pelo banco de dados")
+	public void deveRetornarPregaoEletronico60001() {
+		PregaoEletronicoModel pregao = new PregaoEletronicoModel();
+
+		pregao.setCodigoComprador(ConstantesTest.CNPJ_PREFEITURA); // <par:sCdComprador>?</par:sCdComprador>
+		pregao.setNumeroEdital("PE 142/2017");
+		pregao.setNumeroProcessoDisplay("93194/2016 - PE 142");
+
+		PregaoEletronicoModel habilitaRetornoPregaoEletronico = sujeito.habilitaRetornoPregaoEletronico(pregao);
+		assertTrue(habilitaRetornoPregaoEletronico.getLogDaGravacao().getDescricao().contains("sucesso"));
+
+		List<PregaoEletronicoModel> retorno = sujeito.retornarPregaoEletronico();
+		assertNotNull(retorno);
+
+		assertEquals("Deve trazer um ou mais pregaos", 1, retorno.size());
+		for (PregaoEletronicoModel p : retorno) {
+			if (pregao.getNumeroEdital().equals(p.getNumeroEdital())) {
+
+				assertEquals("Deve ser o mesmo pregao ", pregao.getNumeroProcessoDisplay(),
+						p.getNumeroProcessoDisplay());
+			}
+		}
+	}
+
+	@Test
+	/**
+	 * Retornar pregao eletronico ira sempre trazer TODOS os pregoes existentes.
+	 * Portanto poderá vir mais de um
+	 */
+	@Ignore("Os dados serão retornados pelo banco de dados")
+	public void deveRetornarPregaoEletronico60209() {
+		PregaoEletronicoModel pregao = new PregaoEletronicoModel();
+
+		pregao.setCodigoComprador(ConstantesTest.CNPJ_PREFEITURA); // <par:sCdComprador>?</par:sCdComprador>
+		pregao.setNumeroEdital("PE 529/2015");
+		pregao.setNumeroProcessoDisplay("60209/2015 - PE 529");
+
+		PregaoEletronicoModel habilitaRetornoPregaoEletronico = sujeito.habilitaRetornoPregaoEletronico(pregao);
+
+		assertTrue(habilitaRetornoPregaoEletronico.getLogDaGravacao().getDescricao().contains("sucesso"));
+
+		List<PregaoEletronicoModel> retorno = sujeito.retornarPregaoEletronico();
+
+		assertNotNull(retorno);
+		assertTrue("Deve trazer um ou mais pregaos", retorno.size() >= 1);
+		for (PregaoEletronicoModel p : retorno) {
+			if (pregao.getNumeroEdital().equals(p.getNumeroEdital())) {
+				assertEquals(6, p.getLstPregaoEletronicoItem().size());
+
+				assertEquals("Deve ser o mesmo pregao ", pregao.getNumeroProcessoDisplay(),
+						p.getNumeroProcessoDisplay());
+
+				assertEquals("EQUIPAMENTO DE MEDIÇÃO E IMAGEM", p.getDescricaoObjeto());
+
+				assertEquals("31728067820", p.getCodigoUsuarioCriador());
+			}
+		}
+	}
+
+	//@Test
+	public void deveGravarUmaListaDePregoesEletronicos() {
+		pregoes = new ArrayList<PregaoEletronicoModel>();
+		pregoes.add(montaPregao(PRIMEIRA));
+		pregoes.add(montaPregao(SEGUNDA));
+
+		enviosAuxiliares();
+		List<PregaoEletronicoModel> retorno = sujeito.grava(pregoes);
+
+		assertNotNull(retorno);
+		logs.put("retorno", retorno.get(0).getLogDaGravacao());
+
+		System.out.println("Retorno :" + retorno.get(0).getLogDaGravacao().getDescricao());
+
+		List<String> quaisLogs = new ArrayList<String>();
+		quaisLogs.add("CondicaoDePagamento");
+		quaisLogs.add("Moeda");
+		quaisLogs.add("retorno");
+
+		assertEquals("Quantidade de pregoes processados: ", quaisLogs.size(), logs.size());
+
+		LogDeRetornoDaGravacao log;
+		for (String esteLog : quaisLogs) {
+			log = logs.get(esteLog);
+			Assert.assertNotEquals("", log.getData());
+			Assert.assertNotEquals("", log.getDescricao());
+			Assert.assertNotEquals("", log.getToken());
+			assertNotNull(log.getDescricao());
+			assertTrue("Sem sucesso :" + log.getDescricao(), log.getDescricao().indexOf("sucesso") > 0);
+		}
+
+	}
+
+	private PregaoEletronicoModel montaPregao(String numeroPregao) {
+
+		PregaoEletronicoModel pregao = criaPregaoTemplate();
+		Integer numero = Integer.valueOf(numeroPregao);
+
+		pregao.setCodigoComprador(ConstantesTest.CNPJ_PREFEITURA);
+		pregao.setCodigoCondicaoPagamento(Integer.valueOf(condicaoDePagamento.getCodigoCondicaoPagamento()));
+		pregao.setCodigoPrazoEntrega(numeroPregao);
+		pregao.setCodigoUsuarioCriador("suportepta");
+
+		PregaoEletronicoItemModel item = montaItemPregao(numero);
+		PregaoEletronicoItemLanceModel lance = montaLance(numero, false);
+		PregaoEletronicoLoteModel lote = montaLote(numero);
+
+		List<PregaoEletronicoLoteModel> lstPregaoEletronicoLote = new ArrayList<PregaoEletronicoLoteModel>();
+		lstPregaoEletronicoLote.add(lote);
+		pregao.setLstPregaoEletronicoLote(lstPregaoEletronicoLote);
+
+		List<PregaoEletronicoItemLanceModel> lances = new ArrayList<PregaoEletronicoItemLanceModel>();
+		lances.add(lance);
+		item.setLances(lances);
+
+		List<PregaoEletronicoItemModel> lstPregaoEletronicoItem = new ArrayList<PregaoEletronicoItemModel>();
+		lstPregaoEletronicoItem.add(item);
+
+		pregao.setLstPregaoEletronicoItem(lstPregaoEletronicoItem);
+
+		List<PregaoEletronicoComissaoModel> lstPregaoEletronicoComissao = new ArrayList<PregaoEletronicoComissaoModel>();
+		PregaoEletronicoComissaoModel comissao = new PregaoEletronicoComissaoModel();
+		comissao.setCodigoPerfil(PregaoEletronicoComissaoModel.PERFIL_COMISSAO_APOIO);
+		comissao.setCodigoUsuario(numeroPregao);
+		lstPregaoEletronicoComissao.add(comissao);
+		pregao.setLstPregaoEletronicoComissao(lstPregaoEletronicoComissao);
+
+		pregao.setNumeroProcessoDisplay("TESTE " + numeroPregao);
+		pregao.setNumeroEdital(numeroPregao);
+
+		pregao.setValorTempoDisputa(10);
+		pregao.setValorProrrogaCondicao(10);
+		pregao.setValorProrroga(10);
+
+		return pregao;
+	}
+
+	private PregaoEletronicoItemLanceModel montaLance(int sequencia, boolean vencedor) {
+		PregaoEletronicoItemLanceModel lance = new PregaoEletronicoItemLanceModel();
+
+		lance.setDataLance(conv.converteParaXMLGregorianCalendar(20170520L));
+
+		int valor = sequencia * 10;
+		lance.setValorLance(new BigDecimal(valor));
+		// lance.setCodigoEmpresa(String.valueOf(valor));
+		lance.setCodigoEmpresa(CNPJ_FALSO_PARA_TESTES);
+		lance.setBeneficiarioLei123(PregaoEletronicoItemLanceModel.BENEFICIARIO_LEI_123_NAO);
+		lance.setNumeroRanking(sequencia);
+		lance.setVencedor(vencedor ? PregaoEletronicoItemLanceModel.LANCE_VENCEDOR
+				: PregaoEletronicoItemLanceModel.LANCE_NAO_VENCEDOR);
+
+		return lance;
+	}
+
+	private ProdutoModel criaProdutoTeste() {
+
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo("6145");
+		ProdutoBuilder pb = new ProdutoBuilder().comCodigo("4C014010077").comCodigoEmpresa(ConstantesTest.CNPJ_PREFEITURA)
+				.comCategoria(categoria).comDescricao("CABO FLEXIVEL DE COBRE  ELETROLITICO, 750V, BITOLA").comDetalhe("CABO FLEXIVEL DE COBRE  ELETROLITICO, 750V, BITOLA DE 06MM2, ISOLAMENTO DE  PVC 70 GRAUS CENTIGRADOS, ANTI-CHAMA, EM  ROLOS  COM  100  METROS, DE DIVERSAS CORES, SENDO QUE, A QUANTIDADE  ENTREGUE DE CADA COR DEVERA SER  PROPORCIONAL A QUANTIDADE TOTAL DO PEDIDO. O MATERIAL DEVERA ESTAR DE ACORDO COM A NBR NUMERO 247-3/2000 DA ABNT, QUE DEVERA  ESTAR  GRAVADA  NO CABO OU POR MEIO DE ETIQUETA, BEM  COMO A MARCA DO FABRICANTE, TENSAO ELETRICA, TIPO  DE  CONDUTOR  E SECAO DE CONDUTOR EM MM2, CERTIFICACAO COMPULSORIA DO INMETRO. MARCA: PIRELLI, CORDEIRO, LOUSANO, INDUSCABOS, OU SIMILAR A : DECLARAR MARCA. B : NA FASE DE JULGAMENTO, A PREFEITURA PODERA EXIGIR A APRESENTACAO DE COPIA DO  CERTIFICADO  DE CONFORMIDADE OU LICENCA PARA USO DA  MARCA, COM A RESPECTIVA VALIDADE, FORNECIDO PELO  INMETROINSTITUTO NACIONAL  DE METROLOGIA, NORMALIZACAO E QUALIDADE INDUSTRIAL.")
+				.comUnidadeDeMedida(criaUnidadeDemedida("01120").get(0));
+
+		return pb.build();
+	}
+
+	private List<UnidadeDeMedidaModel> criaUnidadeDemedida(String codigo) {
+		List<UnidadeDeMedidaModel> lista = new ArrayList<UnidadeDeMedidaModel>();
+		UnidadeDeMedidaBuilder umb = new UnidadeDeMedidaBuilder();
+		lista.add(umb.comCodigo(codigo).build());
+
+		return lista;
+	}
+
+	private PregaoEletronicoItemModel montaItemPregao(int sequencia) {
+		PregaoEletronicoItemModel item = new PregaoEletronicoItemModel();
+
+		ProdutoModel produto = criaProdutoTeste();
+
+		// String codigoLoteLegado = String.valueOf(sequencia);
+		// item.setCodigoLoteLegado(codigoLoteLegado);
+		// item.setCodigoItemLegado(codigoLoteLegado);
+
+		item.setCodigoItemSequencial(sequencia);
+		BigDecimal quantidadeItem = new BigDecimal(sequencia * 2);
+		item.setQuantidadeItem(quantidadeItem);
+		item.setValorReferencia(quantidadeItem);
+		item.setDescricaoItem(produto.getDescricao());
+		item.setCodigoUnidadeMedida(produto.getUnidadesDeMedida().get(0).getCodigo());
+		item.setCodigoProduto(produto.getCodigo());
+		item.setCodigoClasse(produto.getCategoria().getCodigo());
+
+		List<PregaoEletronicoItemEnderecoModel> pregaoEletronicoItensEnderecos = new ArrayList<PregaoEletronicoItemEnderecoModel>();
+		PregaoEletronicoItemEnderecoModel endereco = new PregaoEletronicoItemEnderecoModel();
+		/*
+		 * endereco.setCodigoEmpresaCobrancaEndereco("3");
+		 * endereco.setCodigoEmpresaEntregaEndereco("3");
+		 * endereco.setCodigoEmpresaFaturamentoEndereco("3");
+		 */
+		endereco.setCodigoEmpresaCobrancaEndereco(CNPJ_FALSO_PARA_TESTES);
+		endereco.setCodigoEmpresaEntregaEndereco(CNPJ_FALSO_PARA_TESTES);
+		endereco.setCodigoEmpresaFaturamentoEndereco(CNPJ_FALSO_PARA_TESTES);
+		endereco.setQuantidadeItem(new BigDecimal(10));
+		pregaoEletronicoItensEnderecos.add(endereco);
+		item.setPregaoEletronicoItensEnderecos(pregaoEletronicoItensEnderecos);
+
+		return item;
+	}
+
+	private PregaoEletronicoLoteModel montaLote(int sequencia) {
+		PregaoEletronicoLoteModel lote = new PregaoEletronicoLoteModel();
+
+		lote.setCodigoLoteLegado(String.valueOf(sequencia));
+		lote.setCodigoLoteSequencial(sequencia);
+		lote.setDescricaoLote("Lote descrito aqui");
+		lote.setValorReferencia(new BigDecimal(sequencia * 10));
+		return lote;
+	}
+
+	/** Cria um Pregao modelo */
+	private PregaoEletronicoModel criaPregaoTemplate() {
+
+		PregaoEletronicoModel template = new PregaoEletronicoModel();
+
+		template.setAceiteTermo(PregaoEletronicoModel.TERMO_DE_ACEITE_NAO_EXIGIDO);
+		template.setAplicaLei123(PregaoEletronicoModel.APLICA_LEI_123_SIM);
+		template.setAutoEncerramento(PregaoEletronicoModel.DISPUTA_LANCES_COM_AUTO_ENCERRAMENTO);
+
+		template.setCodigoMoeda(PregaoEletronicoModel.CODIGO_MOEDA_REAL);
+		template.setCodigoPregaoTipo(PregaoEletronicoModel.TIPO_PREGAO_NORMAL);
+		template.setCodigoSituacao(PregaoEletronicoModel.CODIGO_DA_SITUACAO_EM_CONFIGURACAO);
+		template.setCodigoTemplate(PregaoEletronicoModel.CODIGO_TEMPLATE);
+
+		template.setDataInicialProposta(conv.converteParaXMLGregorianCalendar(20170201L));
+		template.setDataFinalProposta(conv.converteParaXMLGregorianCalendar(20170531L));
+		template.setDataInicialDisputa(conv.converteParaXMLGregorianCalendar(20170601L));
+		template.setDescricaoObjeto("Objeto em pregao descrito aqui");
+		template.setDescricaoTermo("Termo descrito aqui");
+
+		template.setExigeCapacitacao(PregaoEletronicoModel.VENDEDOR_INFORMA_CONFORMIDADE_REGRAS_CAPACITACAO_NAO);
+
+		template.setModalidade(PregaoEletronicoModel.MODALIDADE_PREGAO_MENOR_PRECO);
+		template.setMostraReferencia(PregaoEletronicoModel.MOSTRAR_VALOR_DE_REFERENCIA_NAO);
+
+		template.setNegociacaoAnexo(PregaoEletronicoModel.ANEXO_FASE_NEGOCIACAO_NAO);
+		template.setNumeroCasasDecimais(PregaoEletronicoModel.DUAS_CASAS_DECIMAIS);
+		template.setNumeroPropostaAnexo(PregaoEletronicoModel.PERMITE_USUARIO_INFORMAR_ANEXO_NAO);
+		template.setNumeroSuperSimples(PregaoEletronicoModel.RESTRINGIR_SOMENTE_ME_EPP_NAO);
+
+		template.setObrigarDeclaracaoVendedor(
+				PregaoEletronicoModel.VENDEDOR_INFORMA_CONFORMIDADE_REGRAS_CAPACITACAO_NAO);
+		template.setObservacao("Teste de envio de pregao eletronico. Teste do modelo de dados");
+
+		template.setPermiteChatBilateral(PregaoEletronicoModel.CHAT_BILATERAL_NAO);
+		template.setProcedenciaProposta(PregaoEletronicoModel.PROCEDENCIA_NAO_EXIBIR);
+		template.setPropostaMarca(PregaoEletronicoModel.USUARIO_ESCOLHE_MARCA_ITEM_NAO);
+		template.setPropostaModelo(PregaoEletronicoModel.USUARIO_ESCOLHE_MODELO_ITEM_NAO);
+		template.setPublicarEdital(PregaoEletronicoModel.GERAR_EDITAL_AUTOMATICAMENTE_NAO);
+
+		template.setQuantosItensPagina(PregaoEletronicoModel.QUANTOS_ITENS_POR_PAGINA_CINQUENTA);
+
+		template.setRestrito(PregaoEletronicoModel.RESTRINGIR_PARTICIPACAO_PROCESSO_DE_ESCOLHA_NAO);
+		template.setRequerCRC(PregaoEletronicoModel.RESTRINGIR_PARTICIPACAO_EMPRESA_SEM_CRC_NAO);
+
+		template.setTipoApuracao(PregaoEletronicoModel.TIPO_APURACAO_PREGAO_POR_ITEM);
+
+		return template;
+	}
+
+	private CondicaoDePagamentoModel montaCondicaoDePagamento() {
+		CondicaoDePagamentoModel condicaoDePagamento = new CondicaoDePagamentoModel();
+		condicaoDePagamento.setCodigoCondicaoPagamento("2");//ESTA PEGANDO O VALOR DO PARADIGIMA
+		EmpresaModel empresa = montaEmpresa();
+		condicaoDePagamento.setCodigoEmpresa(empresa.getCodigoEmpresa());
+		condicaoDePagamento.setDescricaoCondicaoPagamento("15 DIAS FORA QUINZENA");
+		return condicaoDePagamento;
+	}
+
+	private void enviosAuxiliares() {
+		enviaMoeda();
+		enviaCondicaoDePagamento();
+	}
+
+	private EmpresaModel montaEmpresa() {
+
+		/** return buscaEmpresa(); Buscar no Banco quando estiver funcionando */
+
+		SituacaoEmpresa situacao = new SituacaoEmpresa(EmpresaModel.SITUACAO_ATIVA);
+		TipoEmpresa tipoEmpresa = new TipoEmpresa(EmpresaModel.TIPO_VENDEDORA);
+		EmpresaModel empresa = new EmpresaModel();
+
+		empresa.setCnpj(CNPJ_FALSO_PARA_TESTES);
+
+		empresa.setNomeEmpresa("TESTE Alexandre e Jefferson");
+		empresa.setNomeFantasia("Teste");
+
+		empresa.setSituacao(situacao);
+		empresa.setTipoEmpresa(tipoEmpresa);
+
+		EnderecoModel endereco = new EnderecoModel();
+		endereco.setCep("09700000");
+		endereco.setDescricao("rua teste 99");
+		endereco.setBairro("assuncao");
+		endereco.setCidade("São Bernardo do Campo");
+		endereco.setUf("SP");
+		endereco.setSiglaPais("BR");
+
+		empresa.setEndereco(endereco);
+
+		return empresa;
+
+	}
+
+	private void enviaCondicaoDePagamento() {
+
+		CondicaoDePagamentoService condicaoService = new CondicaoDePagamentoService(
+				WSDLs.WSDL_CONDICAO_PAGAMENTO_DESENV_HMG);
+		CondicaoDePagamentoModel retornoOperacao = condicaoService.grava(condicaoDePagamento);
+		logs.put("CondicaoDePagamento", retornoOperacao.getLogDaGravacao());
+
+	}
+
+	private void enviaMoeda() {
+		MoedaService moedaService = new MoedaService(WSDLs.WSDL_MOEDA_DESENV_HMG);
+		CotacaoMoedaModel retorno = moedaService.grava(montaMoeda());
+		logs.put("Moeda", retorno.getLogDaGravacao());
+	}
+
+	private CotacaoMoedaModel montaMoeda() {
+		CotacaoMoedaModel moeda = new CotacaoMoedaModel();
+		moeda.setsCdMoeda("1m");
+		moeda.setDescricaoMoeda("REAL");
+		moeda.setSiglaMoeda("R$");
+		return moeda;
+	}
+
+}

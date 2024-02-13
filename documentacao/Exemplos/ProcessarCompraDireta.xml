@@ -1,0 +1,91 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:par="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:ProcessarCompraDireta>
+         <!--Optional:-->
+         <tem:lstCompraDireta>
+            <!--Zero or more repetitions:-->
+            <par:CompraDiretaDTO>
+               <par:bFlChatBilateral>0</par:bFlChatBilateral>
+               <par:bFlChatBilateralRestrito>1</par:bFlChatBilateralRestrito>
+               <par:bFlDesativarAutoEncerramento>1</par:bFlDesativarAutoEncerramento>
+               <par:bFlMostraReferencia>0</par:bFlMostraReferencia>
+               <par:bFlObrigarDeclaracaoVendedor>0</par:bFlObrigarDeclaracaoVendedor>
+               <par:bFlPermiteInvalidar>1</par:bFlPermiteInvalidar>
+               <par:bFlPermitirLance i:nil="true"/>
+               <par:bFlProrroga>1</par:bFlProrroga>
+               <par:bFlPublicarEdital>0</par:bFlPublicarEdital>
+               <par:bFlRestrito>0</par:bFlRestrito>
+               <par:bFlTermo>0</par:bFlTermo>
+               <par:bFlVariacao>0</par:bFlVariacao>
+               <par:dVlVariacaoMax>0</par:dVlVariacaoMax>
+               <par:dVlVariacaoMin>0</par:dVlVariacaoMin>
+               <par:lstCompraDiretaComissao>
+                  <!--Zero or more repetitions:-->
+                  <par:ComissaoDTO>
+                     <par:nIdPerfil>7</par:nIdPerfil>
+                     <par:sCdUsuario>suportepta</par:sCdUsuario>
+                  </par:ComissaoDTO>
+               </par:lstCompraDiretaComissao>
+               <par:lstCompraDiretaItem>
+                  <!--Zero or more repetitions:-->
+                  <par:CompraDiretaItemDTO>
+                     <par:dQtItem>2000.0000</par:dQtItem>
+                     <par:dVlReferencia>2.0822</par:dVlReferencia>
+                     <par:lstCompraDiretaItemEndereco>
+                        <par:CompraDiretaItemEnderecoDTO>
+                           <par:dQtItem>2000.0000</par:dQtItem>
+                           <par:sCdEmpresaCobrancaEndereco>3</par:sCdEmpresaCobrancaEndereco>
+                           <par:sCdEmpresaEntregaEndereco>3</par:sCdEmpresaEntregaEndereco>
+                           <par:sCdEmpresaFaturamentoEndereco>3</par:sCdEmpresaFaturamentoEndereco>
+                        </par:CompraDiretaItemEnderecoDTO>
+                     </par:lstCompraDiretaItemEndereco>
+                  <par:nCdItemSequencial>1</par:nCdItemSequencial>
+                     <par:nStItem>1</par:nStItem>
+                     <par:sCdClasse>6145</par:sCdClasse>
+                     <par:sCdItemLegado i:nil="true"/>
+                     <par:sCdLoteLegado i:nil="true"/>
+                     <par:sCdProduto>4461</par:sCdProduto>
+                     <par:sCdUnidadeMedida>01120</par:sCdUnidadeMedida>
+                     <par:sDsItem>CABO FLEXIVEL DE COBRE  ELETROLITICO, 750V, BITOLA</par:sDsItem>
+                  </par:CompraDiretaItemDTO>
+               </par:lstCompraDiretaItem>               
+               <par:nCdMoeda>1</par:nCdMoeda>
+               <par:nCdSituacao>8</par:nCdSituacao>
+               <par:nCdTemplate>19000</par:nCdTemplate>
+               <par:nCdTipoCompraDireta i:nil="true"/>
+               <par:nIdAvaliacao>1</par:nIdAvaliacao>
+               <par:nIdEstilo>1</par:nIdEstilo>
+               <par:nIdLanceMarca>1</par:nIdLanceMarca>
+               <par:nIdLanceProcedencia>0</par:nIdLanceProcedencia>
+               <par:nIdTipoApuracao>1</par:nIdTipoApuracao>
+               <par:nIdTipoLanceInicial i:nil="true"/>
+               <par:nNrCasasDecimais>4</par:nNrCasasDecimais>
+               <par:nQtItensPagina>0</par:nQtItensPagina>
+               <par:nVlProrroga>2</par:nVlProrroga>
+               <par:nVlProrrogaCondicao>2</par:nVlProrrogaCondicao>
+               <par:sCdComprador>3</par:sCdComprador>
+               <par:sCdCondicaoPagamento>2</par:sCdCondicaoPagamento>
+               <par:sCdPrazoEntrega>1</par:sCdPrazoEntrega>
+               <par:sCdUsuarioCriador>suportepta</par:sCdUsuarioCriador>
+               <par:sDsObjeto>CABO FLEXÍVEL DE COBRE ELETROLÍTICO</par:sDsObjeto>
+               <par:sDsObservacoes><![CDATA[<P class=MsoNormal><B>LANCES:</B> Os lances deverão ser formulados em valores distintos e decrescentes, inferiores à proposta de menor preço, ou em valores distintos e decrescentes ao último valor apresentado pela própria licitante.</P>  <P class=MsoNormal>Não serão aceitos dois ou mais lances de mesmo valor, preservando aquele que for recebido e registro em primeiro lugar.</P>  <P class=MsoNormal><B>PRORROGAÇÃO AUTOMÁTICA:</B> A duração da etapa de lances será prorrogada automaticamente pelo sistema, visando à continuidade da disputa, quando houver lance admissível ofertado nos últimos 02 (dois) minutos do período de LANCES ou nos sucessivos períodos de prorrogação automática.</P>]]></par:sDsObservacoes>
+               <par:sDsTermo><![CDATA[Declaro, expressamente, sob as penas da lei que:<BR>
+1. inexiste qualquer fato superveniente ao meu registro cadastral que me impeça de contratar com o Município, nos termos do disposto no § 2º do artigo 32 da Lei Federal nº 8.666, de 21 de junho de 1993;<BR>
+2. conheço e aceito o REGULAMENTO DO SECOM/SBC - Dispensa de Licitação, Convite e Pregão;<BR>
+3. atendo às exigências de habilitação previstas no Edital;<BR>
+4. não me utilizo, em qualquer fase do processo produtivo e/ou prestação de serviço, de mão-de-obra de menores de 18 (dezoito) anos de idade em trabalho noturno, perigoso ou insalubre, bem como de menores de 16 (dezesseis) anos de idade, em qualquer trabalho, salvo na condição de aprendiz, a partir de 14 (catorze) anos);<BR>
+5. me responsabilizo pela autenticidade e procedência dos bens e qualidade dos serviços que cotar;<BR>
+6. se possuir cem ou mais empregados, dois a cinco por cento desses cargos serão preenchidos por beneficiários reabilitados, ou pessoas portadoras de deficiência, conforme preceitua o artigo 93 da Lei Federal nº 8.213, de 24 de julho de 1991 e Portaria nº 4.677, de 29 de julho de 1998; e, por fim que<BR>
+7. atendo as exigências, principalmente quanto às condições para pagamentos indicadas pelo Município;<BR>
+8. que cumpre as Normas de Trabalho Decente da Organização Internacional do Trabalho e do Ministério do Trabalho e Emprego, conforme preceitua a Lei Municipal nº 6.078 de 03 de novembro de 2010.<BR>]]></par:sDsTermo>
+               <par:sNrEdital>2301/2017- CD</par:sNrEdital>
+               <par:sNrProcessoDisplay>2301/2017- CD</par:sNrProcessoDisplay>
+               <par:tDtFinal>2017-01-29T09:55:00</par:tDtFinal>
+               <par:tDtInicial>2016-28-04T09:00:00</par:tDtInicial>
+               <par:tDtPublicacao i:nil="true"/>
+            </par:CompraDiretaDTO>
+         </tem:lstCompraDireta>
+      </tem:ProcessarCompraDireta>
+   </soapenv:Body>
+</soapenv:Envelope>

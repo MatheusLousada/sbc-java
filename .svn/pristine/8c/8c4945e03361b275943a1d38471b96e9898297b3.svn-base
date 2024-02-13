@@ -1,0 +1,85 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos;
+
+import br.gov.sp.saobernardo.webservice.paradigma.utils.NormalizadorDeProcesso;
+
+/**
+ * Representaa um número de processo no formato usando no orcom ou no formato
+ * paradigma
+ * 
+ * @author 41476
+ * @since ‪27/ago/2020
+ */
+public class NumeroProcessoOrcomModel {
+	Integer numeroDoProcesso;
+	Integer anoDoProcesso;
+	String separador;
+	NormalizadorDeProcesso normalizador = new NormalizadorDeProcesso();
+
+	public NumeroProcessoOrcomModel() {
+
+	}
+	public NumeroProcessoOrcomModel( String processoSecom ){
+		fromSecom( processoSecom);
+	}
+
+	public void fromSecom(String processo) {
+		String[] p = processo.split(processo.contains("/") ? "/" : "-");
+		final String ano = p[1].split("-")[0].trim();
+		this.anoDoProcesso = Integer.parseInt(ano);
+		this.numeroDoProcesso = Integer.parseInt(p[0]);
+	}
+
+	/**
+	 * @param numeroDoProcesso
+	 * @param anoDoProcesso
+	 */
+	public NumeroProcessoOrcomModel(String numeroDoProcesso, String anoDoProcesso) {
+		super();
+		iniciar(numeroDoProcesso, anoDoProcesso);
+	}
+
+	private void iniciar(String numeroDoProcesso, String anoDoProcesso) {
+		this.numeroDoProcesso = Integer.parseInt(numeroDoProcesso);
+		this.anoDoProcesso = Integer.parseInt(anoDoProcesso);
+		this.separador = "/";
+	}
+
+	@Override
+	public String toString() {
+		return toParadigma();
+	}
+
+	public String toParadigma() {
+		return String.format("%05d/%4d", this.numeroDoProcesso, this.anoDoProcesso);
+	}
+
+	/** Numero do processo do orcom composto por ano do processo com 4 digitos e numero do processo com 6 digitos 
+	 * @return numero do processo usado no orcom no formato aaaapppppp
+	 * @since 19/out/2020 numero do processo sera de 6 digitos
+	 */
+	public String toOrcom() {
+		
+		double fator = Math.pow( 10, 6 );
+		final Integer numeroProc = (int) (this.anoDoProcesso * fator + this.numeroDoProcesso);
+		return numeroProc.toString();
+	}
+	public final Integer getNumeroDoProcesso() {
+		return numeroDoProcesso;
+	}
+	public final void setNumeroDoProcesso(Integer numeroDoProcesso) {
+		this.numeroDoProcesso = numeroDoProcesso;
+	}
+	public final Integer getAnoDoProcesso() {
+		return anoDoProcesso;
+	}
+	public final void setAnoDoProcesso(Integer anoDoProcesso) {
+		this.anoDoProcesso = anoDoProcesso;
+	}
+	public final String getSeparador() {
+		return separador;
+	}
+	public final void setSeparador(String separador) {
+		this.separador = separador;
+	}
+
+}

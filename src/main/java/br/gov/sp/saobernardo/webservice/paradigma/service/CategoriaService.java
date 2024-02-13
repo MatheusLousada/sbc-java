@@ -1,0 +1,62 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.categoria.ArrayOfCategoriaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.categoria.Categoria;
+import br.gov.sp.saobernardo.paradigma.ws.categoria.CategoriaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.categoria.ICategoria;
+import br.gov.sp.saobernardo.paradigma.ws.categoria.RetornoDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.conversores.CategoriaConversor;
+
+public class CategoriaService implements ServiceGrava<CategoriaModel> {
+
+	private ICategoria servico;
+	private QName serviceName;
+	private CategoriaConversor conversor;
+
+	public CategoriaService(WSDLs wsdls) {
+		conversor = new CategoriaConversor();
+		try {
+			URL wsdlURL = new URL(wsdls.getValue());
+			ServicesName nomeServico = ServicesName.CATEGORIA;
+			serviceName = new QName(nomeServico.getUrl(), nomeServico.getServico());
+			Categoria ss = new Categoria(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingICategoria();
+		} catch (Exception e) {
+			System.console().writer().println(e);
+		}
+	}
+
+	@Override
+	public List<CategoriaModel> grava(List<CategoriaModel> categorias) {
+		List<CategoriaModel> categoriasRet = new ArrayList<CategoriaModel>();
+		for (CategoriaModel categoria : categorias) {
+			categoriasRet.add(this.grava(categoria));
+		}
+		return categoriasRet;
+
+	}
+
+	@Override
+	public CategoriaModel grava(CategoriaModel categoriaProduto) {
+		ArrayOfCategoriaDTO lstCategoria = new ArrayOfCategoriaDTO();
+		lstCategoria.getCategoriaDTO().add(conversor.converteParaDTO(categoriaProduto));
+
+		List<CategoriaModel> categorias = new ArrayList<CategoriaModel>();
+		categorias.add(categoriaProduto);
+
+		RetornoDTO retorno = servico.processarCategoriaProduto(lstCategoria);
+		return conversor.converteLogParaModel(retorno.getLstWbtLogDTO().getWbtLogDTO().get(0));
+	}
+
+	public CategoriaModel busca(String codigoDaCategoria) {
+		CategoriaDTO retorno = servico.retornarCategoriaProduto(codigoDaCategoria);
+		return conversor.converteParaModel(retorno);
+	}
+}

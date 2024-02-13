@@ -1,0 +1,112 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.classes.modelos.SituacaoUsuario;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UsuarioModel;
+
+@Ignore
+public class UsuarioServiceTest {
+
+	private UsuarioModel usuario;
+	private UsuarioService sujeito;
+
+	@Before
+	public void antes() {
+
+		sujeito = new UsuarioService(WSDLs.WSDL_USUARIO_PRODUCAO);
+	}
+
+	@Ignore
+	public void insereUsuarioTest() {
+
+		UsuarioModel retorno = sujeito.grava(novoUsuarioTest());
+
+		assertEquals(usuario.getCodigoUsuario(), retorno.getCodigoUsuario());
+		LogDeRetornoDaGravacao logDaGravacao = retorno.getLogDaGravacao();
+		String data = logDaGravacao.getData();
+		String descricao = logDaGravacao.getDescricao();
+		String token = logDaGravacao.getToken();
+		System.out.println(data);
+		System.out.println(descricao);
+		System.out.println(token);
+
+		assertNotEquals("", data);
+		assertNotEquals("", descricao);
+		assertNotEquals("", token);
+
+		assertTrue("Deve conter a palavra sucesso no log", descricao.indexOf("sucesso") > 0);
+
+	}
+
+	@Test
+	public void deveRetornarUmUsuarioPeloCodigo() {
+		usuario = novoUsuarioTest();
+
+		UsuarioModel usuarioRecebido = sujeito.retornarUsuario(usuario.getCodigoUsuario());
+		assertNull(usuarioRecebido.getCodigoEmpresa());
+
+		/**
+		 * Implementar estes testes quando estiver correto o acesso aos dados da
+		 * Paradigma assertEquals(usuario.getCodigoUsuario(),
+		 * usuarioRecebido.getCodigoUsuario()); assertNotNull(usuarioRecebido);
+		 * assertNotEquals("", usuario.getCodigoEmpresa(),
+		 * usuarioRecebido.getCodigoEmpresa()); assertNotEquals("",
+		 * usuario.getEmailContato(), usuarioRecebido.getEmailContato());
+		 */
+
+	}
+
+	@Test
+	public void retornarUsuarioPorEmpresaTest() {
+		EmpresaModel empresa = empresaDeTeste();
+		List<UsuarioModel> usuarios = sujeito.retornarUsuarioPorEmpresa(empresa);
+		assertNotNull(usuarios);
+		assertTrue("Não traz nenhum usuario", !usuarios.isEmpty());
+	}
+
+	@Test
+	public void retornarUsuarioCompradorTest() {
+		EmpresaModel empresa = empresaDeTeste();
+		String listaSituacaoUsuario = "";
+		List<UsuarioModel> compradores = sujeito.retornarUsuarioComprador(empresa.getCodigoEmpresa(),
+				listaSituacaoUsuario, null);
+		assertNotNull(compradores);
+		assertTrue("Não traz nenhum usuario", compradores.isEmpty());
+
+	}
+
+	private EmpresaModel empresaDeTeste() {
+		EmpresaModel empresa = new EmpresaModel();
+		empresa.setCnpj("13328409000183");
+		empresa.setCodigoEmpresa("1978");
+		return empresa;
+	}
+
+	private UsuarioModel novoUsuarioTest() {
+		UsuarioModel u = new UsuarioModel();
+		u.setCodigoEmpresa("3");
+		// u.setCodigoUsuario("11974997847");
+		// u.setEmailContato("teste@teste.sem.valor.net");
+		u.setNomeUsuario("suportepta");
+		u.setSituacaoUsuario(new SituacaoUsuario(1));
+		long[] lstIdPerfil = new long[1];
+		lstIdPerfil[0] = UsuarioModel.PERFIL_USUARIO_COMPRADOR;
+
+		u.setLstIdPerfil(lstIdPerfil);
+		return u;
+	}
+
+}

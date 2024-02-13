@@ -1,0 +1,12 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos;
+
+public class Camara extends Orgaos {
+	public static final String NOME = "CAMARA";
+	public static final int ORGAO = 2;
+	public static final String DESCRICAO = "CÂMARA MUNICIPAL DE SÃO BERNARDO DO CAMPO";
+
+	public Camara() {
+		super(ORGAO, DESCRICAO, NOME);
+	}
+
+}

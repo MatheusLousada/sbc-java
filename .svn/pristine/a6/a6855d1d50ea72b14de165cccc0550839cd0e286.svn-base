@@ -1,0 +1,5 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos.depara;
+
+public interface DePara {
+
+}

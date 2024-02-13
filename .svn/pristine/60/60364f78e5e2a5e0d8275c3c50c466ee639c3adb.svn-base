@@ -1,0 +1,41 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.pregao.PregaoEletronicoItemSituacao;
+
+public class PregaoEletronicoItemSituacaoDAO /* extends AbstractDAO */ {
+	 
+	private DAOExecutor daoEx;
+	public PregaoEletronicoItemSituacaoDAO(Connection con, boolean imprimirSQL) {
+		daoEx = new DAOExecutor(con, imprimirSQL );
+	}
+
+	public PregaoEletronicoItemSituacao buscaPeloCodigoDoParadigma(Long codigoWBC) throws SQLException {
+
+		final String query = "SELECT nCdSituacao, sDsSituacao FROM P_PREGAO_ITEM_SITUACAO WHERE nCdSituacao = " + codigoWBC;
+		PregaoEletronicoItemSituacao situacao = new PregaoEletronicoItemSituacao();
+
+		try {
+			 
+			ResultSet rs = daoEx.executeQuery(query );
+			while (rs.next()) {
+
+				int codigo = rs.getInt("nCdSituacao");
+				String descricao = rs.getString("sDsSituacao");
+
+				situacao.setCodigo(codigo);
+				situacao.setDescricao(descricao);
+
+				break;
+			}
+			rs.close();
+		} finally {
+
+			daoEx.close();
+		}
+		return situacao;
+	}
+}

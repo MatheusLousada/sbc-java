@@ -1,0 +1,68 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.CotacaoItemEnderecoDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao.CotacaoItemEnderecoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.CotacaoService;
+import br.gov.sp.saobernardo.webservice.paradigma.service.ServicesName;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Conversores;
+
+public class CotacaoItemEnderecoConversor implements DePara<CotacaoItemEnderecoModel, CotacaoItemEnderecoDTO> {
+
+	private Conversores conv;
+	
+	public CotacaoItemEnderecoConversor(){
+		super();
+		conv = new Conversores( new QName(ServicesName.COTACAO.getUrl(), ServicesName.COTACAO.getServico(), "pref") );
+	}
+	@Override
+	public CotacaoItemEnderecoModel converteParaModel(CotacaoItemEnderecoDTO dto) {
+		CotacaoItemEnderecoModel item = new CotacaoItemEnderecoModel();
+
+		item.setCodigoEmpresaCobrancaEndereco(dto.getSCdEmpresaCobrancaEndereco());
+		item.setCodigoEmpresaEntregaEndereco(dto.getSCdEmpresaEntregaEndereco());
+		item.setCodigoEmpresaFaturamentoEndereco(dto.getSCdEmpresaFaturamentoEndereco());
+		item.setQtdPrevistaEntrega((double) dto.getDQtEntrega());
+		item.setSequenciaDeEntregaItemEndereco(dto.getNSqItemEndereco());
+		item.setCodigoRequisicaoEmpresa(dto.getSCdRequisicaoEmpresa());
+		item.setDataPrevistaEntrega(conv.converteParaLong(dto.getTDtEntrega()));
+
+		// FIXME: Acertar estes campos no modelo
+		/**
+		 * dto.setSCdCobrancaEndereco(value); dto.setSCdEntregaEndereco(value);
+		 * dto.setSCdFaturamentoEndereco(value);
+		 * dto.setSCdItemRequisicaoEmpresa(value);
+		 */
+
+		return item;
+	}
+
+	@Override
+	public CotacaoItemEnderecoDTO converteParaDTO(CotacaoItemEnderecoModel model) {
+		CotacaoItemEnderecoDTO dto = new CotacaoItemEnderecoDTO();
+		if (null != model.getCodigoEmpresaCobrancaEndereco()) {
+			dto.setSCdEmpresaCobrancaEndereco(model.getCodigoEmpresaCobrancaEndereco());
+		}
+		if (null != model.getCodigoEmpresaEntregaEndereco()) {
+			dto.setSCdEmpresaEntregaEndereco(model.getCodigoEmpresaEntregaEndereco());
+		}
+		dto.setSCdEmpresaFaturamentoEndereco(model.getCodigoEmpresaFaturamentoEndereco());
+
+		dto.setDQtEntrega(10);
+		dto.setNSqItemEndereco(CotacaoService.NUMERO_SEQUENCIAL);
+
+		// FIXME: Acertar estes campos no modelo
+		/**
+		 * dto.setSCdCobrancaEndereco(value); dto.setSCdEntregaEndereco(value);
+		 * dto.setSCdFaturamentoEndereco(value);
+		 * dto.setSCdItemRequisicaoEmpresa(value);
+		 * 
+		 */
+		dto.setSCdRequisicaoEmpresa("1");
+		dto.setTDtEntrega(conv.converteParaXMLGregorianCalendar(20170201L));
+
+		return dto;
+	}
+
+}

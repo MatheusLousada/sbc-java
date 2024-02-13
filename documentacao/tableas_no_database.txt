@@ -1,0 +1,8 @@
+Grupo de Produto / Categoria = CLASSE_PRODUTO
+Condicao de Pagamento = CONDICAO_PAGAMENTO
+Cotação = COTACAO
+Unidade de Medida = UNIDADE_MEDIDA
+Pregão = P_PREGAO
+Compra Direta = P_COMPRA_DIRETA
+Produto = PRODUTO
+Empresa = EMPRESA

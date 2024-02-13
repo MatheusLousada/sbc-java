@@ -1,0 +1,78 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.ws.soap.SOAPFaultException;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.CondicaoDePagamentoModel;
+
+@Ignore
+public class CondicaoDePagamentoServiceTest {
+
+	private CondicaoDePagamentoService sujeito;
+	private CondicaoDePagamentoModel cond15DFQ;
+	private CondicaoDePagamentoModel cond05DU;
+
+	@Before
+	public void antes() throws Exception {
+		sujeito = new CondicaoDePagamentoService(WSDLs.WSDL_CONDICAO_PAGAMENTO_PRODUCAO);
+		cond15DFQ = new CondicaoDePagamentoModel();
+		cond15DFQ.setCodigoCondicaoPagamento("15DFQ");
+		cond15DFQ.setDescricaoCondicaoPagamento("15 DIAS FORA A QUINZENA");
+		cond15DFQ.setCodigoEmpresa("3");
+
+		cond05DU = new CondicaoDePagamentoModel();
+		cond05DU.setCodigoCondicaoPagamento("05DU");
+		cond05DU.setDescricaoCondicaoPagamento("05 DIAS ÚTEIS");
+		cond05DU.setCodigoEmpresa("3");
+	}
+
+	@Test
+	public void testGravaUmaCondicaoDePagamento() {
+
+		List<CondicaoDePagamentoModel> condicoesPg = new ArrayList<CondicaoDePagamentoModel>();
+		condicoesPg.add(cond15DFQ);
+
+		List<CondicaoDePagamentoModel> retorno = sujeito.grava(condicoesPg);
+
+		assertNotEquals("", retorno.get(0).getLogDaGravacao().getData());
+		assertNotEquals("", retorno.get(0).getLogDaGravacao().getDescricao());
+		assertNotEquals("", retorno.get(0).getLogDaGravacao().getToken());
+	}
+
+	@Test
+	public void testGravaMaisDeUmaCondicaoDePagamento() {
+
+		List<CondicaoDePagamentoModel> condicoes = new ArrayList<CondicaoDePagamentoModel>();
+
+		condicoes.add(cond15DFQ);
+		condicoes.add(cond05DU);
+
+		List<CondicaoDePagamentoModel> gravadas = sujeito.grava(condicoes);
+
+		for (CondicaoDePagamentoModel ret : gravadas) {
+			assertNotEquals("", ret.getLogDaGravacao().getData());
+			assertNotEquals("", ret.getLogDaGravacao().getDescricao());
+			assertNotEquals("", ret.getLogDaGravacao().getToken());
+		}
+	}
+
+	@Test(expected = SOAPFaultException.class)
+	public void testBuscarCondicaoPagamento() {
+
+		List<CondicaoDePagamentoModel> condicao = sujeito
+				.buscarCondicaoPagamento(cond15DFQ.getCodigoCondicaoPagamento());
+		assertNotNull(condicao);
+		assertEquals(cond15DFQ.getCodigoCondicaoPagamento(), condicao.get(0).getCodigoCondicaoPagamento());
+	}
+
+}

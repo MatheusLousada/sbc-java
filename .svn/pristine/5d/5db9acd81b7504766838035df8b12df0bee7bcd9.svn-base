@@ -1,0 +1,18 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos;
+
+public class CertidaoDeRegularidadeDoFGTS implements Certificado {
+
+	private String dataDeValidade;
+
+	public static final String CAMPO_DATA = "DATA8";
+
+	@Override
+	public String getDataDeValidade() {
+		return dataDeValidade;
+	}
+
+	@Override
+	public void setDataDeValidade(String dataDeValidade) {
+		this.dataDeValidade = dataDeValidade;
+	}
+}

@@ -1,0 +1,110 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.ArrayOfCompraDiretaItemEnderecoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.ArrayOfCompraDiretaItemTaxaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDiretaItemDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDiretaItemEnderecoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDiretaItemTaxaDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta.CompraDiretaItemEnderecoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta.CompraDiretaItemModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta.CompraDiretaItemTaxaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.ServicesName;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Conversores;
+
+public class CompraDiretaItemConversor implements DePara<CompraDiretaItemModel, CompraDiretaItemDTO> {
+
+	private CompraDiretaItemTaxaConversor convTx;
+	private Conversores conv;
+	private CompraDiretaItemEnderecoConversor convEnd;
+
+	public CompraDiretaItemConversor() {
+		super();
+		convTx = new CompraDiretaItemTaxaConversor();
+		convEnd = new CompraDiretaItemEnderecoConversor();
+		conv = new Conversores(new QName(ServicesName.COMPRA_DIRETA.getUrl(), ServicesName.COMPRA_DIRETA.getServico()));
+	}
+
+	@Override
+	public CompraDiretaItemModel converteParaModel(CompraDiretaItemDTO itemDto) {
+		CompraDiretaItemModel item = new CompraDiretaItemModel();
+		item.setCodigoClasse(itemDto.getSCdClasse());
+
+		if (null != itemDto.getSCdItemLegado()) {
+			item.setCodigoItemLegado(itemDto.getSCdItemLegado().getValue());
+		}
+		if (null != itemDto.getSCdLoteLegado()) {
+			item.setCodigoLoteLegado(itemDto.getSCdLoteLegado().getValue());
+		}
+		item.setCodigoItemSequencial(itemDto.getNCdItemSequencial());
+		item.setQuantidadeItem(itemDto.getDQtItem());
+		item.setValorReferencia(itemDto.getDVlReferencia());
+
+		// item.setSituacaoItem(itemDto.getNStItem());
+		item.setDescricaoItem(itemDto.getSDsItem());
+		item.setCodigoUnidadeMedida(itemDto.getSCdUnidadeMedida());
+		item.setCodigoProduto(itemDto.getSCdProduto());
+
+		List<CompraDiretaItemEnderecoModel> enderecos = new ArrayList<CompraDiretaItemEnderecoModel>();
+		CompraDiretaItemEnderecoModel endereco = new CompraDiretaItemEnderecoModel();
+		for (CompraDiretaItemEnderecoDTO ends : itemDto.getLstCompraDiretaItemEndereco()
+				.getCompraDiretaItemEnderecoDTO()) {
+			endereco.setdQtItem(ends.getDQtItem());
+			endereco.setsCdEmpresaCobrancaEndereco(ends.getSCdEmpresaCobrancaEndereco());
+			endereco.setsCdEmpresaEntregaEndereco(ends.getSCdEmpresaEntregaEndereco());
+			endereco.setsCdEmpresaFaturamentoEndereco(ends.getSCdEmpresaFaturamentoEndereco());
+		}
+		item.setListaCompraDiretaItemEndereco(enderecos);
+
+		List<CompraDiretaItemTaxaModel> taxas = new ArrayList<CompraDiretaItemTaxaModel>();
+		List<CompraDiretaItemTaxaDTO> txDto = itemDto.getLstCompraDiretaItemTaxa().getValue()
+				.getCompraDiretaItemTaxaDTO();
+		for (CompraDiretaItemTaxaDTO tx : txDto) {
+			taxas.add(convTx.converteParaModel(tx));
+
+		}
+		item.setListaCompraDiretaItemTaxaDTO(taxas);
+		return item;
+	}
+
+	@Override
+	public CompraDiretaItemDTO converteParaDTO(CompraDiretaItemModel model) {
+		String codigoItemLegado = model.getCodigoItemLegado();
+		CompraDiretaItemDTO item = new CompraDiretaItemDTO();
+		if (null != codigoItemLegado) {
+			JAXBElement<String> convertido = conv.converteParaJAXBElement(codigoItemLegado);
+			item.setSCdItemLegado(convertido);
+		}
+		if (null != model.getcodigoLoteLegado()) {
+			item.setSCdLoteLegado(conv.converteParaJAXBElement(model.getcodigoLoteLegado()));
+		}
+		item.setNCdItemSequencial(model.getCodigoItemSequencial());
+		item.setDQtItem(model.getQuantidadeItem());
+		item.setDVlReferencia(model.getValorReferencia());
+
+		item.setNStItem(model.getSituacaoItem());
+		item.setSDsItem(model.getDescricaoItem());
+		item.setSCdUnidadeMedida(model.getCodigoUnidadeMedida());
+		item.setSCdProduto(model.getCodigoProduto());
+		item.setSCdClasse(model.getCodigoClasse());
+
+		ArrayOfCompraDiretaItemEnderecoDTO enderecos = new ArrayOfCompraDiretaItemEnderecoDTO();
+		for (CompraDiretaItemEnderecoModel ends : model.getListaCompraDiretaItemEndereco()) {
+			enderecos.getCompraDiretaItemEnderecoDTO().add(convEnd.converteParaDTO(ends));
+		}
+		item.setLstCompraDiretaItemEndereco(enderecos);
+
+		ArrayOfCompraDiretaItemTaxaDTO taxas = new ArrayOfCompraDiretaItemTaxaDTO();
+		for (CompraDiretaItemTaxaModel tx : model.getListaCompraDiretaItemTaxaDTO()) {
+			taxas.getCompraDiretaItemTaxaDTO().add(convTx.converteParaDTO(tx));
+		}
+		item.setLstCompraDiretaItemTaxa(conv.converteParaJAXBElement(taxas));
+		return item;
+	}
+
+}

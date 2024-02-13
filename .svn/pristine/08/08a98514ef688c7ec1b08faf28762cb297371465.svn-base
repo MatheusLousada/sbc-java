@@ -1,0 +1,53 @@
+ /*
+ 30/ABR/2020
+ Claudio Silva perguntou qual era a empresa relacionada ao CPF 29041183817
+ 
+ */
+ SELECT * FROM EMPRESA where sNrCnpj like '618%';
+ select *   from usuario where sCdusuario like '%29041183817%';
+ 
+Select x.campo, x.dado from (
+SELECT 5 pos,'codigo_empresa      :' as "campo",convert( varchar( 8),nCdEmpresa ) "dado" from usuario where sCdusuario like '%29041183817%' union
+SELECT 1,    'Usuario             :',           sNmUsuario   from usuario where sCdusuario like '%29041183817%' union
+SELECT 3,    'Email               :', sDsEmail       from usuario where sCdusuario like '%29041183817%' union
+SELECT 4,    'Ultimo_acesso       :', CONVERT(VARCHAR(11),tDtUltimoAcesso ,103)+' '+
+                             convert(varchar(20),convert(time,tDtUltimoAcesso ),108)  from usuario where sCdusuario like '%29041183817%' union
+SELECT  2,   'Telefone            :', sNrTelefone   from usuario where sCdusuario like '%29041183817%' UNION
+Select  7,   '_____________________', '_____________________' from empresa where nCdEmpresa = 2068 union
+
+SELECT  8,   'Empresa             :', sNmEmpresa from empresa where nCdEmpresa = 2068 union
+SELECT  9,   'Nome Fantasia       :', sNmFantasia from empresa where nCdEmpresa = 2068 union
+SELECT 10,   'CNPJ                :', sNrCnpj from empresa where nCdEmpresa = 2068 union
+SELECT 11,   'Inscrição Municipal :', sNrInscricaoMunicipal from empresa where nCdEmpresa = 2068 union
+SELECT 12,   'Inscrição Estadual  :', sNrInscricaoEstadual from empresa where nCdEmpresa = 2068 union
+SELECT 13,   'Contato             :', sNmContato from empresa where nCdEmpresa = 2068 union
+SELECT 14,   'Email Contato       :', sDsContatoEmail from empresa where nCdEmpresa = 2068 union
+SELECT 15,   'Cargo               :', sDsContatoCargo from empresa where nCdEmpresa = 2068 union
+SELECT 16,   'Telefone            :', sDsContatoFone  from empresa where nCdEmpresa = 2068 
+) x
+order by x.pos
+;
+ 
+ 
+ Select * from empresa where nCdEmpresa = 2068;
+ --------------
+Select nCdEmpresa, sNrCnpj, sNmEmpresa, sNmFantasia,
+sNrInscricaoMunicipal,
+sNrInscricaoEstadual,
+sNmContato,
+sDsContatoEmail,
+sDsContatoCargo,
+sDsContatoFone, sNmApelido
+  from empresa where nCdEmpresa = 2068;
+
+
+
+------------
+
+ 
+ 
+ select * 
+  from information_schema.columns 
+ --where table_name = 'usuario'
+ where column_name like '%pelid%'
+ order by ordinal_position;

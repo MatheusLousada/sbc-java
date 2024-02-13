@@ -1,0 +1,37 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao;
+
+public class CotacaoItemTaxaModel {
+
+	/** Int	16	Código do item da cotação no WBC. */
+	private Long codigoItem;
+	
+	/** String	3	Código da taxa no WBC. */
+	private long codigoTaxaWBC;
+	
+	/** Int	1	Indica se a taxa esta inclusa ou não inclusa. */
+	private long taxaInclusa;
+
+	public Long getCodigoItem() {
+		return codigoItem;
+	}
+
+	public void setCodigoItem(Long long1) {
+		this.codigoItem = long1;
+	}
+
+	public long getCodigoTaxaWBC() {
+		return codigoTaxaWBC;
+	}
+
+	public void setCodigoTaxaWBC(long codigoTaxaWBC) {
+		this.codigoTaxaWBC = codigoTaxaWBC;
+	}
+
+	public long getTaxaInclusa() {
+		return taxaInclusa;
+	}
+
+	public void setTaxaInclusa(long l) {
+		this.taxaInclusa = l;
+	}
+	}

@@ -1,0 +1,19 @@
+1) Para ignorar os testes provisoriamente e ganhar agilidade em pequenas alterações, usar o comando:
+
+mvn clean package -Dmaven.test.skip=true
+
+2) Para entregar um desenvolvimento feito, siga os seguintes passos:
+
+- Commit das alterações.
+- Alterar o POM.xml dos projetos, com:
+	- a versão liberada (só no projeto WEB). Exemplo: <version>4.1.10</version>
+	- a versão do jar (nos 2 projetos: DAO e WEB). Exemplo: <version>0.0.106-SNAPSHOT</version>
+- Commit dos arquivos POM.xml
+
+3) Rodar o comando para gerar o arquivo jar dos projetos pelo Maven.
+
+mvn clean package install deploy
+
+OBS: No caso do projeto WEB, rodar apenas até a diretiva "install", pois o "deploy" será feito pela execução no Jenkins 
+
+mvn clean package install

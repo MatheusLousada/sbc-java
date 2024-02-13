@@ -1,0 +1,56 @@
+package br.gov.sp.saobernardo.webservice.paradigma.utils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.utils.NormalizadorDeProcesso;
+
+public class NormalizadorDeProcessoTest {
+
+	private static final String ANO_2018 = "2018";
+	private static final String RESULTADO_ESPERADO = "CE 140/2018";
+	NormalizadorDeProcesso normalizador;
+
+	@Before
+	public void before() {
+		normalizador = new NormalizadorDeProcesso();
+	}
+
+	@Test
+	public void deveNormalizarAnoDeProcesso() {
+		assertEquals(RESULTADO_ESPERADO, normalizador.normalizaAnoDeProcesso("CE 140", ANO_2018));
+	}
+
+	@Test
+	public void deveNormalizarAnoDeProcessoComBarra() {
+		assertEquals(RESULTADO_ESPERADO, normalizador.normalizaAnoDeProcesso("CE 140/18", ANO_2018));
+	}
+
+	@Test
+	public void deveNormalizarAnoDeProcessoComHifen() {
+		assertEquals("CE 140-2018", normalizador.normalizaAnoDeProcesso("CE 140-18", ANO_2018));
+	}
+
+	@Test
+	public void deveVerificarQueProcessoPossuiAnoCorreto() {
+		String processo = "CE 140-2018";
+		assertTrue(normalizador.isProcessoComAno(processo));
+		processo = RESULTADO_ESPERADO;
+		assertTrue(normalizador.isProcessoComAno(processo));
+	}
+
+	@Test
+	public void deveVerificarQueProcessoNaoPossuiAnoCorreto() {
+		String processo = "CE 140-18";
+		assertFalse(normalizador.isProcessoComAno(processo));
+		processo = "CE 140/18";
+		assertFalse(normalizador.isProcessoComAno(processo));
+		processo = "CE 140";
+		assertFalse(normalizador.isProcessoComAno(processo));
+
+	}
+}

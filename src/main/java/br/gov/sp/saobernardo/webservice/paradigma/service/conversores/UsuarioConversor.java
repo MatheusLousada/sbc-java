@@ -1,0 +1,48 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import br.gov.sp.saobernardo.paradigma.ws.usuario.UsuarioDTO;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.WbtLogDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.SituacaoUsuario;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UsuarioModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.Servicos;
+
+public class UsuarioConversor implements DePara<UsuarioModel, UsuarioDTO>, DeParaLog<UsuarioModel, WbtLogDTO> {
+
+	@Override
+	public UsuarioModel converteLogParaModel(WbtLogDTO wbtLogDTO) {
+		UsuarioModel usuarioRetornado = new UsuarioModel();
+
+		Servicos<WbtLogDTO> serv = new Servicos<WbtLogDTO>(WbtLogDTO.class);
+		try {
+			usuarioRetornado.setLogDaGravacao(serv.converteParaLogRetornoGravacaoModel(wbtLogDTO));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return usuarioRetornado;
+	}
+
+	@Override
+	public UsuarioModel converteParaModel(UsuarioDTO dto) {
+		UsuarioModel usuario = new UsuarioModel();
+		if (null != dto) {
+			usuario.setCodigoEmpresa(dto.getSCdEmpresa());
+			usuario.setCodigoUsuario(dto.getSCdUsuario());
+			usuario.setEmailContato(dto.getSDsEmailContato());
+			usuario.setSituacaoUsuario(new SituacaoUsuario(dto.getNCdSituacao()));
+		}
+		return usuario;
+	}
+
+	@Override
+	public UsuarioDTO converteParaDTO(UsuarioModel model) {
+		UsuarioDTO usuarioDTO = new UsuarioDTO();
+		usuarioDTO.setSCdUsuario(model.getCodigoUsuario());
+		usuarioDTO.setSNmUsuario(model.getNomeUsuario());
+		usuarioDTO.setSDsEmailContato(model.getEmailContato());
+		usuarioDTO.setNCdSituacao(model.getSituacaoUsuario().getSituacao());
+		usuarioDTO.setSCdEmpresa(model.getCodigoEmpresa());
+		return usuarioDTO;
+	}
+
+}

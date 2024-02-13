@@ -1,0 +1,53 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.controller;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.OrcomTFornModel;
+
+public class TestFornecedorNoORCOM {
+	private final String cnpj = "15056433000136";
+	private boolean imprimirQuery = true;
+
+	@Test
+	public void testaSelecaoDeFornecedorNoOrcomPorCnpj() throws Exception {
+		ORCOMFornecedorController fornecedorORCOM = new ORCOMFornecedorController(Ambientes.ORCOM_DESENVOLVIMENTO,
+				imprimirQuery);
+		OrcomTFornModel empresa = fornecedorORCOM.buscaFornecedorPorCNPJ(cnpj);
+		assertEquals(cnpj, empresa.getCGC_CPF());
+		System.out.println(empresa.getORD_TFORN());
+	}
+
+	@Test
+	public void testaMarcacaoDeFornecedorNoOrcomComoWbc() throws Exception {
+		ORCOMFornecedorController fornecedorORCOM = new ORCOMFornecedorController(Ambientes.ORCOM_DESENVOLVIMENTO,
+				imprimirQuery);
+		boolean retorno = fornecedorORCOM.marcaFornecedorComoWBCNoORCOM(cnpj);
+		OrcomTFornModel empresa = fornecedorORCOM.buscaFornecedorPorCNPJ(cnpj);
+		assertEquals("S", empresa.getWBC());
+		assertTrue(retorno);
+	}
+
+	@Test
+	public void testaDesmarcarFornecedorNoOrcomComoWbc() throws Exception {
+		ORCOMFornecedorController fornecedorORCOM = new ORCOMFornecedorController(Ambientes.ORCOM_DESENVOLVIMENTO,
+				imprimirQuery);
+		boolean retorno = fornecedorORCOM.desmarcaFornecedorComoWBCNoORCOM(cnpj);
+		OrcomTFornModel empresa = fornecedorORCOM.buscaFornecedorPorCNPJ(cnpj);
+		assertEquals("N", empresa.getWBC());
+		assertTrue(retorno);
+	}
+
+	@Ignore("Fornecedor pode ter sido atualizado")
+	public void testaFornecedorNoOrcomQueRetornaNullNoWbc() throws Exception {
+		ORCOMFornecedorController fornecedorORCOM = new ORCOMFornecedorController(Ambientes.ORCOM_DESENVOLVIMENTO,
+				imprimirQuery);
+		OrcomTFornModel empresa = fornecedorORCOM.buscaFornecedorPorCNPJ("49526098000104");
+		assertEquals(null, empresa.getWBC());
+	}
+
+}

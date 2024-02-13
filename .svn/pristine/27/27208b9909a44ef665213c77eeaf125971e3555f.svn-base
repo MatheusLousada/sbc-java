@@ -1,0 +1,83 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.proposta.PropostaModel;
+
+public class PropostaDAO {
+
+	private DAOExecutor daoEx;
+
+	public PropostaDAO(Connection con, boolean imprimirSQL) {
+		daoEx = new DAOExecutor(con, imprimirSQL);
+	}
+
+	public List<String> buscaCNPJsDeProcesso(String codigoProcesso) throws SQLException {
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT DISTINCT E.SNRCNPJ ");
+		query.append(fromJoins());
+		query.append(" WHERE C.SCDPROCESSO = '").append( codigoProcesso ).append("'");
+
+		List<String> cnpjs = new ArrayList<String>();
+		
+		try {
+
+			ResultSet rs = daoEx.executeQuery(query );
+			while (rs.next()) {
+				cnpjs.add(rs.getString("sNrCnpj"));
+			}
+			rs.close();
+		} finally {
+			daoEx.close();
+		}
+		return cnpjs;
+	}
+
+	public List<PropostaModel> buscaPropostasDeCNPJ(String codigoProcesso, String cnpj) throws SQLException {
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT CI.SDSPRODUTOCOTACAO, CP.DVLUNITARIO ");
+		query.append(fromJoins());
+		query.append("  WHERE C.SCDPROCESSO = ? AND E.SNRCNPJ = ? AND CP.nStProposta <> 0 ");
+		query.append(" AND C.TDTENCERRAMENTO IS NOT NULL  AND C.TDTCADASTRO = ");
+		query.append(" (SELECT MAX(TDTCADASTRO) FROM COTACAO WHERE SCDPROCESSO = ? AND TDTENCERRAMENTO IS NOT NULL);");
+
+		List<PropostaModel> propostas = new ArrayList<PropostaModel>();
+
+		try {
+			daoEx.clearResetParameters().addParameter( codigoProcesso);
+			daoEx.addParameter(  cnpj); 
+			daoEx.addParameter(  codigoProcesso);
+			 		 
+			ResultSet rs = daoEx.executeQuery(query );
+			while (rs.next()) {
+				PropostaModel proposta = new PropostaModel();
+				String[] chave = rs.getString("sDsProdutoCotacao").split(" - ");
+				proposta.setCodigo(chave[0].substring(0, 10));
+				proposta.setValor(rs.getBigDecimal("dVlUnitario"));
+				propostas.add(proposta);
+			}
+			rs.close();
+		} finally {
+			daoEx.close();
+		}
+
+		return propostas;
+	}
+
+	private String fromJoins() {
+		StringBuilder query = new StringBuilder();
+		query.append(" FROM COTACAO_PROPOSTA CP ");
+		query.append(" INNER JOIN EMPRESA E ON E.NCDEMPRESA = CP.NCDEMPRESA ");
+		query.append(" INNER JOIN COTACAO_ITEM CI ON CI.NCDITEM = CP.NCDITEM ");
+		query.append(" INNER JOIN COTACAO C ON C.NCDCOTACAO = CI.NCDCOTACAO ");
+
+		return query.toString();
+	}
+
+}

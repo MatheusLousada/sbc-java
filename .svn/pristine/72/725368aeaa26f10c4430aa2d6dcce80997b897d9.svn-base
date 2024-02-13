@@ -1,0 +1,12 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos;
+
+public class Fundacao extends Orgaos {
+	public static final String NOME = "FUNDACAO";
+	public static final int ORGAO = 7;
+	public static final String DESCRICAO = "FUNDAÇÃO CRIANÇA DE SÃO BERNARDO DO CAMPO";
+
+	public Fundacao() {
+		super(ORGAO, DESCRICAO, NOME);
+	}
+
+}

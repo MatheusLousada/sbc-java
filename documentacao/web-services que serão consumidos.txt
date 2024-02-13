@@ -1,0 +1,11 @@
+Cadastro de Fornecedor – WBC -> ORCOM; (Será efetuado uma equalização dos de/para’s dos códigos do Portal com o ORCOM);
+Produto/Item – ORCOM -> WBC (Será efetuado uma equalização dos de/para’s dos códigos do Portal com o ORCOM);
+Unidade de medida – ORCOM -> WBC;
+Classe de Materiais – ORCOM -> WBC;
+Usuário Comprador – ORCOM -> WBC;
+Cotação de Orçamento Em Configuração – ORCOM -> WBC;
+Cotação de Orçamento Encerrada – WBC -> ORCOM;
+Pregão Eletrônico Em Configuração – ORCOM -> WBC;
+Pregão Eletrônico Homologado – WBC -> ORCOM;
+Compra Direta Em Configuração – ORCOM -> WBC;
+Compra Direta Homologada – WBC -> ORCOM;

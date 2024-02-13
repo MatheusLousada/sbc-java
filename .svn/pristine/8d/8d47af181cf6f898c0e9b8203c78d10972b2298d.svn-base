@@ -1,0 +1,41 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.pregao.PregaoEletronicoPrazoDeEntregaModel;
+
+public class PregaoEletronicoPrazoDeEntregaDAO /* extends AbstractDAO */ {
+
+	private DAOExecutor daoEx;
+
+	public PregaoEletronicoPrazoDeEntregaDAO(Connection con, boolean imprimirSQL) {
+		daoEx = new DAOExecutor(con, imprimirSQL);
+	}
+
+	public PregaoEletronicoPrazoDeEntregaModel buscaPeloCodigoDoParadigma(Long codigoWBC) throws SQLException {
+
+		final String query = "SELECT nCdPrazoEntrega, sDsPrazoEntrega, nNrDias FROM  PRAZO_ENTREGA  WHERE nCdPrazoEntrega = " + String.valueOf(codigoWBC);
+
+		PregaoEletronicoPrazoDeEntregaModel unidadeMedida = new PregaoEletronicoPrazoDeEntregaModel();
+		try {
+ 
+			ResultSet rs = daoEx.executeQuery(query );
+
+			while (rs.next()) {
+
+				unidadeMedida.setCodigo(rs.getInt("nCdPrazoEntrega"));
+				unidadeMedida.setDescricao(rs.getString("sDsPrazoEntrega"));
+				unidadeMedida.setNumeroDeDias(rs.getInt("nNrDias"));
+
+			}
+			rs.close();
+			
+		} finally {
+			daoEx.close();
+		}
+		return unidadeMedida;
+
+	}
+}

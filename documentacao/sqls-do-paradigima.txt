@@ -1,0 +1,2 @@
+/****** Retorna empresas ativas  ******/
+SELECT * FROM [WBC_SECOM].[dbo].[EMPRESA] where nStEmpresa = 1;

@@ -1,0 +1,5 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.model;
+
+public enum TiposLicitacoes {
+	PE, CE;
+}

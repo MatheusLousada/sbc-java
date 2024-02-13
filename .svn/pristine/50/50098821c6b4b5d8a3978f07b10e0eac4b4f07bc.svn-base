@@ -1,0 +1,27 @@
+Select * from orcom.tforn where ord_tforn = 34258;-- 12889035000102
+Select * from orcom.tforn where ord_tforn = 35292;-- 02820966000109
+Select * from orcom.tforn where cgc_cpf = '02820966000109';
+Select * from orcom.tforn where ord_tforn = 35292;-- 02820966000109
+describe orcom.tforn;
+
+WITH x AS ( Select ATIVOC, to_char( ORD_TFORN ) ord_tforn, R_SOCIAL, R_SOCIAL2, RUAMATRIZ, 
+                   to_char( NUMMATRIZ ) nummatriz, COMPMATRIZ, CIDMATRIZ, BAIRMATRIZ, 
+                   to_char( CEPMATRIZ ) cepmatriz, to_char( CEPMATRIZC ) cepmatrizc, SUFMATRIZ, RUACORR, 
+                   to_char( NUMCORR ) numcorr, COMPCORR, CIDCORR, BAIRCORR, to_char( CEPCORR ) cepcorr, to_char( CEPCORRC ) cepcorrc, 
+                   cgc_cpf,
+                   SUFCORR from orcom.tforn where ord_tforn = 35292 )
+SELECT '01' Pos,  '[ORD_TFORN] R Social' Campo, '[' || ORD_TFORN || ']'  || R_SOCIAL || ' ' || R_SOCIAL2  Valor FROM x union  
+SELECT '02',      'CNPJ       ', CGC_CPF FROM x union
+SELECT '02',      '   ', ' '                                      FROM x union  
+SELECT '03',      'Endereco   ', '---<Matriz>-------------- '     FROM x union
+SELECT '04',      'RUA/Num    ', RUAMATRIZ ||', ' || NUMMATRIZ                     FROM x union  
+SELECT '05',      'Complemento', COMPMATRIZ                       FROM x union  
+SELECT '06',      'Bai/Cid/Uf ', BAIRMATRIZ || ' - ' || CIDMATRIZ || ' - ' || SUFMATRIZ  FROM x union  
+SELECT '07',      'Cep        ', CEPMATRIZ || ' - ' || CEPMATRIZC FROM x union  
+SELECT '08',      ' ', ' '                                        FROM x union
+SELECT '09',      'Endereco   ', '---<Correspondencia>----- '     FROM x union
+SELECT '10',      'Rua/Num     ', RUACORR  || ', ' || NUMCORR                      FROM x union  
+SELECT '11',      'Complemento ', COMPCORR                        FROM x union  
+SELECT '12',      'Bai/Cid/Uf  ', BAIRCORR || ' - ' || CIDCORR || ' - ' || SUFCORR FROM x union
+SELECT '13',      'CEP         ', CEPCORR  || ' - ' || CEPCORRC   FROM x   
+;

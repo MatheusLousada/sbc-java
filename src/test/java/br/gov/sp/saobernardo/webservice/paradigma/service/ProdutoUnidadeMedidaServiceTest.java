@@ -1,0 +1,88 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ProdutoUnidadeMedidaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UnidadeDeMedidaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.ProdutoBuilder;
+import br.gov.sp.saobernardo.webservice.paradigma.service.builders.UnidadeDeMedidaBuilder;
+
+
+public class ProdutoUnidadeMedidaServiceTest {
+
+	private ProdutoUnidadeMedidaService sujeito;
+
+	@Before
+	public void setUp() throws Exception {
+		sujeito = new ProdutoUnidadeMedidaService(WSDLs.WSDL_PRODUTO_X_UNIDADE_MEDIDA_DESENV_HMG);
+	}
+
+	@Test
+	@Ignore
+	/**
+	 * Sera verificado em outro momento o motivo da falha. Alexandre 03/06/2019
+	 */
+	public void deveAssociarUmProdutoAUmaUnidadeDeMedida() {
+		ProdutoUnidadeMedidaModel relacionamento = new ProdutoUnidadeMedidaModel();
+
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo(ConstantesTest.CATEGORIA_7560_IMPRESSOS_NAO_OFICIAIS);
+		ProdutoBuilder pb = new ProdutoBuilder().comCodigo("TESTE9001").comCodigoEmpresa(ConstantesTest.CNPJ_PREFEITURA)
+				.comCategoria(categoria).comDescricao("TESTE de produto TESTE").comDetalhe("Somente um teste simples")
+				.comUnidadeDeMedida(montaUnidadeDeMedida("01008"));
+
+		ProdutoModel produto = pb.build();
+		relacionamento.setProduto(produto);
+		relacionamento.setUnidadesMedida(produto.getUnidadesDeMedida());
+		ProdutoUnidadeMedidaModel retorno = sujeito.grava(relacionamento);
+
+		assertNotNull(retorno);
+	}
+
+	@Test
+	@Ignore
+	/**
+	 * Sera verificado em outro momento o motivo da falha. Alexandre 03/06/2019
+	 */
+	public void deveAssociarUmProdutoAMaisDeUmaUnidadeDeMedidaJaExistente() {
+		ProdutoUnidadeMedidaModel relacionamento = new ProdutoUnidadeMedidaModel();
+
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo(ConstantesTest.CATEGORIA_7560_IMPRESSOS_NAO_OFICIAIS);
+		ProdutoBuilder pb = new ProdutoBuilder().comCodigo("TESTE9001").comCodigoEmpresa(ConstantesTest.CNPJ_PREFEITURA)
+				.comCategoria(categoria).comDescricao("TESTE de produto TESTE").comDetalhe("Somente um teste simples");
+
+		List<UnidadeDeMedidaModel> lista = new ArrayList<UnidadeDeMedidaModel>();
+		lista.add(montaUnidadeDeMedida("01003"));
+		lista.add(montaUnidadeDeMedida("01004"));
+		lista.add(montaUnidadeDeMedida("01002"));
+
+		ProdutoModel produto = pb.build();
+		produto.setUnidadesDeMedida(lista);
+		relacionamento.setProduto(produto);
+		relacionamento.setUnidadesMedida(produto.getUnidadesDeMedida());
+		ProdutoUnidadeMedidaModel retorno = sujeito.grava(relacionamento);
+
+		assertNotNull(retorno);
+	}
+
+	private UnidadeDeMedidaModel montaUnidadeDeMedida(String codigoUnidadeMedida) {
+		UnidadeDeMedidaBuilder umb = new UnidadeDeMedidaBuilder();
+		UnidadeDeMedidaModel unidadeDeMedida = umb.comCodigo(codigoUnidadeMedida).build();
+		LogDeRetornoDaGravacao logDaGravacao = new LogDeRetornoDaGravacao();
+		unidadeDeMedida.setLogDaGravacao(logDaGravacao);
+
+		return unidadeDeMedida;
+
+	}
+}

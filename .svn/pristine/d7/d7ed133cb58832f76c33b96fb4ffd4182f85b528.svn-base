@@ -1,0 +1,69 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import br.gov.sp.saobernardo.webservice.paradigma.dao.ImprimeQuery;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.OrcomTFornModel;
+import br.gov.sp.saobernardo.webservice.paradigma.util.ConversorDeDadosDoBancoParaModelo;
+
+public class OrcomTFornDAO {
+	private Connection con;
+	private boolean imprimirSQL;
+
+	public OrcomTFornDAO(Connection con, boolean imprimirSQL) {
+		this.con = con;
+		this.imprimirSQL = imprimirSQL;
+	}
+
+	public OrcomTFornModel buscaPorCNPJ(String cnpj) throws Exception {
+		String query = " SELECT * FROM " + SchemaOrcom.SCHEMA+ ".tforn WHERE cgc_cpf = ?";
+
+		Statement stmt = con.createStatement();
+		PreparedStatement ps = con.prepareStatement(query.toString());
+		ps.setString(1, cnpj);
+
+		if (imprimirSQL) {
+			ImprimeQuery.imprimeQuery(query.toString(), cnpj);
+		}
+
+		ResultSet rs = ps.executeQuery();
+
+		OrcomTFornModel empresa = new OrcomTFornModel();
+		rs.next();
+		ConversorDeDadosDoBancoParaModelo.converte(empresa, rs);
+		rs.close();
+		ps.close();
+		stmt.close();
+
+		return empresa;
+	}
+
+	public boolean atualizaTipoWBCPorCNPJ(String cpfOuCnpj, boolean ehWBC) throws Exception {
+		String query = "UPDATE " + SchemaOrcom.SCHEMA+ ".tforn SET wbc = ? WHERE cgc_cpf = ?";
+
+		// Statement stmt = con.createStatement();
+		PreparedStatement ps = con.prepareStatement(query);
+		ps.setString(1, ehWBC ? "S" : "N");
+		ps.setString(2, cpfOuCnpj);
+
+		if (imprimirSQL) {
+			ImprimeQuery.imprimeQuery(query.toString(), ehWBC ? "S" : "N", cpfOuCnpj);
+		}
+
+		if (ps.executeUpdate() > 0) {
+			con.commit();
+			// stmt.close();
+			ps.close();
+			return true;
+		} else {
+			con.rollback();
+			// stmt.close();
+			ps.close();
+			return false;
+		}
+
+	}
+}

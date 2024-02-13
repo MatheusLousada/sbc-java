@@ -1,0 +1,58 @@
+/**
+ * 
+ */
+package br.gov.sp.saobernardo.webservice.paradigma.gui;
+
+/**
+ * @author 41476 Os nomes de campos aqui definidos são os mesmos que devem ser
+ *         usados em janela_thinlet.xml
+ */
+public class JanelaMain {
+
+	/**
+	 * Define a origem e o destino dos dados, assim como se mostra ou nao as querys
+	 * para debug
+	 */
+	public static final String NOME_CAMPO_ORIGEM = "cmbOrigem";
+	public static final String NOME_CAMPO_DESTINO = "cmbDestino";
+	public static final String NOME_CAMPO_IMPRIME_QUERY = "viewSql";
+	public static final String NOME_CAMPO_ORGAO = "cmbOrgao";
+
+	/** Campos da Aba de ATUALIZACAO CADASTRAL */
+	public static final String NOME_CAMPO_ATUALIZACAO_CADASTRAL_CNPJ = "cnpjAC";
+
+	/** Campos da Aba de atualizacao de LICITACAO */
+	public static final String NOME_CAMPO_ANO = "anoLC";
+	public static final String NOME_CAMPO_NUMERO_LICITACAO = "numeroLC";
+	public static final String NOME_CAMPO_PROCESSO = "processoLC";
+	public static final String NOME_CAMPO_PREGOES_DISPONIVEIS_PARA_IMPORTACAO = "pregoesImportaveis";
+
+	public static final String NOME_CAMPO_RADIO_TIPO_LICITACAO_COMPRA_DIRETA = "radioButton1";
+	public static final String NOME_CAMPO_RADIO_TIPO_LICITACAO_PREGAO_ELETRONICO = "radioButton2";
+
+	/** Campos da Aba de atualizacao de Cotacoes */
+	public static final String NOME_CAMPO_COTACOES_DISPONIVEIS_PARA_IMPORTACAO = "cotacoesImportaveis";
+	public static final String NOME_CAMPO_FILTRO_SOMENTE_COTACOES_ENCERRADAS = "somenteCotacoesEncerradas";
+	public static final String NOME_CAMPO_ANO_COTACAO = "anoCot";
+	public static final String FILTRO_MES_COTACAO = "mesCot";
+	public static final String NOME_CAMPO_PROCESSO_COTACAO = "processoCot";
+
+	/** Campos da Aba de atualizacao de Certificados */
+	public static final String NOME_CAMPO_ATUALIZACAO_CERTIFICADOS_CNPJ = "cnpjCertf";
+
+	/** Campos da Aba de atualizacao de Certidao */
+
+	public static final String NOME_CAMPO_ATUALIZACAO_CERTIDAO_CNPJ = "cnpjCertidao";
+
+	/** Tipos de licitacao */
+	public static final String COMBO_TIPO_LICITACAO = "cbTipoLicitacao";
+	public static final String LICITACAO_PE = "tipoPE";
+	public static final String LICITACAO_CE = "tipoCE";
+
+	public static void main(String[] args) {
+		JanelaThinletController c = new JanelaThinletController();
+		c.init();
+
+	}
+
+}

@@ -1,0 +1,122 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.ArrayOfCotacaoItemDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.ArrayOfCotacaoMoedaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.ArrayOfCotacaoParticipanteDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.CotacaoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.CotacaoItemDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.CotacaoParticipanteDTO;
+import br.gov.sp.saobernardo.paradigma.ws.cotacao.WbtLogDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.CotacaoMoedaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao.CotacaoItemModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao.CotacaoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao.CotacaoParticipanteModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.Servicos;
+
+public class CotacaoConversor implements DeParaLog<CotacaoModel, WbtLogDTO>, DePara<CotacaoModel, CotacaoDTO> {
+
+	private CotacaoParticipanteConversor convPart;
+	private CotacaoItemConversor convItem;
+	private CotacaoMoedaConversor convMoeda;
+
+	public CotacaoConversor() {
+		convPart = new CotacaoParticipanteConversor();
+		convItem = new CotacaoItemConversor();
+		convMoeda = new CotacaoMoedaConversor();
+	}
+
+	@Override
+	public CotacaoModel converteParaModel(CotacaoDTO dto) {
+		CotacaoModel cotacao = new CotacaoModel();
+
+		cotacao.setDescricaoCotacao(dto.getSDsCotacao());
+		cotacao.setRestrita(dto.getBFlRestrita());
+		cotacao.setDataInicial(dto.getTDtInicial());
+		cotacao.setDataFinal(dto.getTDtFinal());
+		cotacao.setCodigoMoeda(dto.getSCdMoeda());
+		cotacao.setCodigoFretePreferencia(dto.getSCdFrete());
+		cotacao.setCodigoUsuario(dto.getSCdUsuario());
+		cotacao.setExigirTermo(dto.getBFlTermo());
+		cotacao.setCodigoSituacao(dto.getNCdSituacao());
+		cotacao.setTipoNegociacao(dto.getNIdTipoNegociacao());
+		cotacao.setCodigoCotacaoWbcPai(dto.getSCdCotacaoWbcPai().getValue());
+
+		List<CotacaoItemModel> itens = new ArrayList<CotacaoItemModel>();
+		for (CotacaoItemDTO itemDto : dto.getLstCotacaoItemDTO().getCotacaoItemDTO()) {
+			itens.add(convItem.converteParaModel(itemDto));
+		}
+		cotacao.setCotacaoItem(itens);
+
+		List<CotacaoParticipanteModel> participantes = new ArrayList<CotacaoParticipanteModel>();
+		for (CotacaoParticipanteDTO p : dto.getLstCotacaoParticipanteDTO().getCotacaoParticipanteDTO()) {
+			participantes.add(convPart.converteParaModel(p));
+		}
+		cotacao.setCotacaoParticipante(participantes);
+
+		return cotacao;
+	}
+
+	@Override
+	public CotacaoDTO converteParaDTO(CotacaoModel cotacao) {
+		CotacaoDTO cotacaoDTO = new CotacaoDTO();
+
+		cotacaoDTO.setSDsCotacao(cotacao.getDescricaoCotacao());
+		cotacaoDTO.setBFlRestrita(cotacao.getRestrita());
+		cotacaoDTO.setTDtInicial(cotacao.getDataInicial());
+		cotacaoDTO.setTDtFinal(cotacao.getDataFinal());
+		cotacaoDTO.setSCdMoeda(cotacao.getCodigoMoeda());
+		cotacaoDTO.setSCdFrete(cotacao.getCodigoFretePreferencia());
+		cotacaoDTO.setSCdUsuario(cotacao.getCodigoUsuario());
+		cotacaoDTO.setBFlTermo(cotacao.getExigirTermo());
+		cotacaoDTO.setNCdSituacao(cotacao.getCodigoSituacao());
+		cotacaoDTO.setNIdTipoNegociacao(cotacao.getTipoNegociacao());
+
+		cotacaoDTO.setSCdCotacaoERP(cotacao.getCodigoCotacaoERP());
+		cotacaoDTO.setSDsTermo(cotacao.getDescricaoTermoParticipacao());
+		cotacaoDTO.setSCdEmpresa(cotacao.getCnpj());
+
+		ArrayOfCotacaoMoedaDTO v = new ArrayOfCotacaoMoedaDTO();
+
+		for (CotacaoMoedaModel moeda : cotacao.getMoedas()) {
+			v.getCotacaoMoedaDTO().add(convMoeda.converteParaDTO(moeda));
+		}
+		cotacaoDTO.setLstCotacaoMoedaDTO(v);
+
+		ArrayOfCotacaoItemDTO itens = new ArrayOfCotacaoItemDTO();
+		for (CotacaoItemModel item : cotacao.getCotacaoItem()) {
+			itens.getCotacaoItemDTO().add(convItem.converteParaDTO(item));
+		}
+		cotacaoDTO.setLstCotacaoItemDTO(itens);
+
+		ArrayOfCotacaoParticipanteDTO participantes = new ArrayOfCotacaoParticipanteDTO();
+		for (CotacaoParticipanteModel participante : cotacao.getCotacaoParticipante()) {
+
+			participantes.getCotacaoParticipanteDTO().add(convPart.converteParaDTO(participante));
+		}
+		cotacaoDTO.setLstCotacaoParticipanteDTO(participantes);
+
+		return cotacaoDTO;
+	}
+
+	@Override
+	public CotacaoModel converteLogParaModel(WbtLogDTO wbtLogDTO) {
+		CotacaoModel cotacao = new CotacaoModel();
+		Servicos<WbtLogDTO> serv = new Servicos<WbtLogDTO>(WbtLogDTO.class);
+		LogDeRetornoDaGravacao log;
+		try {
+			log = serv.converteParaLogRetornoGravacaoModel(wbtLogDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log = new LogDeRetornoDaGravacao();
+			log.setDescricao("Erro na conversao " + e.getMessage());
+			cotacao.setLogDaGravacao(log);
+		}
+		cotacao.setLogDaGravacao(log);
+		return cotacao;
+	}
+
+}

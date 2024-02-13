@@ -1,0 +1,622 @@
+package br.gov.sp.saobernardo.webservice.paradigma.gui;
+
+import java.sql.SQLException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.logging.Logger;
+
+import br.gov.sp.saobernardo.webservice.paradigma.connections.Conexao;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.CompraDiretaDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Conexoes;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.ConexoesOrcom;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.CotacaoDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.PregaoEletronicoDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao.CotacaoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoC7121Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoC7706Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoC7942Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoDeCertificados;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.AtualizacaoDeFonecedoresCnpj;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.controller.OrcomSecomQuadroController;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.dao.OrcomSecomQuadroDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos.Faculdade;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos.Orgaos;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos.Prefeitura;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.ContextoImportacao;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.NormalizadorDeProcesso;
+import thinlet.FrameLauncher;
+import thinlet.Thinlet;
+
+/**
+ * @author 41476
+ *
+ */
+/**
+ * @author 41476
+ *
+ */
+public class JanelaThinletController extends Thinlet {
+	private static final String SELECTED = "selected";
+
+	private static final int ALTURA_JANELA = 290;
+
+	private static final int LARGURA_JANELA = 370;
+
+	private static final long serialVersionUID = 1L;
+
+	private static final String XML_GUI_MAIN = "/janela_thinlet.xml";
+	public static final String XML_GUI_DIALOG = "/gui_dialog.xml";
+	// private static final ResourceBundle appResources =
+	// ResourceBundle.getBundle("ApplicationResources");
+
+	/*
+	 * private AssociationsController associationsController; private
+	 * MembersController membersController; private AssetsController
+	 * assetsController; private ReunionsController reunionsController; private
+	 * PaymentsController paymentsController; private DebtsController
+	 * debtsController;
+	 */
+	@SuppressWarnings("unused")
+	private static final String TAB_ASSOCIATIONS = "tabEmpresas";
+	@SuppressWarnings("unused")
+	private static final String TAB_MEMBERS = "tabNegocios";
+	@SuppressWarnings("unused")
+	private static final String TAB_ASSETS = "tabAssets";
+	@SuppressWarnings("unused")
+	private static final String TAB_REUNIONS = "tabReunions";
+	@SuppressWarnings("unused")
+	private static final String TAB_PAYMENTS = "tabPayments";
+	@SuppressWarnings("unused")
+	private static final String TAB_DEBTS = "tabDebts";
+
+	/*
+	 * private static final String XML_GUI_MEMBERS = "/fut-manager-gui-members.xml";
+	 * private static final String XML_GUI_ASSOCIATIONS =
+	 * "/fut-manager-gui-associations.xml"; private static final String
+	 * XML_GUI_ASSETS = "/fut-manager-gui-assets.xml"; private static final String
+	 * XML_GUI_REUNIONS = "/fut-manager-gui-reunions.xml"; private static final
+	 * String XML_GUI_PAYMENTS = "/fut-manager-gui-payments.xml"; private static
+	 * final String XML_GUI_DEBTS = "/fut-manager-gui-debts.xml";
+	 */
+	public JanelaThinletController() {
+		try {
+			// this.setResourceBundle( appResources );
+			// System.out.println(XML_GUI_MAIN);
+			add(parse(XML_GUI_MAIN));
+
+			carregaCombos();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			showDialog(this, "Deu erro", "err.msg.load.gui");
+		}
+	}
+
+	/**
+	 * Mostra um dialog em caso de erro. Falta entender melhor
+	 * 
+	 * @param thinlet
+	 * @param title
+	 * @param text
+	 */
+	private void showDialog(Thinlet thinlet, String title, String text) {
+		try {
+			Object dialog = thinlet.parse(XML_GUI_DIALOG);
+			thinlet.setString(dialog, ThinletUtils.TEXT, title);
+			thinlet.setString(thinlet.find(dialog, "lblDialogText"), ThinletUtils.TEXT, text);
+			thinlet.add(dialog);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void init() {
+		createScreen();
+	}
+
+	/**
+	 * Transfere dados cadastrais do CNPJ informado da base de origem para a base de
+	 * destino
+	 * 
+	 * @throws Exception
+	 */
+	public void atualizaDadosCadastrais() throws Exception {
+
+		/** Imprimir as querys? */
+		String cnpj = this.getString(JanelaMain.NOME_CAMPO_ATUALIZACAO_CADASTRAL_CNPJ);
+		ContextoImportacao ci = defineContextoImportacao();
+
+		@SuppressWarnings("unused")
+		AtualizaDadosCadastrais adc = new AtualizaDadosCadastrais(cnpj, ci );
+	}
+
+	public void cadastraCompraDireta() throws Exception {
+
+		/** Imprimir as querys? */
+		Boolean viewSql = this.getBoolean(this.find(JanelaMain.NOME_CAMPO_IMPRIME_QUERY), SELECTED);
+		//String origem = getString(JanelaMain.NOME_CAMPO_ORIGEM);
+		//String destino = getString(JanelaMain.NOME_CAMPO_DESTINO);
+		String processo = getString(JanelaMain.NOME_CAMPO_PROCESSO);
+		String numeroCompraDireta = getString(JanelaMain.NOME_CAMPO_NUMERO_LICITACAO);
+		String ano = getString(JanelaMain.NOME_CAMPO_ANO);
+
+		//System.out.println(MessageFormat.format(" Compra Direta {0}: de {1} para {2} imprimeSql: {3}", numeroCompraDireta, origem, destino, viewSql));
+
+		// Define o tipo de licitacao a ser cadastrado
+		// Boolean isCompraDireta =
+		// getBoolean(JanelaMain.NOME_CAMPO_RADIO_TIPO_LICITACAO_COMPRA_DIRETA,
+		// SELECTED);
+		// Boolean isPregaoEletronico =
+		// getBoolean(JanelaMain.NOME_CAMPO_RADIO_TIPO_LICITACAO_PREGAO_ELETRONICO,SELECTED);
+
+		
+		ContextoImportacao ci = defineContextoImportacao();
+		CadastraCompraDireta cdd = new CadastraCompraDireta();
+		//cdd.cadastraCompraDireta(ano, numeroCompraDireta, processo, origem, destino, viewSql);
+		cdd.cadastraCompraDireta(ano, numeroCompraDireta, processo, ci);
+
+		// if (isPregaoEletronico) {
+		// atualizaPregaoEletronico();
+		// }
+
+	}
+
+	public void atualizaCertificados() {
+		AtualizacaoDeCertificados adc = new AtualizacaoDeCertificados();
+
+		String cnpj = this.getString(JanelaMain.NOME_CAMPO_ATUALIZACAO_CERTIFICADOS_CNPJ);
+		ContextoImportacao ci = defineContextoImportacao();
+		adc.atualizaCertificados(cnpj, ci);
+
+	}
+
+	private ContextoImportacao defineContextoImportacao() {
+		String origem = this.getString(JanelaMain.NOME_CAMPO_ORIGEM);
+		String destino = this.getString(JanelaMain.NOME_CAMPO_DESTINO);
+		Boolean viewSql = this.getBoolean(this.find(JanelaMain.NOME_CAMPO_IMPRIME_QUERY), SELECTED);
+		String orgao = this.getString( JanelaMain.NOME_CAMPO_ORGAO);
+
+		Orgaos o = Faculdade.NOME.equals(orgao) ? new Faculdade() : 
+				 ( Prefeitura.NOME.equals(orgao) ? new Prefeitura() : null);
+
+		return new ContextoImportacao(origem, destino, viewSql, o);
+	}
+
+	/** Auxiliar para obter o valor dos campos String da janela via Thinlet */
+	private String getString(String campo) {
+		Object o = this.find(campo);
+		return this.getString(o, ThinletUtils.TEXT);
+
+	}
+
+	public void carregaCombos() {
+		// Ambientes PARADIGMA
+		List<String> origens = new ArrayList<String>();
+		origens.add(Ambientes.PARADIGMA_PRODUCAO);
+		origens.add(Ambientes.PARADIGMA_HOMOLOGACAO);
+		origens.add(Ambientes.PARADIGMA_DESENVOLVIMENTO);
+
+		// Ambientes ORCOM
+		List<String> destinos = new ArrayList<String>();
+		destinos.add(Ambientes.ORCOM_DESENVOLVIMENTO);
+		destinos.add(Ambientes.ORCOM_PRODUCAO);
+		destinos.add(Ambientes.ORCOM_HOMOLOGACAO);
+		
+		List<String> orgaos = new ArrayList<String>();
+		orgaos.add( Prefeitura.NOME);
+		orgaos.add( Faculdade.NOME);
+
+		List<String> anos = new ArrayList<String>();
+		Calendar dataFinal = Calendar.getInstance();
+		Integer anoAtual = dataFinal.get(Calendar.YEAR);
+
+		Integer anoInicial = anoAtual - 2;
+		for (Integer ano = anoAtual; ano >= anoInicial; ano--) {
+			anos.add(ano.toString());
+		}
+
+		// Busca os pregoes possiveis em ORCOM_PREFEITURA_PRODUCAO para exportacao para o ORCOM
+		// de desenvolvimento
+		//
+		// final String ano = "2019";
+		final String ano = buscaAno(JanelaMain.NOME_CAMPO_ANO);
+		Integer anoCot = Integer.valueOf( buscaAno( JanelaMain.NOME_CAMPO_ANO_COTACAO));
+		Integer mesCot = Integer.valueOf( buscaAno( JanelaMain.FILTRO_MES_COTACAO));
+		
+		List<String> pregoesDoAno = new ArrayList<String>();
+		
+		//TODO Retornar para desenvolvimento
+		ContextoImportacao ci = new ContextoImportacao(Ambientes.PARADIGMA_PRODUCAO, Ambientes.ORCOM_DESENVOLVIMENTO, true, new Prefeitura());
+		Conexao conexaoParadigma = new Conexoes().getConexao(ci.getOrigem());
+		PregaoEletronicoDAO pregaoEletronicoDAO = null;
+		CompraDiretaDAO compraDiretaDAO = null;
+		CotacaoDAO cotacaoDao = null;
+		List<String> cotacoesDoAno = new ArrayList<String>();
+		List<String> anosComCotacaoEncerrada = new ArrayList<String>();
+		
+		List<String> meses = Arrays.asList("1,2,3,4,5,6,7,8,9,10,11,12".split(","));
+
+		try {
+			conexaoParadigma.conecta();
+
+			final Boolean radioPE = this.getBoolean(this.find(JanelaMain.LICITACAO_PE), SELECTED);
+			final Boolean radioCE = this.getBoolean(this.find(JanelaMain.LICITACAO_CE), SELECTED);
+			final Boolean somenteEncerradas = this
+					.getBoolean(this.find(JanelaMain.NOME_CAMPO_FILTRO_SOMENTE_COTACOES_ENCERRADAS), SELECTED);
+
+			if (Boolean.TRUE.equals(radioPE)) {
+				pregaoEletronicoDAO = new PregaoEletronicoDAO(conexaoParadigma.getConnection(), ci.getImprimirQuery());
+				pregoesDoAno = pregaoEletronicoDAO.selecionaPregaoPorAno(ano);
+			}
+
+			if (Boolean.TRUE.equals(radioCE)) {
+				compraDiretaDAO = new CompraDiretaDAO(conexaoParadigma.getConnection(), ci.getImprimirQuery());
+				pregoesDoAno.addAll(compraDiretaDAO.selecionaCompraDiretaPorAno(ano));
+			}
+
+			cotacaoDao = new CotacaoDAO(conexaoParadigma.getConnection(), ci.getImprimirQuery());
+			try {
+				for (Integer anoCotacao : cotacaoDao.filtraAnosComCotacoesEncerradas()) {
+					anosComCotacaoEncerrada.add(anoCotacao.toString());
+				}
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+
+			if (Boolean.TRUE.equals(somenteEncerradas)) {
+				OrcomSecomQuadroController secomQuadroController = new OrcomSecomQuadroController(ci.getDestino(),
+						false);
+
+				secomQuadroController.abreConexao();
+				AtualizacaoC7942Controller atualizacaoC7942Controller = new AtualizacaoC7942Controller(ci);
+				List<CotacaoModel> cotacoesNaoCadastradasNoORCOM = atualizacaoC7942Controller
+						.retornaListaDeCotacoesNaoCadastradasNoORCOM(cotacaoDao.selecionaCotacoesEncerradas(anoCot, mesCot),
+								ci.getDestino(), secomQuadroController);
+				secomQuadroController.fechaConexao();
+				atualizacaoC7942Controller.fecha();
+
+				for (CotacaoModel cotacao : cotacoesNaoCadastradasNoORCOM) {
+					cotacoesDoAno.add(cotacao.getCodigoProcesso());
+				}
+
+			} else {
+				cotacoesDoAno = cotacaoDao
+						.selecionaCotacoesEncerradasDescricao(buscaAno(JanelaMain.NOME_CAMPO_ANO_COTACAO));
+			}
+
+		} catch (Exception e) {
+			Logger.getAnonymousLogger().severe(e.getMessage());
+		}
+
+		carregaCombo(cotacoesDoAno, this.find(JanelaMain.NOME_CAMPO_COTACOES_DISPONIVEIS_PARA_IMPORTACAO));
+		carregaCombo(anosComCotacaoEncerrada, this.find(JanelaMain.NOME_CAMPO_ANO_COTACAO));
+		carregaCombo(meses, this.find(JanelaMain.FILTRO_MES_COTACAO));
+		carregaCombo(pregoesDoAno, this.find(JanelaMain.NOME_CAMPO_PREGOES_DISPONIVEIS_PARA_IMPORTACAO));
+		carregaCombo(origens, this.find(JanelaMain.NOME_CAMPO_ORIGEM));
+		carregaCombo(destinos, this.find(JanelaMain.NOME_CAMPO_DESTINO));
+		carregaCombo(anos, this.find(JanelaMain.NOME_CAMPO_ANO));
+		carregaCombo(origens, this.find(JanelaMain.NOME_CAMPO_ORIGEM));
+		carregaCombo(destinos, this.find(JanelaMain.NOME_CAMPO_DESTINO));
+		carregaCombo(orgaos, this.find(JanelaMain.NOME_CAMPO_ORGAO));
+
+	}
+
+	/**
+	 * Preenche o combo de licitações disponíveis no WBC para escolha e importacao
+	 * 
+	 * @param o pregao selecionado
+	 */
+	public void atualizaCamposLicitacoes() {
+		try {
+
+			String ano = buscaAno(JanelaMain.NOME_CAMPO_ANO);
+
+			final String pregaoSelecionado = this.getString(JanelaMain.NOME_CAMPO_PREGOES_DISPONIVEIS_PARA_IMPORTACAO);
+			final String[] s = pregaoSelecionado.split(PregaoEletronicoDAO.SEPARADOR);
+			this.setString(this.find(JanelaMain.NOME_CAMPO_NUMERO_LICITACAO), ThinletUtils.TEXT, s[0]);
+			this.setString(this.find(JanelaMain.NOME_CAMPO_PROCESSO), ThinletUtils.TEXT, s[1]);
+			this.setString(this.find(JanelaMain.NOME_CAMPO_ORIGEM), ThinletUtils.TEXT, Ambientes.PARADIGMA_PRODUCAO);
+			this.setString(this.find(JanelaMain.NOME_CAMPO_DESTINO), ThinletUtils.TEXT, Ambientes.ORCOM_DESENVOLVIMENTO);
+			this.setString(this.find(JanelaMain.NOME_CAMPO_ANO), ThinletUtils.TEXT, ano);
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+	}
+
+	/**
+	 * @since 2020/MAR/03
+	 */
+	public void atualizaCamposCotacao() {
+		String ano = buscaAno(JanelaMain.NOME_CAMPO_ANO);
+
+		final String pregaoSelecionado = this.getString(JanelaMain.NOME_CAMPO_COTACOES_DISPONIVEIS_PARA_IMPORTACAO);
+		final String[] s = pregaoSelecionado.split(CotacaoDAO.SEPARADOR);
+
+		this.setString(this.find(JanelaMain.NOME_CAMPO_ANO), ThinletUtils.TEXT, ano);
+		this.setString(this.find(JanelaMain.NOME_CAMPO_PROCESSO_COTACAO), ThinletUtils.TEXT, s[0]);
+
+	}
+
+	/**
+	 * @param nomeCampoAno
+	 * @return o ano ou 2019 ( ano que comecou a ter movimento mais forte para
+	 *         importacao
+	 */
+	private String buscaAno(String nomeCampoAno) {
+		return ("".equals(getString(nomeCampoAno)) ? "2019" : getString(nomeCampoAno));
+	}
+
+	private void carregaCombo(List<String> origens, Object comboOrigem) {
+		ThinletUtils.loadObjectsIntoCombo(this, origens, comboOrigem);
+	}
+
+	private void createScreen() {
+		new FrameLauncher("WEB-ORCOM", this, LARGURA_JANELA, ALTURA_JANELA);
+	}
+
+	/**
+	 * vazio
+	 */
+	public void shutdown() {
+		/** vazio */
+	}
+
+	@SuppressWarnings("unused")
+	public void tabChanged(Object tabbedPane) {
+		try {
+			Object newTabPanel = null;
+			Object selectedTab = this.getSelectedItem(tabbedPane);
+			String tabName = this.getString(selectedTab, "name");
+
+			if (selectedTab == null) {
+				return;
+			}
+			/*
+			 * if( TAB_ASSOCIATIONS.equals( tabName ) ) { if( associationsController == null
+			 * ) { associationsController = new AssociationsController( this ); newTabPanel
+			 * = this.parse( XML_GUI_ASSOCIATIONS, associationsController ); this.add(
+			 * selectedTab, newTabPanel ); } //
+			 * associationsController.loadAssociationsPanel();
+			 * 
+			 * } else if( TAB_MEMBERS.equals( tabName ) ) { if( membersController == null )
+			 * { membersController = new MembersController( this ); newTabPanel =
+			 * this.parse( XML_GUI_MEMBERS, membersController ); this.add( selectedTab,
+			 * newTabPanel ); / } // membersController.loadMembersPanel();
+			 * 
+			 * } else if( TAB_ASSETS.equals( tabName ) ) { if( assetsController == null ) {
+			 * assetsController = new AssetsController( this ); newTabPanel = this.parse(
+			 * XML_GUI_ASSETS, assetsController ); this.add( selectedTab, newTabPanel ); }
+			 * assetsController.loadAssetsPanel();
+			 * 
+			 * } else if( TAB_REUNIONS.equals( tabName ) ) { if( reunionsController == null
+			 * ) { reunionsController = new ReunionsController( this ); newTabPanel =
+			 * this.parse( XML_GUI_REUNIONS, reunionsController ); this.add( selectedTab,
+			 * newTabPanel ); } reunionsController.loadReunionsPanel();
+			 * 
+			 * } else if( TAB_PAYMENTS.equals( tabName ) ) { if( paymentsController == null
+			 * ) { paymentsController = new PaymentsController( this ); newTabPanel =
+			 * this.parse( XML_GUI_PAYMENTS, paymentsController ); this.add( selectedTab,
+			 * newTabPanel ); } paymentsController.loadPaymentsPanel();
+			 * 
+			 * } else if( TAB_DEBTS.equals( tabName ) ) { if( debtsController == null ) {
+			 * debtsController = new DebtsController( this ); newTabPanel = this.parse(
+			 * XML_GUI_DEBTS, debtsController ); this.add( selectedTab, newTabPanel ); }
+			 * debtsController.loadDebtsPanel(); }
+			 */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void closeDialog(Object dialog) {
+		ThinletUtils.closeDialog(this, dialog);
+	}
+
+	/** AtualizacaoDadosCadastraisController.java: */
+
+	//@SuppressWarnings("unused")
+	//private void atualizaDadosCadastraisRecentes() {
+	//	naoImplementado();
+	//}
+
+	/** AtualizacaoEnderecoController.java: */
+	//@SuppressWarnings("unused")
+	//private void atualizaEnderecosCnpj() {
+	//	naoImplementado();
+	//}
+
+	public void atualizaCertidao() throws Exception {
+		String cnpj = this.getString(JanelaMain.NOME_CAMPO_ATUALIZACAO_CERTIDAO_CNPJ);
+		ContextoImportacao ci = defineContextoImportacao();
+		AtualizacaoC7706Controller controller = new AtualizacaoC7706Controller(ci);
+		controller.atualizaCertificadosDeCnpj(cnpj);
+	}
+
+	/** AtualizacaoFornecedoresCnpj.java: */
+	public void atualizaFornecedoresCnpj() {
+
+		final String cnpj = this.getString(JanelaMain.NOME_CAMPO_ATUALIZACAO_CADASTRAL_CNPJ);
+		ContextoImportacao ci = defineContextoImportacao();
+		AtualizacaoDeFonecedoresCnpj atualizacaoDeFonecedoresCnpj = new AtualizacaoDeFonecedoresCnpj(cnpj, ci);
+		atualizacaoDeFonecedoresCnpj.atualizaFornecedor();
+
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaFornecedores() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaFornecedoresRecentes() {
+		naoImplementado();
+	}
+
+	/**
+	 * AtualizacaoOrcamentoController.java:
+	 * 
+	 */
+	/**
+	 * Faz a atualizacao do orcamento
+	 * 
+	 * @RequestMapping(value = "/atualiza-orcamento", method = RequestMethod.POST)
+	 * @param pregao
+	 * @param processo
+	 * @param ano
+	 * @return void
+	 * @throws Exception
+	 */
+	public void atualizaOrcamento() throws Exception {
+		String processo = this.getString(JanelaMain.NOME_CAMPO_PROCESSO_COTACAO);
+		if (processo.isEmpty()) {
+			ThinletUtils.showDialog(this, "Erro na importacao da cotação", "Processo nao informado");
+			return;
+		}
+		ContextoImportacao ci = defineContextoImportacao();
+		AtualizacaoC7942Controller cotacoes = new AtualizacaoC7942Controller(ci);
+		cotacoes.atualizaPropostasDeProcesso(processo, buscaAno(JanelaMain.NOME_CAMPO_ANO_COTACAO));
+		cotacoes.fecha();
+	}
+
+	// Nao tem correspondente no wbc
+	public void excluiOrcamentoOrcom() throws Exception {
+		String processo = this.getString(JanelaMain.NOME_CAMPO_PROCESSO_COTACAO);
+		if (processo.isEmpty()) {
+			ThinletUtils.showDialog(this, "Erro na importacao da cotação", "Processo nao informado");
+			return;
+		}
+
+		NormalizadorDeProcesso normalizador = new NormalizadorDeProcesso();
+
+		String codigoOrcom = processo;
+		String anoOrcom = buscaAno(JanelaMain.NOME_CAMPO_ANO_COTACAO);
+
+		if (!normalizador.isProcessoComAno(processo) && (null != anoOrcom) && !anoOrcom.isEmpty()) {
+			codigoOrcom = normalizador.normalizaAnoDeProcesso(processo, anoOrcom);
+		}
+
+		String[] separacaoDoCodigo = codigoOrcom.split(codigoOrcom.contains("/") ? "/" : "-");
+
+		String numeroDoProcesso = separacaoDoCodigo[0];
+		String anoDoProcesso = separacaoDoCodigo[1].trim().substring(0, 4);
+
+		String codigoProcesso = anoDoProcesso + numeroDoProcesso;
+
+		ContextoImportacao ci = defineContextoImportacao();
+		Conexao conexaoORCOM = new ConexoesOrcom().getConexao(ci);
+		conexaoORCOM.conecta();
+
+		OrcomSecomQuadroDAO orcomQuadroDAO = new OrcomSecomQuadroDAO(conexaoORCOM.getConnection(), ci.getImprimirQuery());
+		orcomQuadroDAO.apagaQuadroDePrecosSecom( codigoProcesso );
+		conexaoORCOM.fecha() ;
+	}
+	
+	
+	/** AtualizacaoPregaoEletronicoController.java: */
+	public void atualizaPregaoEletronico() {
+
+		final Boolean viewSql = this.getBoolean(this.find(JanelaMain.NOME_CAMPO_IMPRIME_QUERY), SELECTED);
+		final String origem = this.getString(JanelaMain.NOME_CAMPO_ORIGEM);
+		final String destino = this.getString(JanelaMain.NOME_CAMPO_DESTINO);
+		final ContextoImportacao contextoDeImportacao = new ContextoImportacao(origem, destino, viewSql, new Prefeitura());
+
+		final String ano = this.getString(JanelaMain.NOME_CAMPO_ANO);
+		final String pregao = this.getString(JanelaMain.NOME_CAMPO_NUMERO_LICITACAO);
+		final String processo = this.getString(JanelaMain.NOME_CAMPO_PROCESSO);
+
+		final String msg = " Pregao Eletronico {0}   processo {4}: de {1} para {2} imprimeSql: {3}";
+		final String texto = MessageFormat.format(msg, pregao, origem, destino, viewSql, processo);
+		System.out.println(texto);
+
+		try {
+			AtualizacaoC7121Controller c = new AtualizacaoC7121Controller(contextoDeImportacao.getOrigem(),
+					contextoDeImportacao.getDestino(), contextoDeImportacao.getImprimirQuery());
+			c.cadastraPregaoEletronico(pregao, processo, ano);
+
+		} catch (Exception e) {
+			for( StackTraceElement el : e.getStackTrace()) {
+				if( el.getClassName().startsWith("br")) {
+					System.err.println("at " +el.getClassName() + ": " + el.getMethodName() + ":" + el.getLineNumber());
+				}
+			}
+			System.out.println(e.getMessage());
+		}
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaEmpresas() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNegociacoes() {
+		naoImplementado();
+	}
+
+	/** CategoriaRestController.java: */
+	@SuppressWarnings("unused")
+	private void orcomParaWbcCategoria() {
+		naoImplementado();
+	}
+
+	/** UnidadeDeMedidaRestController.java: */
+	@SuppressWarnings("unused")
+	private void orcomParaWbcUnidadeDeMedida() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoMateriaisController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaMateriaisCnpj() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaMateriai(String cnpj) {
+		naoImplementado();
+	}
+
+	/*
+	 * @SuppressWarnings("unused") private void atualizaMateriais() {
+	 * naoImplementado(); }
+	 */
+	/** AtualizacaoCertificadosController.java: */
+	/*
+	 * private void atualiza_certificados_cnpj() {}
+	 * 
+	 * private void atualiza_certificados(String cnpj) { }
+	 * 
+	 * private void atualiza_certificados() { }
+	 */
+
+	/** AtualizacaoCompraDiretaController.java: */
+	// private void atualiza_compraDireta() { }
+
+	/** AtualizacaoNovosFornecedoresController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedoresCnpj() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedores(String cnpj) {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedores() {
+		naoImplementado();
+	}
+
+	private void naoImplementado() {
+		throw new JanelaThinletControllerRuntimeException("Metodo nao implementado");
+	}
+
+}

@@ -1,0 +1,745 @@
+<wsdl:definitions name="Cotacao" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+   <wsdl:types>
+      <xs:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+         <xs:import namespace="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+         <xs:element name="ProcessarCotacao">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="lstCotacao" nillable="true" type="q1:ArrayOfCotacaoDTO" xmlns:q1="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ProcessarCotacaoResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="ProcessarCotacaoResult" nillable="true" type="q2:RetornoDTO" xmlns:q2="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacao">
+            <xs:complexType>
+               <xs:sequence/>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="RetornarCotacaoResult" nillable="true" type="q3:ArrayOfCotacaoDTO" xmlns:q3="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoItem">
+            <xs:complexType>
+               <xs:sequence/>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoItemResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="RetornarCotacaoItemResult" nillable="true" type="q4:ArrayOfCotacaoDTO" xmlns:q4="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoOrcamento">
+            <xs:complexType>
+               <xs:sequence/>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoOrcamentoResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="RetornarCotacaoOrcamentoResult" nillable="true" type="q5:ArrayOfCotacaoDTO" xmlns:q5="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ReabrirCotacao">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="lstConfirmacaoNegociacaoDTO" nillable="true" type="q6:ArrayOfConfirmacaoNegociacaoDTO" xmlns:q6="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ReabrirCotacaoResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="ReabrirCotacaoResult" nillable="true" type="q7:RetornoDTO" xmlns:q7="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="HabilitarRetornarCotacao">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="lstConfirmacaoNegociacaoDTO" nillable="true" type="q8:ArrayOfConfirmacaoNegociacaoDTO" xmlns:q8="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="HabilitarRetornarCotacaoResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="HabilitarRetornarCotacaoResult" nillable="true" type="q9:RetornoDTO" xmlns:q9="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ReabrirCotacaoItem">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="lstConfirmacaoNegociacaoDTO" nillable="true" type="q10:ArrayOfConfirmacaoNegociacaoDTO" xmlns:q10="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ReabrirCotacaoItemResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="ReabrirCotacaoItemResult" nillable="true" type="q11:RetornoDTO" xmlns:q11="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="HabilitarRetornarCotacaoItem">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="lstConfirmacaoNegociacaoDTO" nillable="true" type="q12:ArrayOfConfirmacaoNegociacaoDTO" xmlns:q12="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="HabilitarRetornarCotacaoItemResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="HabilitarRetornarCotacaoItemResult" nillable="true" type="q13:RetornoDTO" xmlns:q13="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoComEmpresaSemDePara">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="nFlParticipa" type="xs:int"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RetornarCotacaoComEmpresaSemDeParaResponse">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element minOccurs="0" name="RetornarCotacaoComEmpresaSemDeParaResult" nillable="true" type="q14:ArrayOfProcessoCotacaoDTO" xmlns:q14="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:schema>
+      <xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/">
+         <xs:element name="anyType" nillable="true" type="xs:anyType"/>
+         <xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+         <xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+         <xs:element name="boolean" nillable="true" type="xs:boolean"/>
+         <xs:element name="byte" nillable="true" type="xs:byte"/>
+         <xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+         <xs:element name="decimal" nillable="true" type="xs:decimal"/>
+         <xs:element name="double" nillable="true" type="xs:double"/>
+         <xs:element name="float" nillable="true" type="xs:float"/>
+         <xs:element name="int" nillable="true" type="xs:int"/>
+         <xs:element name="long" nillable="true" type="xs:long"/>
+         <xs:element name="QName" nillable="true" type="xs:QName"/>
+         <xs:element name="short" nillable="true" type="xs:short"/>
+         <xs:element name="string" nillable="true" type="xs:string"/>
+         <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+         <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+         <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+         <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+         <xs:element name="char" nillable="true" type="tns:char"/>
+         <xs:simpleType name="char">
+            <xs:restriction base="xs:int"/>
+         </xs:simpleType>
+         <xs:element name="duration" nillable="true" type="tns:duration"/>
+         <xs:simpleType name="duration">
+            <xs:restriction base="xs:duration">
+               <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+               <xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+               <xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+            </xs:restriction>
+         </xs:simpleType>
+         <xs:element name="guid" nillable="true" type="tns:guid"/>
+         <xs:simpleType name="guid">
+            <xs:restriction base="xs:string">
+               <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+            </xs:restriction>
+         </xs:simpleType>
+         <xs:attribute name="FactoryType" type="xs:QName"/>
+         <xs:attribute name="Id" type="xs:ID"/>
+         <xs:attribute name="Ref" type="xs:IDREF"/>
+      </xs:schema>
+      <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO">
+         <xs:import namespace="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core"/>
+         <xs:complexType name="ArrayOfCotacaoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoDTO" nillable="true" type="tns:CotacaoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoDTO" nillable="true" type="tns:ArrayOfCotacaoDTO"/>
+         <xs:complexType name="CotacaoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q1:DtoBase" xmlns:q1="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="bFlPermissaoEmpresaClic" type="xs:int"/>
+                     <xs:element name="bFlRestrita" type="xs:int"/>
+                     <xs:element name="bFlTermo" type="xs:int"/>
+                     <xs:element minOccurs="0" name="bFlVisivelClic" type="xs:int"/>
+                     <xs:element name="lstCotacaoItemDTO" nillable="true" type="tns:ArrayOfCotacaoItemDTO"/>
+                     
+					 <!-- Alterado-->
+                     <xs:element minOccurs="0" name="lstCotacaoMoedaDTO" nillable="false" type="tns:ArrayOfCotacaoMoedaDTO"/>
+                     <xs:element name="lstCotacaoParticipanteDTO" nillable="true" type="tns:ArrayOfCotacaoParticipanteDTO"/>
+                     <xs:element name="nCdSituacao" type="xs:long"/>
+                     <xs:element name="nIdTipoNegociacao" type="xs:int"/>
+
+					 <!-- Alterado-->
+                     <xs:element minOccurs="0" name="sCdCotacaoERP" nillable="false" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdCotacaoWbc" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdCotacaoWbcPai" nillable="true" type="xs:string"/>
+					 <!-- Alterado-->
+                     <xs:element minOccurs="0" name="sCdEmpresa" nillable="false" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdEmpresaRequisicao" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdFrete" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdMoeda" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdUsuario" nillable="true" type="xs:string"/>
+                     <xs:element name="sDsCotacao" nillable="true" type="xs:string"/>
+                     
+					 <!-- Alterado-->
+                     <xs:element minOccurs="0" name="sDsTermo" nillable="false" type="xs:string"/>
+                     <xs:element minOccurs="0" name="tDtCadastro" type="xs:dateTime"/>
+                     <xs:element name="tDtFinal" type="xs:dateTime"/>
+                     <xs:element name="tDtInicial" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoDTO" nillable="true" type="tns:CotacaoDTO"/>
+         <xs:complexType name="ArrayOfCotacaoItemDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoItemDTO" nillable="true" type="tns:CotacaoItemDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoItemDTO" nillable="true" type="tns:ArrayOfCotacaoItemDTO"/>
+         <xs:complexType name="CotacaoItemDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q2:DtoBase" xmlns:q2="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="bFlCalculaReferencia" type="xs:int"/>
+                     <xs:element name="dQtItem" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="dVlReferencia" type="xs:decimal"/>
+                     <xs:element name="lstCotacaoItemEnderecoDTO" nillable="true" type="tns:ArrayOfCotacaoItemEnderecoDTO"/>
+					 <!-- Alterado -->
+                     <xs:element minOccurs="0" name="lstCotacaoItemParticipanteDTO" nillable="false" type="tns:ArrayOfCotacaoItemParticipanteDTO"/>
+                     <xs:element name="lstCotacaoItemTaxaDTO" nillable="true" type="tns:ArrayOfCotacaoItemTaxaDTO"/>
+                     <xs:element name="lstCotacaoPropostaDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaDTO"/>
+                     <xs:element name="nCdAplicacao" type="xs:long"/>
+                     <xs:element name="nCdSituacao" type="xs:long"/>
+                     <xs:element name="sCdClasse" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdCondicaoPagamento" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdCotacao" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdItemEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdItemWbc" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdItemWbcPai" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdMarca" nillable="true" type="xs:string"/>
+                     <!-- Alterado -->
+                     <xs:element minOccurs="0" name="sCdProduto" nillable="false" type="xs:string"/>
+                     <xs:element name="sCdUnidadeMedida" nillable="true" type="xs:string"/>
+                     <xs:element name="sDsItem" nillable="true" type="xs:string"/>
+                     <xs:element name="sDsJustificativa" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sDsObservacao" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoItemDTO" nillable="true" type="tns:CotacaoItemDTO"/>
+         <xs:complexType name="ArrayOfCotacaoItemEnderecoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoItemEnderecoDTO" nillable="true" type="tns:CotacaoItemEnderecoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoItemEnderecoDTO" nillable="true" type="tns:ArrayOfCotacaoItemEnderecoDTO"/>
+         <xs:complexType name="CotacaoItemEnderecoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q3:DtoBase" xmlns:q3="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="dQtEntrega" type="xs:int"/>
+                     <xs:element name="nSqItemEndereco" type="xs:int"/>
+                     <xs:element minOccurs="0" name="sCdCobrancaEndereco" nillable="true" type="xs:string"/>
+					 <!-- Alterado -->
+                     <xs:element minOccurs="0" name="sCdEmpresaCobrancaEndereco" nillable="false" type="xs:string"/>
+					 <!-- Alterado -->
+                     <xs:element minOccurs="0" name="sCdEmpresaEntregaEndereco" nillable="false" type="xs:string"/>
+					 <!-- Alterado -->
+                     <xs:element minOccurs="0" name="sCdEmpresaFaturamentoEndereco" nillable="false" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdEntregaEndereco" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdFaturamentoEndereco" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdItemRequisicaoEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdRequisicaoEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element name="tDtEntrega" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoItemEnderecoDTO" nillable="true" type="tns:CotacaoItemEnderecoDTO"/>
+         <xs:complexType name="ArrayOfCotacaoItemParticipanteDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoItemParticipanteDTO" nillable="true" type="tns:CotacaoItemParticipanteDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoItemParticipanteDTO" nillable="true" type="tns:ArrayOfCotacaoItemParticipanteDTO"/>
+         <xs:complexType name="CotacaoItemParticipanteDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q4:DtoBase" xmlns:q4="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="bFlHomologado" type="xs:int"/>
+                     <xs:element name="nCdItem" type="xs:long"/>
+                     <xs:element name="sCdEmpresa" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoItemParticipanteDTO" nillable="true" type="tns:CotacaoItemParticipanteDTO"/>
+         <xs:complexType name="ArrayOfCotacaoItemTaxaDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoItemTaxaDTO" nillable="true" type="tns:CotacaoItemTaxaDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoItemTaxaDTO" nillable="true" type="tns:ArrayOfCotacaoItemTaxaDTO"/>
+         <xs:complexType name="CotacaoItemTaxaDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q5:DtoBase" xmlns:q5="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="bFlIncluso" type="xs:long"/>
+                     <xs:element minOccurs="0" name="nCdItem" type="xs:long"/>
+                     <xs:element name="nCdTaxa" type="xs:long"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoItemTaxaDTO" nillable="true" type="tns:CotacaoItemTaxaDTO"/>
+         <xs:complexType name="ArrayOfCotacaoPropostaDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoPropostaDTO" nillable="true" type="tns:CotacaoPropostaDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoPropostaDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaDTO"/>
+         <xs:complexType name="CotacaoPropostaDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q6:DtoBase" xmlns:q6="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="dPcDesconto" type="xs:decimal"/>
+                     <xs:element name="dVlLiquido" type="xs:decimal"/>
+                     <xs:element name="dVlProposta" type="xs:decimal"/>
+                     <xs:element name="dVlUnitario" type="xs:decimal"/>
+                     <xs:element name="lstCotacaoPropostaEnderecoDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaEnderecoDTO"/>
+                     <xs:element name="lstCotacaoPropostaTaxaDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaTaxaDTO"/>
+                     <xs:element name="lstPropostaRequisicaoDTO" nillable="true" type="tns:ArrayOfPropostaRequisicaoDTO"/>
+                     <xs:element minOccurs="0" name="nCdProposta" type="xs:long"/>
+                     <xs:element name="nCdSituacao" type="xs:long"/>
+                     <xs:element name="nIdVencedor" type="xs:int"/>
+                     <xs:element name="nNrRanking" type="xs:int"/>
+                     <xs:element name="sCdCondicaoPagamento" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdFrete" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdIva" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdMarca" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdNmb" nillable="true" type="xs:string"/>
+                     <xs:element name="sCdUsuario" nillable="true" type="xs:string"/>
+                     <xs:element name="sDsMotivoDesclassificado" nillable="true" type="xs:string"/>
+                     <xs:element name="sDsObservacao" nillable="true" type="xs:string"/>
+                     <xs:element name="tDtAlteracao" type="xs:dateTime"/>
+                     <xs:element name="tDtProposta" type="xs:dateTime"/>
+                     <xs:element name="tDtValidade" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoPropostaDTO" nillable="true" type="tns:CotacaoPropostaDTO"/>
+         <xs:complexType name="ArrayOfCotacaoPropostaEnderecoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoPropostaEnderecoDTO" nillable="true" type="tns:CotacaoPropostaEnderecoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoPropostaEnderecoDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaEnderecoDTO"/>
+         <xs:complexType name="CotacaoPropostaEnderecoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q7:DtoBase" xmlns:q7="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="dQtFornecimento" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="dQtPorUnidade" nillable="true" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="dQtUnidade" nillable="true" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="dVlFrete" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="nCdPropostaEndereco" type="xs:long"/>
+                     <xs:element name="nSqItemEndereco" type="xs:int"/>
+                     <xs:element name="sCdTransportadora" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdUnidadeFornecimento" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sNmTransportadora" nillable="true" type="xs:string"/>
+                     <xs:element name="tDtFornecimento" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoPropostaEnderecoDTO" nillable="true" type="tns:CotacaoPropostaEnderecoDTO"/>
+         <xs:complexType name="ArrayOfCotacaoPropostaTaxaDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoPropostaTaxaDTO" nillable="true" type="tns:CotacaoPropostaTaxaDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoPropostaTaxaDTO" nillable="true" type="tns:ArrayOfCotacaoPropostaTaxaDTO"/>
+         <xs:complexType name="CotacaoPropostaTaxaDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q8:DtoBase" xmlns:q8="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="bFlIncluso" type="xs:int"/>
+                     <xs:element name="dPcTaxa" type="xs:decimal"/>
+                     <xs:element name="nCdTaxa" type="xs:long"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoPropostaTaxaDTO" nillable="true" type="tns:CotacaoPropostaTaxaDTO"/>
+         <xs:complexType name="ArrayOfPropostaRequisicaoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="PropostaRequisicaoDTO" nillable="true" type="tns:PropostaRequisicaoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfPropostaRequisicaoDTO" nillable="true" type="tns:ArrayOfPropostaRequisicaoDTO"/>
+         <xs:complexType name="PropostaRequisicaoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q9:DtoBase" xmlns:q9="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="dVlFrete" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="lstPropostaEntrega" nillable="true" type="tns:ArrayOfPropostaEntregaDTO"/>
+                     <xs:element minOccurs="0" name="nCdPropostaEndereco" type="xs:long"/>
+                     <xs:element minOccurs="0" name="sCdRequisicaoEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sCdTransportadora" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sNmTransportadora" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="PropostaRequisicaoDTO" nillable="true" type="tns:PropostaRequisicaoDTO"/>
+         <xs:complexType name="ArrayOfPropostaEntregaDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="PropostaEntregaDTO" nillable="true" type="tns:PropostaEntregaDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfPropostaEntregaDTO" nillable="true" type="tns:ArrayOfPropostaEntregaDTO"/>
+         <xs:complexType name="PropostaEntregaDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q10:DtoBase" xmlns:q10="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="dQtFornecimento" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="sCdItemRequisicaoEmpresa" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="tDtFornecimento" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="PropostaEntregaDTO" nillable="true" type="tns:PropostaEntregaDTO"/>
+         <xs:complexType name="ArrayOfCotacaoMoedaDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoMoedaDTO" nillable="true" type="tns:CotacaoMoedaDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoMoedaDTO" nillable="true" type="tns:ArrayOfCotacaoMoedaDTO"/>
+         <xs:complexType name="CotacaoMoedaDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q11:DtoBase" xmlns:q11="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="bFlAtivo" type="xs:int"/>
+                     <xs:element minOccurs="0" name="dVlIndice" type="xs:decimal"/>
+                     <xs:element minOccurs="0" name="nCdSituacao" type="xs:long"/>
+                     <xs:element minOccurs="0" name="nNrCasasDecimais" type="xs:int"/>
+                     <xs:element minOccurs="0" name="sCdMoeda" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="tDtCotacao" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoMoedaDTO" nillable="true" type="tns:CotacaoMoedaDTO"/>
+         <xs:complexType name="ArrayOfCotacaoParticipanteDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="CotacaoParticipanteDTO" nillable="true" type="tns:CotacaoParticipanteDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfCotacaoParticipanteDTO" nillable="true" type="tns:ArrayOfCotacaoParticipanteDTO"/>
+         <xs:complexType name="CotacaoParticipanteDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q12:DtoBase" xmlns:q12="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="nStParticipacao" type="xs:int"/>
+                     <xs:element name="sCdEmpresa" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="CotacaoParticipanteDTO" nillable="true" type="tns:CotacaoParticipanteDTO"/>
+         <xs:complexType name="RetornoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q13:DtoBase" xmlns:q13="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="lstWbtLogDTO" nillable="true" type="tns:ArrayOfWbtLogDTO"/>
+                     <xs:element name="nIdRetorno" type="xs:long"/>
+                     <xs:element minOccurs="0" name="sNrToken" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="RetornoDTO" nillable="true" type="tns:RetornoDTO"/>
+         <xs:complexType name="ArrayOfWbtLogDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="WbtLogDTO" nillable="true" type="tns:WbtLogDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfWbtLogDTO" nillable="true" type="tns:ArrayOfWbtLogDTO"/>
+         <xs:complexType name="WbtLogDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q14:DtoBase" xmlns:q14="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element minOccurs="0" name="nIdRetorno" type="xs:long"/>
+                     <xs:element minOccurs="0" name="sCdOrigem" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sDsLog" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="sNrToken" nillable="true" type="xs:string"/>
+                     <xs:element minOccurs="0" name="tDtLog" type="xs:dateTime"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="WbtLogDTO" nillable="true" type="tns:WbtLogDTO"/>
+         <xs:complexType name="ArrayOfConfirmacaoNegociacaoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="ConfirmacaoNegociacaoDTO" nillable="true" type="tns:ConfirmacaoNegociacaoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfConfirmacaoNegociacaoDTO" nillable="true" type="tns:ArrayOfConfirmacaoNegociacaoDTO"/>
+         <xs:complexType name="ConfirmacaoNegociacaoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q15:DtoBase" xmlns:q15="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="lstConfirmacaoNegociacaoItemDTO" nillable="true" type="tns:ArrayOfConfirmacaoNegociacaoItemDTO"/>
+                     <xs:element name="nIdTipoProcesso" type="xs:int"/>
+                     <xs:element name="sCdProcessoWbc" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="ConfirmacaoNegociacaoDTO" nillable="true" type="tns:ConfirmacaoNegociacaoDTO"/>
+         <xs:complexType name="ArrayOfConfirmacaoNegociacaoItemDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="ConfirmacaoNegociacaoItemDTO" nillable="true" type="tns:ConfirmacaoNegociacaoItemDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfConfirmacaoNegociacaoItemDTO" nillable="true" type="tns:ArrayOfConfirmacaoNegociacaoItemDTO"/>
+         <xs:complexType name="ConfirmacaoNegociacaoItemDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q16:DtoBase" xmlns:q16="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="sCdProcessoItemWbc" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="ConfirmacaoNegociacaoItemDTO" nillable="true" type="tns:ConfirmacaoNegociacaoItemDTO"/>
+         <xs:complexType name="ArrayOfProcessoCotacaoDTO">
+            <xs:sequence>
+               <xs:element minOccurs="0" maxOccurs="unbounded" name="ProcessoCotacaoDTO" nillable="true" type="tns:ProcessoCotacaoDTO"/>
+            </xs:sequence>
+         </xs:complexType>
+         <xs:element name="ArrayOfProcessoCotacaoDTO" nillable="true" type="tns:ArrayOfProcessoCotacaoDTO"/>
+         <xs:complexType name="ProcessoCotacaoDTO">
+            <xs:complexContent mixed="false">
+               <xs:extension base="q17:DtoBase" xmlns:q17="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+                  <xs:sequence>
+                     <xs:element name="sCdCotacaoWBC" nillable="true" type="xs:string"/>
+                  </xs:sequence>
+               </xs:extension>
+            </xs:complexContent>
+         </xs:complexType>
+         <xs:element name="ProcessoCotacaoDTO" nillable="true" type="tns:ProcessoCotacaoDTO"/>
+      </xs:schema>
+      <xs:schema elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+         <xs:complexType name="DtoBase">
+            <xs:sequence/>
+         </xs:complexType>
+         <xs:element name="DtoBase" nillable="true" type="tns:DtoBase"/>
+      </xs:schema>
+   </wsdl:types>
+   <wsdl:message name="ICotacao_ProcessarCotacao_InputMessage">
+      <wsdl:part name="parameters" element="tns:ProcessarCotacao"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_ProcessarCotacao_OutputMessage">
+      <wsdl:part name="parameters" element="tns:ProcessarCotacaoResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacao_InputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacao"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacao_OutputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoItem_InputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoItem"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoItem_OutputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoItemResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoOrcamento_InputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoOrcamento"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoOrcamento_OutputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoOrcamentoResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_ReabrirCotacao_InputMessage">
+      <wsdl:part name="parameters" element="tns:ReabrirCotacao"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_ReabrirCotacao_OutputMessage">
+      <wsdl:part name="parameters" element="tns:ReabrirCotacaoResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_HabilitarRetornarCotacao_InputMessage">
+      <wsdl:part name="parameters" element="tns:HabilitarRetornarCotacao"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_HabilitarRetornarCotacao_OutputMessage">
+      <wsdl:part name="parameters" element="tns:HabilitarRetornarCotacaoResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_ReabrirCotacaoItem_InputMessage">
+      <wsdl:part name="parameters" element="tns:ReabrirCotacaoItem"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_ReabrirCotacaoItem_OutputMessage">
+      <wsdl:part name="parameters" element="tns:ReabrirCotacaoItemResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_HabilitarRetornarCotacaoItem_InputMessage">
+      <wsdl:part name="parameters" element="tns:HabilitarRetornarCotacaoItem"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_HabilitarRetornarCotacaoItem_OutputMessage">
+      <wsdl:part name="parameters" element="tns:HabilitarRetornarCotacaoItemResponse"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoComEmpresaSemDePara_InputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoComEmpresaSemDePara"/>
+   </wsdl:message>
+   <wsdl:message name="ICotacao_RetornarCotacaoComEmpresaSemDePara_OutputMessage">
+      <wsdl:part name="parameters" element="tns:RetornarCotacaoComEmpresaSemDeParaResponse"/>
+   </wsdl:message>
+   <wsdl:portType name="ICotacao">
+      <wsdl:operation name="ProcessarCotacao">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/ProcessarCotacao" message="tns:ICotacao_ProcessarCotacao_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/ProcessarCotacaoResponse" message="tns:ICotacao_ProcessarCotacao_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacao">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacao" message="tns:ICotacao_RetornarCotacao_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoResponse" message="tns:ICotacao_RetornarCotacao_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoItem">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoItem" message="tns:ICotacao_RetornarCotacaoItem_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoItemResponse" message="tns:ICotacao_RetornarCotacaoItem_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoOrcamento">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoOrcamento" message="tns:ICotacao_RetornarCotacaoOrcamento_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoOrcamentoResponse" message="tns:ICotacao_RetornarCotacaoOrcamento_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="ReabrirCotacao">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/ReabrirCotacao" message="tns:ICotacao_ReabrirCotacao_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/ReabrirCotacaoResponse" message="tns:ICotacao_ReabrirCotacao_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="HabilitarRetornarCotacao">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/HabilitarRetornarCotacao" message="tns:ICotacao_HabilitarRetornarCotacao_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/HabilitarRetornarCotacaoResponse" message="tns:ICotacao_HabilitarRetornarCotacao_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="ReabrirCotacaoItem">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/ReabrirCotacaoItem" message="tns:ICotacao_ReabrirCotacaoItem_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/ReabrirCotacaoItemResponse" message="tns:ICotacao_ReabrirCotacaoItem_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="HabilitarRetornarCotacaoItem">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/HabilitarRetornarCotacaoItem" message="tns:ICotacao_HabilitarRetornarCotacaoItem_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/HabilitarRetornarCotacaoItemResponse" message="tns:ICotacao_HabilitarRetornarCotacaoItem_OutputMessage"/>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoComEmpresaSemDePara">
+         <wsdl:input wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoComEmpresaSemDePara" message="tns:ICotacao_RetornarCotacaoComEmpresaSemDePara_InputMessage"/>
+         <wsdl:output wsaw:Action="http://tempuri.org/ICotacao/RetornarCotacaoComEmpresaSemDeParaResponse" message="tns:ICotacao_RetornarCotacaoComEmpresaSemDePara_OutputMessage"/>
+      </wsdl:operation>
+   </wsdl:portType>
+   <wsdl:binding name="BasicHttpBinding_ICotacao" type="tns:ICotacao">
+      <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsdl:operation name="ProcessarCotacao">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/ProcessarCotacao" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacao">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/RetornarCotacao" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoItem">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/RetornarCotacaoItem" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoOrcamento">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/RetornarCotacaoOrcamento" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="ReabrirCotacao">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/ReabrirCotacao" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="HabilitarRetornarCotacao">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/HabilitarRetornarCotacao" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="ReabrirCotacaoItem">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/ReabrirCotacaoItem" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="HabilitarRetornarCotacaoItem">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/HabilitarRetornarCotacaoItem" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+      <wsdl:operation name="RetornarCotacaoComEmpresaSemDePara">
+         <soap:operation soapAction="http://tempuri.org/ICotacao/RetornarCotacaoComEmpresaSemDePara" style="document"/>
+         <wsdl:input>
+            <soap:body use="literal"/>
+         </wsdl:input>
+         <wsdl:output>
+            <soap:body use="literal"/>
+         </wsdl:output>
+      </wsdl:operation>
+   </wsdl:binding>
+   <wsdl:service name="Cotacao">
+      <wsdl:port name="BasicHttpBinding_ICotacao" binding="tns:BasicHttpBinding_ICotacao">
+         <soap:address location="http://10.1.0.160/services/Cotacao.svc"/>
+      </wsdl:port>
+   </wsdl:service>
+</wsdl:definitions>

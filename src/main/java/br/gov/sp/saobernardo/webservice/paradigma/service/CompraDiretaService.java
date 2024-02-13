@@ -1,0 +1,94 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.ArrayOfCompraDiretaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.ArrayOfHabilitarCompraDiretaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDireta;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDiretaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.HabilitarCompraDiretaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.ICompraDireta;
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.RetornoDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.Constantes;
+import br.gov.sp.saobernardo.webservice.classes.modelos.compradireta.CompraDiretaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.conversores.CompraDiretaConversor;
+
+public class CompraDiretaService implements ServiceGrava<CompraDiretaModel> {
+
+	private static final Logger logger = Logger.getLogger(Thread.currentThread().getStackTrace()[0].getClassName());
+	private ICompraDireta servico;
+	private QName serviceName;
+	private CompraDiretaConversor convCD;
+
+	public CompraDiretaService(WSDLs wsdls) {
+		try {
+			URL wsdlURL = new URL(wsdls.getValue());
+			ServicesName nomeServico = ServicesName.COMPRA_DIRETA;
+			serviceName = new QName(nomeServico.getUrl(), nomeServico.getServico());
+			CompraDireta ss = new CompraDireta(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingICompraDireta();
+
+			convCD = new CompraDiretaConversor();
+
+		} catch (Exception ex) {
+			logger.log(Level.SEVERE, ex.toString(), ex);
+			System.console().writer().println(ex.getStackTrace());
+		}
+	}
+
+	public List<CompraDiretaModel> retornaCompraDireta(CompraDiretaModel compra) {
+		List<CompraDiretaModel> compras = new ArrayList<CompraDiretaModel>();
+		ArrayOfHabilitarCompraDiretaDTO lstCompraDiretaHabilitar = new ArrayOfHabilitarCompraDiretaDTO();
+
+		HabilitarCompraDiretaDTO e = new HabilitarCompraDiretaDTO();
+
+		e.setSCdComprador(Constantes.CNPJ_PREFEITURA);
+		e.setSNrProcessoDisplay(compra.getNumeroProcessoDisplay());
+
+		lstCompraDiretaHabilitar.getHabilitarCompraDiretaDTO().add(e);
+		servico.habilitarRetornarCompraDireta(lstCompraDiretaHabilitar);
+
+		for (CompraDiretaDTO compraDiretaRetornada : servico.retornarCompraDireta().getCompraDiretaDTO()) {
+			compras.add(convCD.converteParaModel(compraDiretaRetornada));
+		}
+
+		return compras;
+	}
+	
+	public List<CompraDiretaModel> retornaCompraDireta() {
+		List<CompraDiretaModel> compras = new ArrayList<CompraDiretaModel>();
+		for (CompraDiretaDTO compraDiretaRetornada : servico.retornarCompraDireta().getCompraDiretaDTO()) {
+			compras.add(convCD.converteParaModel(compraDiretaRetornada));
+		}
+		return compras;
+	}
+	
+	@Override
+	public List<CompraDiretaModel> grava(List<CompraDiretaModel> compras) {
+		List<CompraDiretaModel> retornos = new ArrayList<CompraDiretaModel>();
+		for (CompraDiretaModel compra : compras) {
+			retornos.add(this.grava(compra));
+		}
+		return retornos;
+
+	}
+
+	@Override
+	public CompraDiretaModel grava(CompraDiretaModel compra) {
+		ArrayOfCompraDiretaDTO dtos = new ArrayOfCompraDiretaDTO();
+		dtos.getCompraDiretaDTO().add(convCD.converteParaDTO(compra));
+		RetornoDTO retorno = servico.processarCompraDireta(dtos);
+		return convCD.converteLogParaModel(retorno.getLstWbtLogDTO().getWbtLogDTO().get(0));
+	}
+
+	public QName getServiceName() {
+		return serviceName;
+	}
+
+}

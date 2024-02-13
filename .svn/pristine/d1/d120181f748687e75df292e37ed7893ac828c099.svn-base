@@ -1,0 +1,16 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.dao;
+
+/**
+ * Schema Orcom a ser prefixado nas tabelas quando acessar os bancos ORCOM Visa
+ * facilitar testes e substituicoes, bem como garantir que todas as querys sejam
+ * utilizadas no mesmo schema.
+ * 
+ * @author 41476
+ * @since ‪08/out/2020
+ */
+public class SchemaOrcom {
+	public static final String SCHEMA = "orcom";
+	
+	// ORCOMPROC : Schema temporário usado na alteração do campo processo do ORCOM para 10 digitos
+	//public static final String SCHEMA = "orcomproc";
+}

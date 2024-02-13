@@ -1,0 +1,56 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
+import javax.xml.ws.soap.SOAPFaultException;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.paradigma.service.AmbienteDeTeste;
+import br.gov.sp.saobernardo.webservice.paradigma.service.CategoriaService;
+
+public class CategoriaServiceTest {
+
+	private CategoriaService sujeito;
+
+	@Before
+	public void setUp() {
+		sujeito = new CategoriaService(AmbienteDeTeste.getAmbienteWSDLCategoria());
+		montaCategoria();
+	}
+
+	@Ignore
+	@Test
+	public void deveGravarUmaCategoriaProdutoModel() {
+		CategoriaModel categoria = montaCategoria();
+		CategoriaModel categoriaRecebida = sujeito.grava(categoria);
+
+		LogDeRetornoDaGravacao log = categoriaRecebida.getLogDaGravacao();
+		assertNotEquals("", log.getData());
+		assertNotEquals("", log.getDescricao());
+		assertNotEquals("", log.getToken());
+		assertTrue("Deve trazer mensagem de sucesso : " + log.getDescricao(),
+				log.getDescricao().indexOf("sucesso") > -1);
+	}
+
+	@Test(expected = SOAPFaultException.class)
+	@Ignore
+	public void testBusca() {
+		CategoriaModel categoria = montaCategoria();
+		CategoriaModel busca = sujeito.busca(categoria.getCodigo());
+		assertEquals("1010", busca.getCodigo());
+	}
+
+	private CategoriaModel montaCategoria() {
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo("1010");
+		categoria.setCodigoPai("10");
+		categoria.setDescricao(categoria.getCodigo() + " - ARMAS CONVENCIONAIS");
+		return categoria;
+	}
+
+}

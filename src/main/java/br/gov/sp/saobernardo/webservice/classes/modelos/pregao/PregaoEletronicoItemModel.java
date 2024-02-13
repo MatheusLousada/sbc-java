@@ -1,0 +1,152 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.pregao;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public class PregaoEletronicoItemModel {
+	public static final int SITUACAO_ITEM_ATIVO = 1;
+
+	/**
+	 * String 20 Não obrigatório. Código do lote no cliente. Indica a qual lote
+	 * o item está relacionado.
+	 */
+	private String codigoLoteLegado;
+
+	/** String 20 Não obrigatório. Código do item no cliente. */
+	private String codigoItemLegado;
+
+	/**
+	 * Int 3 Número da sequência em que o item aparecerá na negociação. O
+	 * primeiro item deve iniciar com o número 1.
+	 */
+	private Integer codigoItemSequencial;
+
+	/** Decimal 16,4 Somatório das quantidades das entregas do item. */
+	private BigDecimal quantidadeItem;
+
+	/** Decimal 16,4 Valor de referência do item. */
+	private BigDecimal valorReferencia;
+
+	/** String 4000 Descrição do item. */
+	private String descricaoItem;
+
+	/** String 10 Código da unidade de medida. */
+	private String codigoUnidadeMedida;
+
+	/** String 10 Código do produto. */
+	private String codigoProduto;
+
+	/** String 10 Código da categoria de produto. */
+	private String codigoClasse;
+
+	/** Array de pregaoEletronicoItemEndereco Lista das entregas do item. */
+	private List<PregaoEletronicoItemEnderecoModel> pregaoEletronicoItensEnderecos;
+
+	/** Array de pregaoEletronicoItemLance Lista das lances do item. */
+	List<PregaoEletronicoItemLanceModel> lances;
+
+	/** Situação do item do pregão */
+	private PregaoEletronicoItemSituacao situacaoPregao;
+
+	public String getCodigoLoteLegado() {
+		return codigoLoteLegado;
+	}
+
+	public void setCodigoLoteLegado(String codigoLoteLegado) {
+		this.codigoLoteLegado = codigoLoteLegado;
+	}
+
+	public String getCodigoItemLegado() {
+		return codigoItemLegado;
+	}
+
+	public void setCodigoItemLegado(String codigoItemLegado) {
+		this.codigoItemLegado = codigoItemLegado;
+	}
+
+	public Integer getCodigoItemSequencial() {
+		return codigoItemSequencial;
+	}
+
+	public void setCodigoItemSequencial(Integer codigoItemSequencial) {
+		this.codigoItemSequencial = codigoItemSequencial;
+	}
+
+	public BigDecimal getQuantidadeItem() {
+		return quantidadeItem;
+	}
+
+	public void setQuantidadeItem(BigDecimal quantidadeItem) {
+		this.quantidadeItem = quantidadeItem;
+	}
+
+	public BigDecimal getValorReferencia() {
+		return valorReferencia;
+	}
+
+	public void setValorReferencia(BigDecimal valorReferencia) {
+		this.valorReferencia = valorReferencia;
+	}
+
+	public String getDescricaoItem() {
+		return descricaoItem;
+	}
+
+	public void setDescricaoItem(String descricaoItem) {
+		this.descricaoItem = descricaoItem;
+	}
+
+	public String getCodigoUnidadeMedida() {
+		return codigoUnidadeMedida;
+	}
+
+	public void setCodigoUnidadeMedida(String codigoUnidadeMedida) {
+		this.codigoUnidadeMedida = codigoUnidadeMedida;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public String getCodigoClasse() {
+		return codigoClasse;
+	}
+
+	public void setCodigoClasse(String codigoClasse) {
+		this.codigoClasse = codigoClasse;
+	}
+
+	public List<PregaoEletronicoItemEnderecoModel> getPregaoEletronicoItensEnderecos() {
+		return pregaoEletronicoItensEnderecos;
+	}
+
+	public void setPregaoEletronicoItensEnderecos(
+			List<PregaoEletronicoItemEnderecoModel> pregaoEletronicoItensEnderecos) {
+		this.pregaoEletronicoItensEnderecos = pregaoEletronicoItensEnderecos;
+	}
+
+	public List<PregaoEletronicoItemLanceModel> getLances() {
+		return lances;
+	}
+
+	public void setLances(List<PregaoEletronicoItemLanceModel> lances) {
+		this.lances = lances;
+	}
+
+	public int getSituacaoItem() {
+		return SITUACAO_ITEM_ATIVO;
+	}
+
+	public PregaoEletronicoItemSituacao getSituacaoPregao() {
+		return situacaoPregao;
+	}
+
+	public void setSituacaoPregao(PregaoEletronicoItemSituacao situacao) {
+		this.situacaoPregao = situacao;
+	}
+
+}

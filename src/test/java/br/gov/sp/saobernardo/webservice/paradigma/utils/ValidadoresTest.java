@@ -1,0 +1,25 @@
+package br.gov.sp.saobernardo.webservice.paradigma.utils;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.utils.Validadores;
+
+public class ValidadoresTest {
+
+	Validadores validador = new Validadores();
+	
+	@Test
+	public void deveRejeitarValores() {
+		String result = validador.valorNaoPodeSer("1", new String[]{"1"});
+		assertTrue(null == result);
+		
+		String result2 = validador.valorNaoPodeSer("0", new String[]{"1", "0"});
+		assertTrue(null == result2);
+		
+		String result3 = validador.valorNaoPodeSer("3", new String[]{"2", "1", "0"});
+		assertTrue(null != result3);
+	}
+	
+}

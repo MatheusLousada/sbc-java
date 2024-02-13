@@ -1,0 +1,65 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.pregao;
+
+import java.math.BigDecimal;
+
+public class PregaoEletronicoLoteModel {
+
+	/** Sempre 1 . Não existe Lote inativo*/
+	public static final int LOTE_ATIVO = 1;
+
+	/** String 20 Não obrigatório. Código do lote no cliente. */
+	private String codigoLoteLegado;
+
+	/**
+	 * Int 3 Número da sequência em que o lote aparecerá na negociação. O
+	 * primeiro lote deve iniciar com o número 1.
+	 */
+	private int codigoLoteSequencial;
+
+	/** String 1000 Descrição do lote. */
+	private String descricaoLote;
+
+	/**
+	 * Decimal 16,4 O valor de referência do lote, deve ser composto pela
+	 * somatória da multiplicação do valor de referência de cada item pela
+	 * quantidade de cada item.
+	 */
+	private BigDecimal valorReferencia;
+
+	public String getCodigoLoteLegado() {
+		return codigoLoteLegado;
+	}
+
+	public void setCodigoLoteLegado(String codigoLoteLegado) {
+		this.codigoLoteLegado = codigoLoteLegado;
+	}
+
+	public int getCodigoLoteSequencial() {
+		return codigoLoteSequencial;
+	}
+
+	public void setCodigoLoteSequencial(int codigoLoteSequencial) {
+		this.codigoLoteSequencial = codigoLoteSequencial;
+	}
+
+	public String getDescricaoLote() {
+		return descricaoLote;
+	}
+
+	public void setDescricaoLote(String descricaoLote) {
+		this.descricaoLote = descricaoLote;
+	}
+
+	public BigDecimal getValorReferencia() {
+		return valorReferencia;
+	}
+
+	public void setValorReferencia(BigDecimal valorReferencia) {
+		this.valorReferencia = valorReferencia;
+	}
+
+	public int getSituacaoLote() {
+		return LOTE_ATIVO;
+	}
+
+}

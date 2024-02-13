@@ -1,0 +1,9 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos;
+
+public interface Certificado {
+
+	String getDataDeValidade();
+
+	void setDataDeValidade(String dataDeValidade);
+
+}

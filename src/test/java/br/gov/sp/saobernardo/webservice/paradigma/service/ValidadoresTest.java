@@ -1,0 +1,70 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.EnderecoModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.ParadigmaIntegracaoException;
+import br.gov.sp.saobernardo.webservice.classes.modelos.cotacao.CotacaoModel;
+
+public class ValidadoresTest {
+
+	/** Deve testar uma classe de Model que use Validadores */
+	private EnderecoModel sujeito;
+
+	@Test
+	public void ufDeveAceitarUmaLetra() {
+		sujeito = new EnderecoModel();
+		sujeito.setUf("X");
+		assertEquals("X", sujeito.getUf());
+		assertEquals(1, sujeito.getUf().length());
+	}
+
+	@Test
+	public void ufDeveAceitarDuasLetras() {
+		sujeito = new EnderecoModel();
+		sujeito.setUf("SP");
+		assertEquals("SP", sujeito.getUf());
+		assertEquals(2, sujeito.getUf().length());
+	}
+
+	@Ignore
+	@Test(expected = ParadigmaIntegracaoException.class)
+	public void ufDeveSerTruncadaEmDuasLetras() {
+		sujeito = new EnderecoModel();
+		sujeito.setUf("SPA");
+		assertEquals("SP", sujeito.getUf());
+		assertEquals(2, sujeito.getUf().length());
+	}
+
+	@Test
+	public void deveValidarTipoDeNegociacao1() {
+		CotacaoModel sujeito2 = new CotacaoModel();
+		sujeito2.setTipoNegociacao(CotacaoModel.TIPO_NEGOCIACAO_GERAR_PEDIDO);
+		assertEquals(CotacaoModel.TIPO_NEGOCIACAO_GERAR_PEDIDO, sujeito2.getTipoNegociacao());
+	}
+
+	@Test
+	public void deveValidarTipoDeNegociacao2() {
+		CotacaoModel sujeito2 = new CotacaoModel();
+		sujeito2.setTipoNegociacao(CotacaoModel.TIPO_NEGOCIACAO_GERAR_CONTRATO);
+		assertEquals(CotacaoModel.TIPO_NEGOCIACAO_GERAR_CONTRATO, sujeito2.getTipoNegociacao());
+	}
+
+	@Test
+	public void deveValidarTipoDeNegociacao0() {
+		CotacaoModel sujeito2 = new CotacaoModel();
+		sujeito2.setTipoNegociacao(CotacaoModel.TIPO_NEGOCIACAO_ORCAMENTO);
+		assertEquals(CotacaoModel.TIPO_NEGOCIACAO_ORCAMENTO, sujeito2.getTipoNegociacao());
+	}
+
+	@Test(expected = ParadigmaIntegracaoException.class)
+	public void deveRecusarTipoDeNegociacaoInvalido() {
+		CotacaoModel sujeito2 = new CotacaoModel();
+		sujeito2.setTipoNegociacao(8);
+		assertEquals(8, sujeito2.getTipoNegociacao());
+	}
+
+}

@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS USUARIO;
+
+CREATE TABLE USUARIO (
+  sCdUsuario VARCHAR(255) NOT NULL,
+  sNmUsuario VARCHAR(255) NOT NULL
+);
+
+INSERT INTO USUARIO (sCdUsuario, sNmUsuario) VALUES
+('123', 'João'),
+('456', 'Maria'),
+('789', 'Pedro');

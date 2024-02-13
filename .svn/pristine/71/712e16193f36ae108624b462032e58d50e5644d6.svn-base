@@ -1,0 +1,12 @@
+MAV:
+CAMED - CADASTRO DE UNIDADE DE MEDIDA
+MATRI - CADASTRO DE MATRICULAS
+CAMAT
+CAESP - (ESTA TELA DEVE SER CHAMADA PELA TELA CAMAT)
+EXMAT - 
+CAEXI - (ESTA NÃO É ATUALIZADA)
+C3003 - (Esta tela vincula o processo com suas REMAs, neste momento deve buscar na tabela CACOM os dados do processo com os materiais para gerar a cotação)
+
+ORCOM:
+M077 - MENU CADASTRO DE FORNECEDORES (entrar na opcao 8 para acessar a CCLAS para não dar erro de permissão)
+CCLAS - COMPRAS-CADAST.GRUPO/SUB-GRUPO

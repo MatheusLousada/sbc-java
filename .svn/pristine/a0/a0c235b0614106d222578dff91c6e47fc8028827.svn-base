@@ -1,0 +1,66 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.controller;
+
+import org.apache.log4j.Logger;
+
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.orgaos.Prefeitura;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.ContextoImportacao;
+
+public class AtualizacaoDeFonecedoresCnpj {
+
+	private static final String CNPJ_PREFEITURA_REMA = "43776447000160";
+
+	private static final Logger log = Logger.getLogger(AtualizacaoDeFonecedoresCnpj.class);
+
+	private String cnpj;
+
+	private ContextoImportacao ci;
+
+	public static void main(String[] args) {
+		ContextoImportacao ci = new ContextoImportacao(Ambientes.PARADIGMA_PRODUCAO, Ambientes.ORCOM_DESENVOLVIMENTO, true, new Prefeitura());
+		AtualizacaoDeFonecedoresCnpj af = new AtualizacaoDeFonecedoresCnpj(CNPJ_PREFEITURA_REMA, ci);
+		af.atualizaFornecedor();
+	}
+
+	public AtualizacaoDeFonecedoresCnpj(String cnpj, ContextoImportacao ci) {
+		this.cnpj = cnpj;
+		this.ci = ci;
+	}
+
+	/**
+	 * Vai ser mapeado pela url "/atualiza-fornecedores-cnpj" em
+	 * atualizacao-wbc-orcom => AtualizacaoFornecedoresController.java
+	 */
+	public void atualizaFornecedor() {
+
+		try {
+
+			AtualizacaoC7702Controller c7702Controller = new AtualizacaoC7702Controller(ci);
+			c7702Controller.cadastraDadosDeCnpj(cnpj);
+
+			AtualizacaoCFORXController cFORXController = new AtualizacaoCFORXController(ci);
+			cFORXController.abreConexao();
+			cFORXController.atualizaDadosCadastraisDeCnpj(cnpj);
+			cFORXController.fechaConexao();
+
+			AtualizacaoC7703Controller c7703Controller = new AtualizacaoC7703Controller(ci);
+			c7703Controller.realizaCargaDeCnpj(cnpj);
+
+			AtualizacaoC7706Controller c7706Controller = new AtualizacaoC7706Controller(ci);
+			c7706Controller.atualizaCertificadosDeCnpj(cnpj);
+
+			AtualizacaoC7708Controller c7708Controller = new AtualizacaoC7708Controller(ci);
+			c7708Controller.atualizaEnderecoDeCnpj(cnpj);
+			log.info(String.format("---<Fim importacao cnpj %s >----", cnpj));
+
+		} catch (Exception e) {
+			log.error(e);
+			for (StackTraceElement st : e.getStackTrace()) {
+				if (st.toString().startsWith("br.gov.sp")) {
+					log.error(st.toString());
+				}
+			}
+		}
+	}
+
+}

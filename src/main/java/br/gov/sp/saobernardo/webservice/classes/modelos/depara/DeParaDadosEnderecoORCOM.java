@@ -1,0 +1,127 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos.depara;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import br.gov.sp.saobernardo.orcom.c7708.C7708Bean;
+import br.gov.sp.saobernardo.orcom.cforx.CFORXBean;
+import br.gov.sp.saobernardo.webservice.classes.utils.Normalizador;
+import br.gov.sp.saobernardo.webservice.paradigma.log.ArquivoDeLog;
+
+public class DeParaDadosEnderecoORCOM {
+
+	private static final String UFLOGC = "UFLOGC";
+	private static final String SUFCORR = "SUFCORR";
+	private Map<String, String> mapa;
+	private ArquivoDeLog log;
+
+	public DeParaDadosEnderecoORCOM(ArquivoDeLog log) {
+		mapa = new HashMap<String, String>();
+		mapa.put("TIPOLOG", "TIPOLOG");
+		mapa.put("NOMELOG", "NOMELOG");
+		mapa.put("BAIRROLOG", "BAIRROLOG");
+		mapa.put("CIDLOG", "CIDLOG");
+		mapa.put("UFLOG", "UFLOG");
+
+		mapa.put("TIPOLOGC", "TIPOLOGC");
+		mapa.put("NOMELOGC", "NOMELOGC");
+		mapa.put("BAIRROLOGC", "BAIRROLOGC");
+		mapa.put("CIDLOGC", "CIDLOGC");
+		mapa.put(UFLOGC, UFLOGC); // UF para o C7708Bean
+		mapa.put(SUFCORR, SUFCORR); // UF para o CFORXBean
+
+		this.log = log;
+	}
+
+	public void logaDados(C7708Bean de, C7708Bean para) {
+		Class<? extends C7708Bean> classeC7708Bean = para.getClass();
+
+		for (Map.Entry<String, String> entry : mapa.entrySet()) {
+			try {
+				Class<? extends C7708Bean> classeEmpresaModel = de.getClass();
+				if (!entry.getKey().equals(SUFCORR)) {
+					Field campoEmpresaModel = classeEmpresaModel.getDeclaredField(entry.getValue());
+					// log.adiciona("Analisando campo '" + entry.getKey() +
+					// "'...");
+					campoEmpresaModel.setAccessible(true);
+
+					Field campoC7708Bean = classeC7708Bean.getDeclaredField(entry.getKey());
+					campoC7708Bean.setAccessible(true);
+					Object valorDe = campoEmpresaModel.get(de);
+					Object valorPara = campoC7708Bean.get(para);
+					if (valorDe != null && !valorPara.equals(valorDe)) {
+						campoC7708Bean.set(para, Normalizador.removerAcentos(valorDe.toString()));
+
+						//log.adiciona(entry.getValue(), valorPara.toString(), valorDe.toString());
+					}
+					/*
+					 * else { log.adiciona("Campo:" +
+					 * campoEmpresaModel.getName() +
+					 * ". Valor nao sera alterado no ORCOM: " + (valorDe == null
+					 * ? "valorDe NULO. Necessario corrigir no SECOM primeiro "
+					 * : (valorPara.equals(valorDe) ?
+					 * "De e Para tem o mesmo valor '" + valorPara + "'" :
+					 * "investigar o motivo"))); }
+					 */
+				}
+			} catch (IllegalArgumentException e) {
+				throw new DeParaDadosException(e);
+			} catch (IllegalAccessException e) {
+				throw new DeParaDadosException(e);
+			} catch (SecurityException e) {
+				throw new DeParaDadosException(e);
+			} catch (NoSuchFieldException e) {
+				throw new DeParaDadosException(e);
+			}
+
+		}
+	}
+
+	public void logaDados(CFORXBean de, CFORXBean para) {
+		Class<? extends CFORXBean> classeCFORXBean = para.getClass();
+
+		for (Map.Entry<String, String> entry : mapa.entrySet()) {
+			try {
+				Class<? extends CFORXBean> classeEmpresaModel = de.getClass();
+
+				if (!entry.getKey().equals(UFLOGC)) {
+					Field campoEmpresaModel = classeEmpresaModel.getDeclaredField(entry.getValue());
+					// log.adiciona("Analisando campo '" + entry.getKey() + "'...");
+					campoEmpresaModel.setAccessible(true);
+
+					Field campoCFORXBean = classeCFORXBean.getDeclaredField(entry.getKey());
+					campoCFORXBean.setAccessible(true);
+					Object valorDe = campoEmpresaModel.get(de);
+					Object valorPara = campoCFORXBean.get(para);
+					final boolean isValorDeNulo = valorDe == null;
+					if (!isValorDeNulo && !valorPara.equals(valorDe)) {
+						// log.adiciona(entry.getValue(), valorDe.toString(), valorPara.toString());
+					} else {
+						/*
+						 * log.adiciona("Campo:" + campoEmpresaModel.getName() + ". Valor nao sera alterado no ORCOM: " 
+						 * + (valorDe == null ? "valorDe NULO. Necessario corrigir no SECOM primeiro " : 
+						 * (valorPara.equals(valorDe) ? "De e Para tem o mesmo valor '" + valorPara + "'" : "investigar o motivo")));
+						 */
+						log.adiciona(mensagemStatus(campoEmpresaModel, isValorDeNulo));
+						
+					}
+				}
+			} catch (IllegalArgumentException e) {
+				throw new DeParaDadosException(e);
+			} catch (IllegalAccessException e) {
+				throw new DeParaDadosException(e);
+			} catch (SecurityException e) {
+				throw new DeParaDadosException(e);
+			} catch (NoSuchFieldException e) {
+				throw new DeParaDadosException(e);
+			}
+
+		}
+	}
+
+	private String mensagemStatus(Field campoEmpresaModel, final boolean isValorDeNulo) {
+		return isValorDeNulo ? String.format("Campo: %s valorDe NULO. Necessario corrigir no SECOM primeiro ",
+				campoEmpresaModel.getName()) : "";
+	}
+}

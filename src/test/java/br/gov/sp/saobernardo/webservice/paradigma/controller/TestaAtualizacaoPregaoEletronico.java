@@ -1,0 +1,17 @@
+package br.gov.sp.saobernardo.webservice.paradigma.controller;
+
+import br.gov.sp.saobernardo.webservice.orcom.controller.AtualizacaoC7121Controller;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+
+public class TestaAtualizacaoPregaoEletronico {
+
+	public static void main(String[] args) throws Exception {
+
+		String pregao = "PE 367/2017";
+		String processo = "01819/2017 - PE 367";
+		String ambienteWBC = Ambientes.PARADIGMA_PRODUCAO;
+		String ambienteORCOM = Ambientes.ORCOM_DESENVOLVIMENTO;
+		new AtualizacaoC7121Controller(ambienteWBC, ambienteORCOM, true).cadastraPregaoEletronico(pregao, processo, null);
+	}
+
+}

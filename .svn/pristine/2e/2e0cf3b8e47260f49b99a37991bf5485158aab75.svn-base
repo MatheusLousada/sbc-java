@@ -1,0 +1,214 @@
+/**
+ * 
+ */
+package br.gov.sp.saobernardo.webservice.paradigma.gui;
+
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+/**
+ * @author 41476
+ *
+ */
+public class Janela {
+
+	public Janela() {
+		showGUI();
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+
+		Janela janela = new Janela();
+		janela.showGUI();
+	}
+
+	private void showGUI() {
+
+		final JFrame mainFrame;
+		final JLabel headerLabel;
+		final JLabel statusLabel;
+		final JPanel controlPanel;
+		final JLabel msglabel;
+
+		mainFrame = new JFrame("Atualiza WBC-Orcom");
+		mainFrame.setSize(400, 400);
+		mainFrame.setLayout(new GridLayout(3, 1));
+		mainFrame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent windowEvent) {
+				System.exit(0);
+			}
+		});
+
+		headerLabel = new JLabel("", JLabel.CENTER);
+		statusLabel = new JLabel("", JLabel.CENTER);
+		statusLabel.setSize(350, 100);
+
+		msglabel = new JLabel("CNPJ:", JLabel.LEFT);
+
+		controlPanel = new JPanel();
+		controlPanel.setLayout(new FlowLayout());
+
+		mainFrame.add(headerLabel);
+		mainFrame.add(controlPanel);
+		mainFrame.add(statusLabel);
+		mainFrame.setVisible(true);
+
+		headerLabel.setText("Dados");
+
+		final JTextField cnpj = new JTextField(11);
+		JButton atualizar = new JButton("Atualizar Fornecedor");
+
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.BLUE);
+		panel.setLayout(new FlowLayout());
+		panel.add(msglabel);
+
+		controlPanel.add(panel);
+		controlPanel.add(cnpj);
+		controlPanel.add(atualizar);
+
+		mainFrame.setVisible(true);
+	}
+
+	/** AtualizacaoCertificadosController.java: */
+	/*
+	 * private void atualiza_certificados_cnpj() {}
+	 * 
+	 * private void atualiza_certificados(String cnpj) { }
+	 * 
+	 * private void atualiza_certificados() { }
+	 */
+	/** AtualizacaoCompraDiretaController.java: */
+	// private void atualiza_compraDireta() { }
+
+	/** AtualizacaoDadosCadastraisController.java: */
+	// private void atualizaDados_cadastrais_cnpj() { }
+
+	
+
+	@SuppressWarnings("unused")
+	private void atualizaDadosCadastrais() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaDadosCadastraisRecentes() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoEnderecoController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaEnderecosCnpj() {
+		naoImplementado();
+	}
+
+	//@SuppressWarnings("unused") 	private void atualizaEnderecos(String cnpj) {naoImplementado(); }
+
+	@SuppressWarnings("unused")
+	private void atualizaEnderecos() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoFornecedoresController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaFornecedoresCnpj() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaFornecedores() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaFornecedoresRecentes() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoMateriaisController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaMateriaisCnpj() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaMateriai(String cnpj) {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaMateriais() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoNovosFornecedoresController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedoresCnpj() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedores(String cnpj) {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNovosFornecedores() {
+		naoImplementado();
+	}
+
+	/** AtualizacaoOrcamentoController.java: */
+	@SuppressWarnings("unused")
+	private void atualizaOrcamento() {
+		naoImplementado();
+	}
+
+	//@SuppressWarnings("unused") private void atualizaOrcamento() { naoImplementado(); }
+
+	/** AtualizacaoPregaoEletronicoController.java: */
+	// @SuppressWarnings("unused") private void atualizaPregaoEletronico() {}
+
+	@SuppressWarnings("unused")
+	private void atualizaPregaoEletronico() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaEmpresas() {
+		naoImplementado();
+	}
+
+	@SuppressWarnings("unused")
+	private void atualizaNegociacoes() {
+		naoImplementado();
+	}
+
+	/** CategoriaRestController.java: */
+	@SuppressWarnings("unused")
+	private void orcomParaWbcCategoria() {
+		naoImplementado();
+	}
+
+	/** UnidadeDeMedidaRestController.java: */
+	@SuppressWarnings("unused")
+	private void orcomParaWbcUnidadeDeMedida() {
+		naoImplementado();
+	}
+	
+	private void naoImplementado() {
+			throw new RuntimeException("Metodo nao implementado");
+	}
+}

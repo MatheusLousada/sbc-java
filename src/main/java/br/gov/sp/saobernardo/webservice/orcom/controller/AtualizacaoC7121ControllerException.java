@@ -1,0 +1,39 @@
+package br.gov.sp.saobernardo.webservice.orcom.controller;
+
+public class AtualizacaoC7121ControllerException extends RuntimeException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * 
+	 */
+	public AtualizacaoC7121ControllerException() {
+		super();
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public AtualizacaoC7121ControllerException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
+	 * @param message
+	 */
+	public AtualizacaoC7121ControllerException(String message) {
+		super(message);
+	}
+
+	/**
+	 * @param cause
+	 */
+	public AtualizacaoC7121ControllerException(Throwable cause) {
+		super(cause);
+	}
+
+}

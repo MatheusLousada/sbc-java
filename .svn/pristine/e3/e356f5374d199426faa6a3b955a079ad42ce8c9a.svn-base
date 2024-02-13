@@ -1,0 +1,71 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+class AbstractDAO {
+	private Statement stmt;
+	private PreparedStatement ps;
+	private ResultSet rs;
+	private Connection con;
+
+	private AbstractDAO(Connection connection) {
+		con = connection;
+		stmt = null;
+		ps = null;
+		rs = null;
+	}
+
+	
+	/**
+	 * Reestruturar melhor para usar este metodo close geral
+	 * @param query
+	 * @return
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unused")
+	
+	private ResultSet getRs(String query) throws SQLException {
+		ps = con.prepareStatement(query);
+		rs = ps.executeQuery();
+		return rs;
+	}
+
+	/**
+	 * 
+	 * Reestruturar melhor para usar este metodo close geral
+	 * 
+	 * @throws SQLException
+	 */
+	@SuppressWarnings("unused")
+	private void close() throws SQLException {
+
+		if (null != rs)
+			rs.close();
+		if (null != ps)
+			ps.close();
+		if (null != stmt)
+			stmt.close();
+
+	}
+
+/*	public void close(Statement stmt, PreparedStatement ps, ResultSet rs) {
+
+		try {
+			if (null != rs)
+				rs.close();
+			if (null != ps)
+				ps.close();
+			if (null != stmt)
+				stmt.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	*/
+}

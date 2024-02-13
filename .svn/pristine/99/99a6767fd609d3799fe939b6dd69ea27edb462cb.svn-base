@@ -1,0 +1,27 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos;
+
+import java.math.BigDecimal;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+
+/**
+ * @author 41476
+ *
+ */
+public interface ItemModel {
+
+	public XMLGregorianCalendar getDataLance();
+
+	public String getMarca();
+
+	public BigDecimal getValorLance();
+
+	public String getNumeroDoRegistro();
+
+	String getCodigoEmpresa();
+
+	int getNumeroRanking();
+
+	boolean isLanceValido();
+
+}

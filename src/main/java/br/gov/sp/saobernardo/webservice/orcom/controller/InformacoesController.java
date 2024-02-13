@@ -1,0 +1,43 @@
+package br.gov.sp.saobernardo.webservice.orcom.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class InformacoesController {
+
+	public InformacoesController(String ambiente) {
+
+		List<String> s = new ArrayList<String>();
+
+		adicionaValores(s);
+
+	}
+
+	/**
+	 * @param s
+	 */
+	private void adicionaValores(List<String> s) {
+		Map<String, Object> m = new HashMap<String, Object>();
+
+		m.put("C7121", br.gov.sp.saobernardo.orcom.c7121.Servico.values());
+		m.put("C7184", br.gov.sp.saobernardo.orcom.c7184.Servico.values());
+		m.put("C7701", br.gov.sp.saobernardo.orcom.c7701.Servico.values());
+		m.put("C7702", br.gov.sp.saobernardo.orcom.c7702.Servico.values());
+		m.put("C7703", br.gov.sp.saobernardo.orcom.c7703.Servico.values());
+		m.put("C7706", br.gov.sp.saobernardo.orcom.c7706.Servico.values());
+		m.put("C7707", br.gov.sp.saobernardo.orcom.c7707.Servico.values());
+		m.put("C7708", br.gov.sp.saobernardo.orcom.c7708.Servico.values());
+		m.put("C7942", br.gov.sp.saobernardo.orcom.c7942.Servico.values());
+		m.put("CFORX", br.gov.sp.saobernardo.orcom.cforx.Servico.values());
+		m.put("M071", br.gov.sp.saobernardo.orcom.m071.Servico.values());
+		m.put("M077", br.gov.sp.saobernardo.orcom.m077.Servico.values());
+		m.put("M079", br.gov.sp.saobernardo.orcom.m079.Servico.values());
+		
+		for (String x : m.keySet()) {
+			s.add(x.toString());
+		}
+	}
+
+}

@@ -1,0 +1,26 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos;
+
+public class OcupacaoModel {
+
+	private static final Long VAZIO = -1L;
+	private Long codigo = VAZIO;
+	private String descricao = "";
+
+	public OcupacaoModel(Long codigo, String descricao) {
+		super();
+		this.codigo = codigo;
+		this.descricao = descricao;
+	}
+
+	public Long getCodigo() {
+		return codigo;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public boolean isEmpty() {
+		return codigo.equals(VAZIO);
+	}
+}

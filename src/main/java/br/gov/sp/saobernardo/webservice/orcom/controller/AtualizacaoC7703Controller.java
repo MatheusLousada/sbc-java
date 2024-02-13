@@ -1,0 +1,435 @@
+package br.gov.sp.saobernardo.webservice.orcom.controller;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import br.gov.sp.saobernardo.orcom.c7703.C7703;
+import br.gov.sp.saobernardo.orcom.c7703.C7703Bean;
+import br.gov.sp.saobernardo.orcom.c7703.C7703CopyFromBean;
+import br.gov.sp.saobernardo.orcom.c7703.ExtraiDadosDoCopyFromParaBean;
+import br.gov.sp.saobernardo.orcom.m077.M077;
+import br.gov.sp.saobernardo.orcom.m077.M077Bean;
+import br.gov.sp.saobernardo.orcom.menusetelas.ComandosOrcom;
+import br.gov.sp.saobernardo.orcom.menusetelas.MenuOrcomM077;
+import br.gov.sp.saobernardo.orcom.menusetelas.TelaC7703;
+import br.gov.sp.saobernardo.webservice.classes.modelos.BuscadorCodigoFornecedor;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.MaterialModel;
+import br.gov.sp.saobernardo.webservice.classes.utils.ContextoImportacao;
+import br.gov.sp.saobernardo.webservice.orcom.dao.UsuarioSenha;
+import br.gov.sp.saobernardo.webservice.paradigma.connections.Conexao;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Conexoes;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.EmpresaDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.MaterialDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.log.ArquivoDeLog;
+
+public class AtualizacaoC7703Controller {
+
+	private static final String REMOVENDO_GRUPOS_E_SUBGRUPO = "Removendo: grupo[%s] subgrupo[%s]";
+	Conexao conexaoParadigma;
+	EmpresaDAO empresaDAO;
+	MaterialDAO materialDAO;
+	private ArquivoDeLog log;
+	private String ambienteORCOM;
+
+	public AtualizacaoC7703Controller(String ambienteWBC, String ambienteORCOM, boolean imprimirQuery)
+			throws Exception {
+
+		iniciar(ambienteWBC, ambienteORCOM, imprimirQuery, new ArquivoDeLog());
+	}
+
+	public AtualizacaoC7703Controller(String ambienteWBC, String ambienteORCOM, boolean imprimirQuery, Logger log)
+			throws Exception {
+		iniciar(ambienteWBC, ambienteORCOM, imprimirQuery, new ArquivoDeLog(log));
+
+	}
+
+	public AtualizacaoC7703Controller(String ambienteWBC, String ambienteORCOM, boolean imprimirQuery, ArquivoDeLog log)
+			throws Exception {
+		iniciar(ambienteWBC, ambienteORCOM, imprimirQuery, log);
+	}
+
+	public AtualizacaoC7703Controller(ContextoImportacao ci) throws Exception {
+		iniciar(ci.getOrigem(), ci.getOrigem(), ci.getImprimirQuery(), new ArquivoDeLog());
+	}
+
+	private void iniciar(String ambienteWBC, String ambienteORCOM, boolean imprimirQuery, ArquivoDeLog log)
+			throws Exception {
+		conexaoParadigma = new Conexoes().getConexao(ambienteWBC);
+		conexaoParadigma.conecta();
+		// aqui eu preciso apenas passar o tipo
+		empresaDAO = new EmpresaDAO(conexaoParadigma.getConnection(), imprimirQuery);
+		materialDAO = new MaterialDAO(conexaoParadigma.getConnection(), imprimirQuery);
+		this.log = log;
+		this.ambienteORCOM = ambienteORCOM;
+	}
+
+	public void realizaCargaDeCnpj(String cnpj) {
+		UsuarioSenha usuario = new UsuarioSenha();
+		try {
+			EmpresaModel empresa = empresaDAO.buscaPeloCnpj(cnpj);
+			String msgCodFornecedor = "Fornecedor:<codigo ORCOM ainda nao foi atribuido>";
+			if (null != empresa.getCodigoFornecedor()) {
+				msgCodFornecedor = "Fornecedor:" + empresa.getCodigoFornecedor();
+			}
+			log.adiciona(msgCodFornecedor);
+			log.adiciona("CNPJ:" + empresa.getCnpj());
+
+			String fornecedor = new BuscadorCodigoFornecedor().buscaCodigoDe(empresa.getCnpj(), ambienteORCOM);
+
+			log.adiciona("Codigo fornecedor do ORCOM:" + fornecedor);
+			if (null != fornecedor) {
+				empresa.setCodigoFornecedor(fornecedor);
+			}
+
+			if (empresa.getSituacao().getSituacaoEmpresa() == 0) {
+				log.erro("Fornecedor Inativo.");
+				return;
+			}
+
+			log.adiciona( "Vinculado com grupo e classe");
+			List<MaterialModel> materiais = materialDAO
+					.buscaPeloCodigoDeEmpresaParadigma(Long.parseLong(empresa.getCodigoEmpresa()));
+			empresa.setMateriais(materiais);
+
+			M077 telaDoMenu = new MenuOrcomM077(ambienteORCOM).getMenu();
+			M077Bean dadosDaTelaDeMenu = telaDoMenu.loadPage();
+			dadosDaTelaDeMenu.setOPCAO2(MenuOrcomM077.MENU_ORCOM_M077_OPCAO_04_VINCULACAO_COM_O_GRUPO_CLASSE);
+			telaDoMenu.submit(dadosDaTelaDeMenu);
+
+			C7703 telaVinculoFornecedorClasseDeMaterial = new TelaC7703(telaDoMenu, ambienteORCOM).getTela();
+			C7703Bean dadosVinculados = telaVinculoFornecedorClasseDeMaterial.redirecionadaDaTela();
+			dadosVinculados.setORD_TFORN(empresa.getCodigoFornecedor());
+			dadosVinculados.setOPCAO3(br.gov.sp.saobernardo.orcom.menusetelas.ComandosOrcom.INQ.toString());
+			dadosVinculados = telaVinculoFornecedorClasseDeMaterial.executa(dadosVinculados, false);
+
+			List<C7703CopyFromBean> listaDoORCOM = dadosVinculados.getListaDeCopyFrom();
+
+			List<C7703CopyFromBean> listaDaParadigma = new ArrayList<C7703CopyFromBean>();
+
+			for (MaterialModel material : empresa.getMateriais()) {
+				if( material.getGrupo() == null || material.getSubGrupo() == null ) {
+					log.adiciona( "Erro : Grupo ou SubGrupo Nao definido para [" +material.getDescricao() +"]");
+				}
+				C7703CopyFromBean copyFromBean = new C7703CopyFromBean();
+				copyFromBean.setGRUPO1(material.getGrupo());
+				copyFromBean.setSUB_GRUPO1(material.getSubGrupo());
+				listaDaParadigma.add(copyFromBean);
+			}
+
+			List<C7703CopyFromBean> listaParaDelecao = removeGruposESubGrupos(listaDaParadigma, listaDoORCOM);
+
+			for (int pagina = 0; pagina <= (listaParaDelecao.size() - 1) / 4; pagina++) {
+				C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+				dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+				dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+				dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.CHG.toString());
+				dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+				dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+				List<C7703CopyFromBean> listaParaDelecao2 = new ArrayList<C7703CopyFromBean>();
+				for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+					if (registro <= listaParaDelecao.size() - 1) {
+						listaParaDelecao2.add(listaParaDelecao.get(registro));
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaDelecao2);
+					}
+				}
+				ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+						dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+				telaVinculoFornecedorClasseDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+			}
+
+			List<C7703CopyFromBean> listaParaInsercao = new ArrayList<C7703CopyFromBean>();
+
+			for (C7703CopyFromBean paradigma : listaDaParadigma) {
+				if (!listaDoORCOM.contains(paradigma)) {
+					log.adiciona("Cadastrando: " + paradigma.getGRUPO1() + paradigma.getSUB_GRUPO1());
+					listaParaInsercao.add(paradigma);
+				}
+
+			}
+
+			for (int pagina = 0; pagina <= (listaParaInsercao.size() - 1) / 4; pagina++) {
+				C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+				dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+				dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+				dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.ADD.toString());
+				dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+				dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+				List<C7703CopyFromBean> listaParaInsercao2 = new ArrayList<C7703CopyFromBean>();
+				for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+					if (registro <= listaParaInsercao.size() - 1) {
+						listaParaInsercao2.add(listaParaInsercao.get(registro));
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaInsercao2);
+					}
+				}
+				ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+						dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+				telaVinculoFornecedorClasseDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+			}
+			log.adiciona("fim");
+
+		} catch (Exception e) {
+			log.excecao(e);
+		}
+	}
+
+	public void atualizaMateriaisDeEmpresas() {
+		UsuarioSenha usuario = new UsuarioSenha();
+		try {
+			for (EmpresaModel empresa : empresaDAO.buscaDadosCadastraisDeEmpresas()) {
+				log.adiciona("Fornedor: " + empresa.getCodigoFornecedor());
+				log.adiciona("CNPJ: " + empresa.getCnpj());
+
+				String fornecedor = new BuscadorCodigoFornecedor().buscaCodigoDe(empresa.getCnpj(), ambienteORCOM);
+
+				log.adiciona("Codigo fornecedor do ORCOM:" + fornecedor);
+				if (null != fornecedor) {
+					empresa.setCodigoFornecedor(fornecedor);
+				}
+
+				List<MaterialModel> materiais = materialDAO
+						.buscaPeloCodigoDeEmpresaParadigma(Long.parseLong(empresa.getCodigoEmpresa()));
+				empresa.setMateriais(materiais);
+
+				if (!empresa.getMateriais().isEmpty()) {
+					log.adiciona( "Vinculando grupo e classe");
+					
+					M077 telaDoMenu = new MenuOrcomM077(ambienteORCOM).getMenu();
+					M077Bean dadosDaTelaDeMenu = telaDoMenu.loadPage();
+					dadosDaTelaDeMenu.setOPCAO2(MenuOrcomM077.MENU_ORCOM_M077_OPCAO_04_VINCULACAO_COM_O_GRUPO_CLASSE);
+					telaDoMenu.submit(dadosDaTelaDeMenu);
+
+					// C7703 telaDeLigacaoDeMaterial = new C7703(telaDoMenu, TESTE, ambienteORCOM);
+					C7703 telaDeLigacaoDeMaterial = new TelaC7703(telaDoMenu, ambienteORCOM).getTela();
+					C7703Bean dadosDaTelaDeLigacao = telaDeLigacaoDeMaterial.redirecionadaDaTela();
+
+					if (null != empresa.getCodigoFornecedor()) {
+						dadosDaTelaDeLigacao.setORD_TFORN(empresa.getCodigoFornecedor());
+					}
+
+					dadosDaTelaDeLigacao.setOPCAO3(ComandosOrcom.INQ.toString());
+					dadosDaTelaDeLigacao = telaDeLigacaoDeMaterial.executa(dadosDaTelaDeLigacao, false);
+
+					List<C7703CopyFromBean> listaDoORCOM = dadosDaTelaDeLigacao.getListaDeCopyFrom();
+
+					List<C7703CopyFromBean> listaDaParadigma = new ArrayList<C7703CopyFromBean>();
+
+					for (MaterialModel material : empresa.getMateriais()) {
+						if( material.getGrupo() == null || material.getSubGrupo() == null ) {
+							log.adiciona( "Erro : Grupo ou SubGrupo Nao definido para [" +material.getDescricao() +"]");
+						}
+						C7703CopyFromBean copyFromBean = new C7703CopyFromBean();
+						copyFromBean.setGRUPO1(material.getGrupo());
+						copyFromBean.setSUB_GRUPO1(material.getSubGrupo());
+						listaDaParadigma.add(copyFromBean);
+					}
+
+					List<C7703CopyFromBean> listaParaDelecao = removeGruposESubGrupos(listaDaParadigma, listaDoORCOM);
+
+					for (int pagina = 0; pagina <= (listaParaDelecao.size() - 1) / 4; pagina++) {
+						C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+						dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+						dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.CHG.toString());
+						dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+						dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+						List<C7703CopyFromBean> listaParaDelecao2 = new ArrayList<C7703CopyFromBean>();
+						for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+							if (registro <= listaParaDelecao.size() - 1) {
+								listaParaDelecao2.add(listaParaDelecao.get(registro));
+								dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaDelecao2);
+							}
+						}
+						ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+								dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+						telaDeLigacaoDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+					}
+
+					List<C7703CopyFromBean> listaParaInsercao = cadastrandoGrupoESubrGrupo(listaDoORCOM,
+							listaDaParadigma);
+
+					for (int pagina = 0; pagina <= (listaParaInsercao.size() - 1) / 4; pagina++) {
+						C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+
+						if (null != empresa.getCodigoFornecedor()) {
+							dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+						}
+
+						dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.ADD.toString());
+						dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+						dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+						List<C7703CopyFromBean> listaParaInsercao2 = new ArrayList<C7703CopyFromBean>();
+						for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+							if (registro <= listaParaInsercao.size() - 1) {
+								listaParaInsercao2.add(listaParaInsercao.get(registro));
+								dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaInsercao2);
+							}
+						}
+						ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+								dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+						C7703Bean submit = telaDeLigacaoDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+
+						logarResultadoOperacao(empresa, submit.getXSEEDMSG());
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.excecao(e);
+		}
+
+	}
+
+	public void atualizaDadosCadastraisDeEmpresasAlteradasRecentemente() {
+
+		UsuarioSenha usuario = new UsuarioSenha();
+		try {
+			for (EmpresaModel empresa : empresaDAO.buscaTodasEmpresasAlteradasRecentemente()) {
+				log.adiciona("Fornedor: " + empresa.getCodigoFornecedor());
+				log.adiciona("CNPJ: " + empresa.getCnpj());
+
+				String fornecedor = new BuscadorCodigoFornecedor().buscaCodigoDe(empresa.getCnpj(), ambienteORCOM);
+
+				log.adiciona("Codigo fornecedor do ORCOM:" + fornecedor);
+				if (null != fornecedor) {
+					empresa.setCodigoFornecedor(fornecedor);
+				}
+
+				List<MaterialModel> materiais = materialDAO
+						.buscaPeloCodigoDeEmpresaParadigma(Long.parseLong(empresa.getCodigoEmpresa()));
+				empresa.setMateriais(materiais);
+
+				if (!empresa.getMateriais().isEmpty()) {
+					M077 telaDoMenu = new MenuOrcomM077(ambienteORCOM).getMenu();
+					M077Bean dadosDaTelaDeMenu = telaDoMenu.loadPage();
+					dadosDaTelaDeMenu.setOPCAO2(MenuOrcomM077.MENU_ORCOM_M077_OPCAO_04_VINCULACAO_COM_O_GRUPO_CLASSE);
+					telaDoMenu.submit(dadosDaTelaDeMenu);
+
+					C7703 telaDeLigacaoDeMaterial = new TelaC7703(telaDoMenu, ambienteORCOM).getTela();
+					C7703Bean dadosDaTelaDeLigacao = telaDeLigacaoDeMaterial.redirecionadaDaTela();
+
+					if (null != empresa.getCodigoFornecedor()) {
+						dadosDaTelaDeLigacao.setORD_TFORN(empresa.getCodigoFornecedor());
+					}
+
+					dadosDaTelaDeLigacao.setOPCAO3(ComandosOrcom.INQ.toString());
+					dadosDaTelaDeLigacao = telaDeLigacaoDeMaterial.executa(dadosDaTelaDeLigacao, false);
+
+					List<C7703CopyFromBean> listaDoORCOM = dadosDaTelaDeLigacao.getListaDeCopyFrom();
+
+					List<C7703CopyFromBean> listaDaParadigma = new ArrayList<C7703CopyFromBean>();
+
+					for (MaterialModel material : empresa.getMateriais()) {
+						C7703CopyFromBean copyFromBean = new C7703CopyFromBean();
+						copyFromBean.setGRUPO1(material.getGrupo());
+						copyFromBean.setSUB_GRUPO1(material.getSubGrupo());
+						listaDaParadigma.add(copyFromBean);
+					}
+
+					List<C7703CopyFromBean> listaParaDelecao = removeGruposESubGrupos(listaDaParadigma, listaDoORCOM);
+
+					for (int pagina = 0; pagina <= (listaParaDelecao.size() - 1) / 4; pagina++) {
+						C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+						dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+						dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.CHG.toString());
+						dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+						dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+						List<C7703CopyFromBean> listaParaDelecao2 = new ArrayList<C7703CopyFromBean>();
+						for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+							if (registro <= listaParaDelecao.size() - 1) {
+								listaParaDelecao2.add(listaParaDelecao.get(registro));
+								dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaDelecao2);
+							}
+						}
+						ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+								dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+						telaDeLigacaoDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+					}
+
+					List<C7703CopyFromBean> listaParaInsercao = cadastrandoGrupoESubrGrupo(listaDoORCOM,
+							listaDaParadigma);
+
+					for (int pagina = 0; pagina <= (listaParaInsercao.size() - 1) / 4; pagina++) {
+						C7703Bean dadosDaTelaDeLigacaoParaCadastro = new C7703Bean();
+						dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(new ArrayList<C7703CopyFromBean>());
+
+						if (null != empresa.getCodigoFornecedor()) {
+							dadosDaTelaDeLigacaoParaCadastro.setORD_TFORN(empresa.getCodigoFornecedor());
+						}
+
+						dadosDaTelaDeLigacaoParaCadastro.setOPCAO3(ComandosOrcom.ADD.toString());
+						dadosDaTelaDeLigacaoParaCadastro.setMATRICULA1(usuario.getMatricula());
+						dadosDaTelaDeLigacaoParaCadastro.setTSENHA(usuario.getSenha());
+
+						List<C7703CopyFromBean> listaParaInsercao2 = new ArrayList<C7703CopyFromBean>();
+						for (int registro = pagina * 4; registro <= 4 * (pagina + 1) - 1; registro++) {
+							if (registro <= listaParaInsercao.size() - 1) {
+								listaParaInsercao2.add(listaParaInsercao.get(registro));
+								dadosDaTelaDeLigacaoParaCadastro.setListaDeCopyFrom(listaParaInsercao2);
+							}
+						}
+						ExtraiDadosDoCopyFromParaBean.executa(dadosDaTelaDeLigacaoParaCadastro,
+								dadosDaTelaDeLigacaoParaCadastro.getListaDeCopyFrom(), 0);
+						C7703Bean submit = telaDeLigacaoDeMaterial.submit(dadosDaTelaDeLigacaoParaCadastro);
+
+						String xseedmsg = submit.getXSEEDMSG();
+						logarResultadoOperacao(empresa, xseedmsg);
+
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.excecao(e);
+		}
+
+	}
+
+	private List<C7703CopyFromBean> removeGruposESubGrupos(List<C7703CopyFromBean> listaDaParadigma,
+			List<C7703CopyFromBean> listaDoORCOM) {
+		List<C7703CopyFromBean> listaParaDelecao = new ArrayList<C7703CopyFromBean>();
+		for (C7703CopyFromBean orcom : listaDoORCOM) {
+			if (!listaDaParadigma.contains(orcom)) {
+				orcom.setOPCAO1_BWS(TelaC7703.OPCAO1_B_E_EXCLUIR);
+				log.adiciona(String.format(REMOVENDO_GRUPOS_E_SUBGRUPO, orcom.getGRUPO1(), orcom.getSUB_GRUPO1()));
+				listaParaDelecao.add(orcom);
+			}
+		}
+		return listaParaDelecao;
+	}
+
+	private List<C7703CopyFromBean> cadastrandoGrupoESubrGrupo(List<C7703CopyFromBean> listaDoORCOM,
+			List<C7703CopyFromBean> listaDaParadigma) {
+
+		List<C7703CopyFromBean> listaParaInsercao = new ArrayList<C7703CopyFromBean>();
+
+		for (C7703CopyFromBean paradigma : listaDaParadigma) {
+			if (!listaDoORCOM.contains(paradigma)) {
+				listaParaInsercao.add(paradigma);
+				log.adiciona("Cadastrando: " + paradigma.getGRUPO1() + paradigma.getSUB_GRUPO1());
+			}
+
+		}
+		return listaParaInsercao;
+	}
+
+	private void logarResultadoOperacao(EmpresaModel empresa, String xseedmsg) {
+		if ("".equals(xseedmsg.trim()) || xseedmsg.isEmpty()) {
+			final String mensagem = MessageFormat.format(
+					"Dados do fornecedor (codigo ''{0}'') submetidos com sucesso. {1}", empresa.getCodigoFornecedor(),
+					xseedmsg);
+			log.adiciona(mensagem);
+		} else {
+			log.erro(xseedmsg);
+		}
+	}
+
+}

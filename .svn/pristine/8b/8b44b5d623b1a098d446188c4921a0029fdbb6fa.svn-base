@@ -1,0 +1,57 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.UnidadeDeMedidaModel;
+
+public class ProdutoDAO {
+
+	private DAOExecutor daoEx;
+
+	public ProdutoDAO(Connection con, boolean imprimirSQL) {
+		daoEx = new DAOExecutor(con, imprimirSQL );
+	}
+
+	public ProdutoModel buscaProdutoPeloCodigoParadigma(Long nCdProduto) throws SQLException {
+		final String query = "SELECT * FROM PRODUTO WHERE nCdProduto = '" + nCdProduto + "'";
+		ProdutoModel produto = new ProdutoModel();
+
+		try {
+			 
+			ResultSet rs = daoEx.executeQuery(query);
+			while (rs.next()) {
+				produto = new ProdutoModel();
+				final String sCdProdutoEmpresa = rs.getString("sCdProdutoEmpresa");
+				final String nCdEmpresa = rs.getString("nCdEmpresa");
+				final String sDsProduto = rs.getString("sDsProduto");
+				final String sDsDetalhe = rs.getString("sDsDetalhe");
+				final Long nCdClasse = rs.getLong("nCdClasse");
+				final Long nCdUnidadeMedida = rs.getLong("nCdUnidadeMedida");
+
+				CategoriaDAO categoria = new CategoriaDAO(daoEx.getConnection(), daoEx.isImprimirSql());
+				produto.setCategoria(categoria.buscaPeloCodigoDoParadigma(nCdClasse));
+
+				produto.setCodigo(sCdProdutoEmpresa);
+				produto.setCodigoEmpresa(nCdEmpresa);
+				produto.setDescricao(sDsProduto);
+				produto.setDetalhe(sDsDetalhe);
+
+				UnidadeDeMedidaDAO unidadeMedidaDao = new UnidadeDeMedidaDAO(daoEx.getConnection(), daoEx.isImprimirSql());
+				UnidadeDeMedidaModel unidadeMedida = unidadeMedidaDao.buscaPeloCodigoDoParadigma(nCdUnidadeMedida);
+				ArrayList<UnidadeDeMedidaModel> unidadesDeMedida = new ArrayList<UnidadeDeMedidaModel>();
+				unidadesDeMedida.add(unidadeMedida);
+				produto.setUnidadesDeMedida(unidadesDeMedida);
+
+			}
+			rs.close();
+		} finally {
+			daoEx.close();
+		}
+		return produto;
+
+	}
+}

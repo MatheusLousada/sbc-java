@@ -1,0 +1,69 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/" xmlns:par="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <tem:ProcessarCotacao>         
+         <tem:lstCotacao>            
+            <par:CotacaoDTO>
+               <par:bFlRestrita>0</par:bFlRestrita>
+               <par:bFlTermo>1</par:bFlTermo>
+               <par:lstCotacaoItemDTO>                  
+                  <par:CotacaoItemDTO>
+                     <par:bFlCalculaReferencia>1</par:bFlCalculaReferencia>
+                     <par:dQtItem>10</par:dQtItem>   
+			        <par:lstCotacaoItemEnderecoDTO>                        
+                        <par:CotacaoItemEnderecoDTO>
+                           <par:dQtEntrega>10</par:dQtEntrega>
+                           <par:nSqItemEndereco>1</par:nSqItemEndereco>                           
+                           <par:sCdCobrancaEndereco i:nil="true"/>                           
+                           <par:sCdEmpresaCobrancaEndereco>46523239000147</par:sCdEmpresaCobrancaEndereco>                           
+                           <par:sCdEmpresaEntregaEndereco>46523239000147</par:sCdEmpresaEntregaEndereco>                           
+                           <par:sCdEmpresaFaturamentoEndereco>46523239000147</par:sCdEmpresaFaturamentoEndereco>                           
+                           <par:sCdEntregaEndereco i:nil="true"/>                           
+                           <par:sCdFaturamentoEndereco i:nil="true"/>                           
+                           <par:sCdItemRequisicaoEmpresa i:nil="true"/>
+                           <par:sCdRequisicaoEmpresa i:nil="true"/>
+                           <par:tDtEntrega>2018-12-31T10:50:00</par:tDtEntrega>
+                        </par:CotacaoItemEnderecoDTO>
+                     </par:lstCotacaoItemEnderecoDTO>			                      
+                     <par:lstCotacaoItemParticipanteDTO/>                                                               
+                     <par:lstCotacaoItemTaxaDTO>
+                        <!--Zero or more repetitions:-->
+                        <par:CotacaoItemTaxaDTO>
+                           <par:bFlIncluso>1</par:bFlIncluso>                           
+                           <par:nCdTaxa>1</par:nCdTaxa>
+                        </par:CotacaoItemTaxaDTO>
+                     </par:lstCotacaoItemTaxaDTO>
+                     <par:lstCotacaoPropostaDTO i:nil="true"/>       
+                     <par:nCdAplicacao>1</par:nCdAplicacao>
+                     <par:nCdSituacao>1</par:nCdSituacao>
+                     <par:sCdClasse>7560</par:sCdClasse>
+                     <par:sCdCondicaoPagamento>54542011</par:sCdCondicaoPagamento> 
+					 <par:sCdCotacao i:nil="true"/>  
+                     <par:sCdItemEmpresa i:nil="true"/>  
+					 <par:sCdProduto>7L007010732</par:sCdProduto>					 
+                     <par:sCdUnidadeMedida>00640</par:sCdUnidadeMedida>					 
+                     <par:sDsItem>TST INTEGRACAO PBS II</par:sDsItem>
+                     <par:sDsJustificativa>TST INTEGRACAO PBS II</par:sDsJustificativa>
+                  </par:CotacaoItemDTO>
+               </par:lstCotacaoItemDTO>
+			   <par:lstCotacaoMoedaDTO/>
+               <par:lstCotacaoParticipanteDTO/>                                 
+               <par:nCdSituacao>1</par:nCdSituacao>
+               <par:nIdTipoNegociacao>0</par:nIdTipoNegociacao>			   
+			   <par:sCdCotacaoERP>03022018</par:sCdCotacaoERP>
+			   <par:sCdEmpresa>46523239000147</par:sCdEmpresa>
+               <par:sCdFrete>C</par:sCdFrete>
+               <par:sCdMoeda>1</par:sCdMoeda>
+               <par:sCdUsuario>suportepta</par:sCdUsuario>
+               <par:sDsCotacao>TST INTEGRACAO PBS</par:sDsCotacao>
+			   <par:sDsTermo><![CDATA[Declaro, expressamente, sob as penas da lei que:
+1. Me responsabilizo pela autenticidade e procedência dos bens e qualidade dos serviços que cotar;
+2. No valor unitário estão inclusos todos os impostos, inclusive as despesas com frete.
+3. Estou ciente que a presente cotação de preço não configura proposta de fornecimento.]]></par:sDsTermo>
+               <par:tDtFinal>2017-12-31T10:50:00</par:tDtFinal>
+               <par:tDtInicial>2017-12-31T10:50:00</par:tDtInicial>
+            </par:CotacaoDTO>
+         </tem:lstCotacao>
+      </tem:ProcessarCotacao>
+   </soapenv:Body>
+</soapenv:Envelope>

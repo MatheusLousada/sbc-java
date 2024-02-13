@@ -1,0 +1,24 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service.conversores;
+
+import br.gov.sp.saobernardo.paradigma.ws.compradireta.CompraDiretaItemTaxaDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta.CompraDiretaItemTaxaModel;
+
+public class CompraDiretaItemTaxaConversor implements DePara<CompraDiretaItemTaxaModel, CompraDiretaItemTaxaDTO> {
+
+	@Override
+	public CompraDiretaItemTaxaModel converteParaModel(CompraDiretaItemTaxaDTO dto) {
+		CompraDiretaItemTaxaModel taxa = new CompraDiretaItemTaxaModel();
+		taxa.setCodigoTaxa(dto.getNCdTaxa());
+		taxa.setCodigoEmpresaEntrega(dto.getBFlIncluso());
+		return taxa;
+	}
+
+	@Override
+	public CompraDiretaItemTaxaDTO converteParaDTO(CompraDiretaItemTaxaModel model) {
+		CompraDiretaItemTaxaDTO taxa = new CompraDiretaItemTaxaDTO();
+		taxa.setNCdTaxa(model.getCodigoTaxa());
+		taxa.setBFlIncluso(model.getCodigoEmpresaEntrega());
+		return taxa;
+	}
+
+}

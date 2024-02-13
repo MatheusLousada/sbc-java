@@ -1,0 +1,169 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * @author 41476 ChatGPT
+ *
+ */
+public class DAOExecutor {
+
+	// private Statement stmt;
+	private Connection connection;
+	private PreparedStatement preparedStatement;
+	private ResultSet resultSet;
+	private boolean imprimirSql;
+	private String sql;
+	private Map<Integer, Object> objs;
+	private int pos;
+
+	public DAOExecutor(Connection connection, boolean imprimirSQL) {
+		configuracaoInterna(connection, imprimirSQL);
+	}
+
+	public DAOExecutor(Connection connection) {
+		configuracaoInterna(connection, false);
+	}
+
+	private void configuracaoInterna(Connection connection, boolean imprimirSQL) {
+		this.connection = connection;
+		this.imprimirSql = imprimirSQL;
+		pos = 0;
+		objs = new HashMap<>();
+	}
+
+	public Connection getConnection() {
+		return this.connection;
+	}
+
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
+
+	public void setSql(StringBuilder sql) {
+		this.setSql(sql.toString());
+	}
+
+	/**
+	 * Se precisar adicionar outros tipos para manipular, consultar:
+	 * 
+	 * @see <a href=
+	 *      "https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html">javadoc</a>
+	 * @param sql
+	 * @param params
+	 * @return
+	 * @throws SQLException
+	 */
+	public ResultSet executeQuery() throws SQLException {
+		preparedStatement = connection.prepareStatement(sql);
+
+		int i = 1;
+		int total = StringUtils.countMatches(sql, '?');
+
+		if (total > 0) {
+			for (Object key : objs.keySet()) {
+				Object param = objs.get(key);
+				if (param instanceof Long) {
+					preparedStatement.setLong(i, (Long) param);
+				} else if (param instanceof Integer) {
+					preparedStatement.setInt(i, (Integer) param);
+				} else if (param instanceof BigDecimal) {
+					preparedStatement.setBigDecimal(i, (BigDecimal) param);
+				} else if (param instanceof String) {
+					preparedStatement.setString(i, (String) param);
+				} else if (param instanceof java.sql.Date) {
+					preparedStatement.setDate(i, (java.sql.Date) param);
+				} else {
+					throw new IllegalArgumentException(
+							"Unsupported parameter type: " + param.getClass().getSimpleName());
+				}
+				i++;
+				if (i > total) {
+					break;
+				}
+			}
+		}
+		if (imprimirSql) {
+			System.out.println(toString());
+		}
+
+		resultSet = preparedStatement.executeQuery();
+
+		return resultSet;
+	}
+
+	public void close() throws SQLException {
+		if (resultSet != null) {
+			resultSet.close();
+		}
+		if (preparedStatement != null) {
+			preparedStatement.close();
+		}
+	}
+
+	public void closeConnection() throws SQLException {
+		if (connection != null) {
+			connection.close();
+		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder queryStringBuilder = new StringBuilder(sql);
+		@SuppressWarnings("unused")
+		int paramIndex = 1;
+		final String placeholder = "?";// + paramIndex;
+
+		for (Integer p : objs.keySet()) {
+			Object param = objs.get(p);
+			String paramValue;
+			if (param instanceof String) {
+				paramValue = "'" + param + "'";
+			} else if (param instanceof java.sql.Date) {
+				paramValue = "'" + param.toString() + "'";
+			} else {
+				paramValue = param.toString();
+			}
+			int placeholderIndex = queryStringBuilder.indexOf(placeholder);
+			if (placeholderIndex != -1) {
+				queryStringBuilder.replace(placeholderIndex, placeholderIndex + placeholder.length(), paramValue);
+			}
+			paramIndex++;
+		}
+		return queryStringBuilder.toString();
+	}
+
+	public ResultSet executeQuery(String query) throws SQLException {
+		this.sql = query;
+		return executeQuery();
+	}
+
+	public ResultSet executeQuery(StringBuilder query) throws SQLException {
+
+		return executeQuery(query.toString());
+
+	}
+
+	public DAOExecutor clearResetParameters() {
+		objs.clear();
+		pos = 0;
+		return this;
+	}
+
+	public void addParameter(Object param) {
+		objs.put(pos, param);
+		pos++;
+	}
+
+	public boolean isImprimirSql() {
+		return this.imprimirSql;
+	}
+}

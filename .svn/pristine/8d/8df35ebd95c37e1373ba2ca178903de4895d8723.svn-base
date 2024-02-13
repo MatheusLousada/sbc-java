@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<panel columns="1" gap="3">
+
+	<tabbedpane name="tabbedPanes" selected="0" weightx="1" weighty="1" action="tabChanged(this)">
+		
+		<tab text="Licitacoes" icon="/img/money.gif" name="tabNegocios">
+			<tabbedpane name="tabbedPaneNegociacoes" selected="0" weightx="1" weighty="1" action="tabChanged(this)">
+				<tab text="Licitacao" name="licitacao">
+					<panel columns="4" gap="4">
+						<separator colspan="4" />
+						<!-- label text="Ano"       colspan="1" /  combobox  name="anoLC"      editable="false" columns="5" /  label text=" " colspan="2"/ 
+						 label text="Licitacao" colspan="1" /  textfield name="numeroLC"   editable="true"  columns="10" /  label text=" " colspan="2"/ 
+						 label text="Processo"  colspan="1" /  textfield name="processoLC" editable="true"  columns="20" /  label text=" " colspan="2"/ 
+						-->
+						<panel columns="3" gap="4" colspan="4">
+							<label text="Ano       "/><label text="Licitacao   "  /><label text="Processo"   />
+						</panel>
+						<panel columns="3" gap="4" colspan="4">
+							<combobox  name="anoLC"      editable="false" columns="5" /> 
+							<textfield name="numeroLC"   editable="true"  columns="10" /> 
+							<textfield name="processoLC" editable="true"  columns="20" /> 
+						</panel>
+						
+						
+						<separator colspan="4" />
+						
+						<panel  columns="3" gap="4" >
+						<label text="Buscar em Producao" colspan="4" />
+							<checkbox text="PE" name="tipoPE" group="cbTipoLicitacao" action="carregaCombos"/>
+							<checkbox text="CE" name="tipoCE" group="cbTipoLicitacao" action="carregaCombos"/>
+						</panel>
+						<separator colspan="4" />
+						<combobox  name="pregoesImportaveis" editable="false" columns="40" action="atualizaCamposLicitacoes" colspan="3"/>
+						<separator colspan="4" />
+						
+						<button text="Importar CE-Compra Direta"      alignment="center" tooltip="Compra Direta"     action="cadastraCompraDireta"     icon="/conf/img/refresh.gif" />
+						<button text="Importar PE-Pregao Eletronico"  alignment="center" tooltip="Pregao Eletronico" action="atualizaPregaoEletronico" icon="/conf/img/refresh.gif" />
+						
+					</panel>				
+				</tab>
+				<tab text="Orcamento" name="orcamento">
+					<panel columns="2" gap="4">
+					
+						 
+						<label text="Filtrar" colspan="2" />
+						<checkbox text="Somente Encerradas ?" colspan="2"  name="somenteCotacoesEncerradas" action="carregaCombos"/> 
+						<label text="Ano" colspan="1" /><label text="Mes" colspan="1" />
+						
+						<combobox colspan="1" name="anoCot" editable="false" columns="3" action="carregaCombos" />
+						<combobox colspan="1" name="mesCot" editable="false" columns="3" action="carregaCombos" />
+				 
+						<label text="Processo"  colspan="1" />
+						<textfield colspan="1" name="processoCot" editable="true"  columns="10" />
+					 
+						<label text="Buscar em Producao" colspan="1" />
+						<combobox  name="cotacoesImportaveis" editable="false"  action="atualizaCamposCotacao" colspan="1"/> <!-- columns="20" --> 
+  
+  						<label text="Cotacao" colspan="1"/>
+  						<panel columns="2" gap="4">
+							<button text="Importar"      action="atualizaOrcamento"    colspan="1" alignment="center" tooltip="Inserir cotacoes"          icon="/conf/img/refresh.gif" />
+							<button text="Excluir ORCOM" action="excluiOrcamentoOrcom" colspan="1" alignment="center" tooltip="Excluir cotacoes do ORCOM" icon="/conf/img/refresh.gif" />
+  						</panel>
+						
+					</panel>	
+				</tab>
+			</tabbedpane>
+		</tab>
+
+		<tab text="Empresa" icon="/img/company.gif" name="tabEmpresas">		
+			<panel columns="1" top="4" left="4" bottom="4" right="4" gap="4">
+				<tabbedpane name="tabbedPaneEmpresas" selected="0" weightx="1" weighty="1" action="tabChanged(this)">
+					<tab text="Geral" name="tabAtualizacaoGeral">
+						<panel columns="4" top="4" left="4" bottom="4" right="4" gap="4">
+							<label text="CNPJ" /><textfield name="cnpjAC"       editable="true"  columns="14" colspan="3" />
+							<separator colspan="4" />					
+							<label text="Atualizar ->" />		
+							<button text="Dados Cadastrais por CNPJ" alignment="center" tooltip="atualizar dados cadastrais por CNPJ" action="atualizaDadosCadastrais" icon="/conf/img/refresh.gif" />
+							<button text="Fornecedor"                alignment="center" tooltip="Atualizar Dados do fornecedor"       action="atualizaFornecedoresCnpj" icon="/conf/img/refresh.gif" />
+						</panel>
+					</tab>
+					<tab text="Certificados" name="tabCertificados" >
+						<panel columns="4" top="4" left="4" bottom="4" right="4" gap="4">
+							<label text="Origem e Destino da importacao" colspan="4" />
+							<separator colspan="4" />
+							<label text="CNPJ" />                <textfield name="cnpjCertf"       editable="true"  columns="14" colspan="3" />
+							<separator colspan="4" />							
+							<button text="Atualizar Certificado" alignment="center" tooltip="atualizar Certificado" action="atualizaCertificados" icon="/conf/img/refresh.gif" />
+						</panel>
+					</tab>
+					<tab text="Certidoes" name="tabAtualizaCertidoes">
+	  					<panel columns="4" top="4" left="4" bottom="4" right="4" gap="4">
+							<label text="Origem e Destino da importacao" colspan="4" />
+							<separator colspan="4" />
+							<label text="CNPJ" />
+							<textfield name="cnpjCertidao"       editable="true"  columns="14" colspan="3" />
+							<separator colspan="4" />
+							<button text="Atualizar Certidao" alignment="center" tooltip="atualizar Certidao" action="atualizaCertidao" icon="/conf/img/refresh.gif" />
+						</panel>
+					</tab>
+				</tabbedpane>
+			</panel>
+		</tab>
+	</tabbedpane>
+	<panel columns="4" top="4" left="4" bottom="4" right="4" gap="4">
+		<label text="Origem e Destino da importacao" colspan="4" />
+		<separator colspan="4" />
+		<label text="Origem"   colspan="1" /><combobox  name="cmbOrigem"  editable="false" columns="30" />
+		<label text="Destino"  colspan="1" /><combobox  name="cmbDestino" editable="false" columns="30" />
+		<label text="Ver sql?" colspan="1" /><checkbox  name="viewSql"    text="CheckBox" selected="false"/>
+		<label text="Orgao"    colspan="1" /><combobox  name="cmbOrgao"   editable="false" columns="12" />
+		<label text=" " colspan="1" rowspan="2"/>
+	</panel>
+</panel>

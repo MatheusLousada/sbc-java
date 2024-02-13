@@ -1,0 +1,107 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos.depara;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
+import br.gov.sp.saobernardo.orcom.c7708.C7708Bean;
+import br.gov.sp.saobernardo.orcom.cforx.CFORXBean;
+import br.gov.sp.saobernardo.webservice.paradigma.log.ArquivoDeLog;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.EnderecoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Normalizador;
+
+public class DeParaDadosEndereco {
+
+//SuppressWarnings("unused")
+	private static final String CAMPO_COMPLEMENTO_VEIO_NULO = "Campo 'complemento' veio NULO do SECOM. Sera gravado ' ' (espaco) no ORCOM";
+	private Map<String, String> mapa;
+	private ArquivoDeLog log;
+
+	public DeParaDadosEndereco(ArquivoDeLog log) {
+		mapa = new HashMap<String, String>();
+		mapa.put("NOMELOG", "descricao");
+		mapa.put("BAIRROLOG", "bairro");
+		mapa.put("CIDLOG", "cidade");
+		mapa.put("UFLOG", "uf");
+		mapa.put("NUMMATRIZ", "numero");
+		mapa.put("COMPMATRIZ", "complemento");
+
+		this.log = log;
+	}
+
+	public void populaDados(EnderecoModel de, C7708Bean para)
+			throws IllegalAccessException, NoSuchFieldException, SecurityException {
+		Class<? extends C7708Bean> classeC7708Bean = para.getClass();
+
+		for (Map.Entry<String, String> entry : mapa.entrySet()) {
+			Class<? extends EnderecoModel> classeEmpresaModel = de.getClass();
+			Field campoEmpresaModel = classeEmpresaModel.getDeclaredField(entry.getValue());
+			campoEmpresaModel.setAccessible(true);
+
+			Field campoC7708Bean = classeC7708Bean.getDeclaredField(entry.getKey());
+			log.adiciona("Analisando campo '" + entry.getKey() + "'...");
+			campoC7708Bean.setAccessible(true);
+			Object valorDe = campoEmpresaModel.get(de);
+			Object valorPara = campoC7708Bean.get(para);
+
+			if (valorDe != null && !valorPara.equals(valorDe)) {
+				campoC7708Bean.set(para, Normalizador.removerAcentos(valorDe.toString()));
+				log.adiciona(entry.getValue(), valorPara.toString(), valorDe.toString());
+			} else {
+				if (campoEmpresaModel.getName().equals("complemento") && valorDe == null) {
+					campoC7708Bean.set(para, " ");
+					log.adiciona(CAMPO_COMPLEMENTO_VEIO_NULO);
+				} else {
+					log.adiciona(aviso1(campoEmpresaModel, valorDe, valorPara));
+				}
+			}
+
+		}
+	}
+
+	public void populaDados(EnderecoModel de, CFORXBean para)
+			throws IllegalAccessException, NoSuchFieldException, SecurityException {
+		Class<? extends CFORXBean> classeCFORXBEAN = para.getClass();
+
+		for (Map.Entry<String, String> entry : mapa.entrySet()) {
+			Class<? extends EnderecoModel> classeEmpresaModel = de.getClass();
+			Field campoEmpresaModel = classeEmpresaModel.getDeclaredField(entry.getValue());
+			// log.adiciona("Analisando campo '" + entry.getKey() + "'...");
+			campoEmpresaModel.setAccessible(true);
+
+			Field campoCFORXBEAN = classeCFORXBEAN.getDeclaredField(entry.getKey());
+			campoCFORXBEAN.setAccessible(true);
+			Object valorDe = campoEmpresaModel.get(de);
+			Object valorPara = campoCFORXBEAN.get(para);
+			if (valorDe != null && !valorPara.equals(valorDe)) {
+				campoCFORXBEAN.set(para, valorDe);
+				// log.adiciona(entry.getValue(), valorPara.toString(), valorDe.toString());
+			} else {
+				if (campoEmpresaModel.getName().equals("complemento") && valorDe == null) {
+					campoCFORXBEAN.set(para, " ");
+					// log.adiciona(CAMPO_COMPLEMENTO_VEIO_NULO);
+					// }else {
+					// log.adiciona( aviso1(campoEmpresaModel, valorDe, valorPara));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Auxiliar para
+	 * 
+	 * @param campoEmpresaModel
+	 * @param valorDe           valor a ser comparado
+	 * @param valorPara         valor que sera adotado
+	 * @return
+	 */
+	private String aviso1(Field campoEmpresaModel, Object valorDe, Object valorPara) {
+		StringBuilder retorno = new StringBuilder();
+		retorno.append(String.format("Campo: %s. Valor nao sera alterado no ORCOM: ", campoEmpresaModel.getName()));
+		retorno.append((valorDe == null ? "valorDe NULO. Necessario corrigir no SECOM primeiro "
+				: (valorPara.equals(valorDe) ? String.format("De e Para tem o mesmo valor '%s'", valorPara)
+						: "investigar o motivo")));
+		return retorno.toString();
+	}
+
+}

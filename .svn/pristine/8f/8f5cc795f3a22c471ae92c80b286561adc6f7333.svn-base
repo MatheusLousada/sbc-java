@@ -1,0 +1,88 @@
+package br.gov.sp.saobernardo.webservice.paradigma.dao;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.compradireta.CompraDiretaItemLanceModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.pregao.PregaoEletronicoItemLanceModel;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Conversores;
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Pausa;
+
+public class CompraDiretaItemLanceDAO /* extends AbstractDAO */ {
+
+	private DAOExecutor daoEx;
+
+	public CompraDiretaItemLanceDAO(Connection con, boolean imprimirSQL) {
+		daoEx = new DAOExecutor(con, imprimirSQL);
+	}
+
+	public List<CompraDiretaItemLanceModel> buscaPeloCodigoDoParadigma(Long codigoWBCCompraDireta, Long codigoWBCItem)
+			throws SQLException {
+
+		final Pausa pausa = new Pausa();
+		
+		final String query = "SELECT * FROM P_COMPRA_DIRETA_LANCE WHERE nCdCompraDireta = ? and nCdItem = ?  ;";
+
+		List<CompraDiretaItemLanceModel> lances = new ArrayList<CompraDiretaItemLanceModel>();
+
+		try {
+
+			daoEx.addParameter(codigoWBCCompraDireta );
+			daoEx.addParameter(  codigoWBCItem);
+			ResultSet rs = daoEx.executeQuery(query);
+			while (rs.next()) {
+				CompraDiretaItemLanceModel lance = new CompraDiretaItemLanceModel();
+
+				final String nCdEmpresa = rs.getString("nCdEmpresa");
+				final String tDtLance = rs.getString("tDtLance");
+				final int nNrRanking = rs.getInt("nNrRanking");
+				final BigDecimal dVlLance = rs.getBigDecimal("dVlLance");
+				final int nStLance = rs.getInt("nStLance");
+				final String sDsJustificativa = rs.getString("sDsJustificativa");
+				// int bFlAceitabilidade = rs.getInt("bFlAceitabilidade");
+				final int bFlVencedor = rs.getInt("bFlVencedor");
+
+				final String sDsMarca = rs.getString("sDsMarca");
+				final String sDsModelo = rs.getString("sDsModelo");
+				final String sNrRegistro = rs.getString("sNrRegistro");
+				final String sDsFabricante = rs.getString("sDsFabricante");
+				final String sDsEmbalagem = rs.getString("sDsEmbalagem");
+
+				// lance.setBeneficiarioLei123(beneficiarioLei123)
+				EmpresaDAO empresaDAO = new EmpresaDAO(daoEx.getConnection(), daoEx.isImprimirSql());
+				EmpresaModel empresa = empresaDAO.buscaPeloCodigoDaParadigma(Long.valueOf(nCdEmpresa));
+
+				lance.setCodigoEmpresa(empresa.getCodigoEmpresa());
+				Conversores conversores = new Conversores(null);
+				lance.setDataLance(conversores.stringParaXMLGregorianCalendar(tDtLance));
+				lance.setNumeroRanking(nNrRanking);
+				lance.setValorLance(dVlLance);
+				// lance.setBeneficiarioLei123(bFlAceitabilidade);
+				lance.setVencedor(bFlVencedor);
+				lance.setJustificativa(sDsJustificativa);
+
+				lance.setMarca(sDsMarca);
+				lance.setModelo(sDsModelo);
+				lance.setNumeroDoRegistro(sNrRegistro);
+				lance.setFabricante(sDsFabricante);
+				lance.setsDsEmbalagem(sDsEmbalagem);
+				lance.setLanceValido(nStLance == PregaoEletronicoItemLanceModel.LANCE_VALIDO);
+				lance.setBeneficiarioLei123(empresa.getBeneficiarioLei123());
+
+				lances.add(lance);
+
+				pausa.pausa((long) 100);
+			 
+			}
+			rs.close();
+		} finally {
+			daoEx.close();
+		}
+		return lances;
+	}
+}

@@ -1,0 +1,168 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.produto.ArrayOfProdutoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.produto.IProduto;
+import br.gov.sp.saobernardo.paradigma.ws.produto.Produto;
+import br.gov.sp.saobernardo.paradigma.ws.produto.ProdutoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.produto.RetornoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.produto.RetornoListaX003CProdutoDTOX003E;
+import br.gov.sp.saobernardo.paradigma.ws.produto.WbtLogDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.CategoriaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.LogDeRetornoDaGravacao;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.ProdutoModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.UnidadeDeMedidaModel;
+
+public class ProdutoService implements ServiceGrava<ProdutoModel> {
+
+	private IProduto servico;
+	private ArrayList<ProdutoModel> produtos;
+	private QName serviceName;
+	@SuppressWarnings("unused")
+	private WSDLs wsdlUnidadeMedidaDesenvHmg;
+	@SuppressWarnings("unused")
+	private WSDLs wsdlProdutoXUnidadeMedidaDesenvHmg;
+
+	public ProdutoService(WSDLs wsdlsDoProduto, WSDLs wsdlUnidadeDeMedida, WSDLs wsdlProdutoUnidadeDeMedida) {
+		try {
+			
+			this.wsdlUnidadeMedidaDesenvHmg = wsdlUnidadeDeMedida;
+			this.wsdlProdutoXUnidadeMedidaDesenvHmg= wsdlProdutoUnidadeDeMedida;
+			
+			URL wsdlURL = new URL(wsdlsDoProduto.getValue());
+			serviceName = new QName(ServicesName.PRODUTO.getUrl(), ServicesName.PRODUTO.getServico());
+			Produto ss = new Produto(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingIProduto();
+		} catch (Exception e) {
+			System.console().writer().println(e);
+		}
+	}
+
+	@Override
+	public List<ProdutoModel> grava(List<ProdutoModel> produtos) {
+		List<ProdutoModel> retorno = new ArrayList<ProdutoModel>();
+		for (ProdutoModel produto : produtos) {
+			retorno.add(this.grava(produto));
+		}
+		return retorno;
+	}
+
+	@Override
+	public ProdutoModel grava(ProdutoModel produto) {
+		ArrayOfProdutoDTO lstProduto = new ArrayOfProdutoDTO();
+		RetornoDTO retorno;
+
+		lstProduto.getProdutoDTO().add(converteParaProdutoDTO(produto));
+
+		retorno = servico.processarProduto(lstProduto);
+
+		ProdutoModel prod = new ProdutoModel();
+		WbtLogDTO log = retorno.getLstWbtLogDTO().getWbtLogDTO().get(0);
+
+		prod.setCodigo(log.getSCdOrigem().getValue());
+		prod.setLogDaGravacao(converteParaLogDeRetornoDaGravacaoModel(log));
+
+		return prod;
+	}
+
+	private ProdutoDTO converteParaProdutoDTO(ProdutoModel produto) {
+		ProdutoDTO dto = new ProdutoDTO();
+		dto.setSCdProduto(produto.getCodigo());
+		dto.setSDsProduto(produto.getDescricao());
+		dto.setSDsDetalhe(produto.getDetalhe());
+		dto.setSCdEmpresa(produto.getCodigoEmpresa());
+		dto.setSCdClasse(produto.getCategoria().getCodigo());
+		dto.setSCdUnidadeMedida(produto.getUnidadesDeMedida().get(0).getCodigo());
+
+		return dto;
+	}
+
+	private LogDeRetornoDaGravacao converteParaLogDeRetornoDaGravacaoModel(WbtLogDTO wbtLogDTO) {
+		LogDeRetornoDaGravacao logDaGravacao = new LogDeRetornoDaGravacao();
+		logDaGravacao.setData(wbtLogDTO.getTDtLog().toString());
+		logDaGravacao.setToken(wbtLogDTO.getSNrToken().getValue());
+		logDaGravacao.setDescricao(wbtLogDTO.getSDsLog().getValue());
+		return logDaGravacao;
+	}
+
+	/** Este funciona */
+	public List<ProdutoModel> buscaProdutoPorCodigo(String sCdProduto, Integer nNrPagina) {
+		RetornoListaX003CProdutoDTOX003E lista = servico.retornarProdutoPorCodigo(sCdProduto, nNrPagina);
+		return converteListaParaProdutoModel(lista);
+	}
+
+	/** @deprecated Nao funciona. Erro de INSERT! WBC */
+	@Deprecated
+	public ProdutoModel buscaProduto(String codigoProduto) {
+		ProdutoModel produto = new ProdutoModel();
+		produto.setCodigo(codigoProduto);
+		ProdutoDTO retorno = servico.retornarProduto(codigoProduto);
+		return converteParaProdutoModel(retorno);
+	}
+
+	public List<ProdutoModel> buscaProdutoEmContratoPorDescricao(String descricaoProduto, String statusProduto,
+			int pagina) {
+		RetornoListaX003CProdutoDTOX003E lista = servico.retornarProdutoEmContratoPorDescricao(descricaoProduto,
+				statusProduto, pagina);
+		return converteListaParaProdutoModel(lista);
+	}
+
+	/**
+	 * @deprecated Gera a excecao: javax.xml.ws.soap.SOAPFaultException: The
+	 *             INSERT statement conflicted with the FOREIGN KEY
+	 *             constraint...
+	 */
+	@Deprecated
+	public List<ProdutoModel> buscaProdutoPorCategoria(String classeProduto) {
+		ArrayOfProdutoDTO lista = servico.retornarProdutoPorCategoria(classeProduto);
+		return converteListaParaProdutoModel(lista.getProdutoDTO());
+	}
+
+	public List<ProdutoModel> buscaProdutoPorDescricao(String sDsProduto, String sStProduto, Integer nNrPagina) {
+		RetornoListaX003CProdutoDTOX003E lista = servico.retornarProdutoPorDescricao(sDsProduto, sStProduto, nNrPagina);
+		return converteListaParaProdutoModel(lista);
+	}
+
+	private List<ProdutoModel> converteListaParaProdutoModel(List<ProdutoDTO> lista) {
+		for (ProdutoDTO produtoRetornado : lista) {
+			produtos.add(converteParaProdutoModel(produtoRetornado));
+		}
+		return produtos;
+	}
+
+	private List<ProdutoModel> converteListaParaProdutoModel(RetornoListaX003CProdutoDTOX003E lista) {
+		produtos = new ArrayList<ProdutoModel>();
+		List<ProdutoDTO> produtosRetornados = lista.getLstObjetoRetorno().getProdutoDTO();
+		for (ProdutoDTO produtoRetornado : produtosRetornados) {
+			produtos.add(converteParaProdutoModel(produtoRetornado));
+		}
+		return produtos;
+	}
+
+	private ProdutoModel converteParaProdutoModel(ProdutoDTO produtoDTO) {
+		ProdutoModel prod = new ProdutoModel();
+		List<UnidadeDeMedidaModel> unidadesMedida = new ArrayList<UnidadeDeMedidaModel>();
+
+		UnidadeDeMedidaModel e = new UnidadeDeMedidaModel();
+		e.setCodigo(produtoDTO.getSCdUnidadeMedida());
+		unidadesMedida.add(e);
+
+		prod.setUnidadesDeMedida(unidadesMedida);
+		prod.setCodigo(produtoDTO.getSCdProduto());
+		prod.setDescricao(produtoDTO.getSDsProduto());
+		prod.setDetalhe(produtoDTO.getSDsDetalhe());
+		prod.setCodigoEmpresa(produtoDTO.getSCdEmpresa());
+
+		CategoriaModel categoria = new CategoriaModel();
+		categoria.setCodigo(produtoDTO.getNCdProdutoTipo().toString().trim());
+		prod.setCategoria(categoria);
+		return prod;
+
+	}
+
+}

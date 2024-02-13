@@ -1,0 +1,83 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.controller;
+
+import br.gov.sp.saobernardo.webservice.paradigma.connections.Conexao;
+import br.gov.sp.saobernardo.webservice.paradigma.connections.ConnectionORCOMPrefeituraDesenvolvimento;
+import br.gov.sp.saobernardo.webservice.paradigma.connections.ConnectionORCOMPrefeituraHomologacao;
+import br.gov.sp.saobernardo.webservice.paradigma.connections.ConnectionORCOMPrefeituraProducao;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.ConexoesException;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.dao.OrcomTFornDAO;
+import br.gov.sp.saobernardo.webservice.paradigma.orcom.model.OrcomTFornModel;
+
+public class ORCOMFornecedorController {
+
+	Conexao conexaoORCOM;
+	OrcomTFornDAO orcomEmpresaDAO;
+	private boolean imprimirQuery;
+
+	public ORCOMFornecedorController(String ambiente, boolean imprimirQuery) throws Exception {
+		this.imprimirQuery = imprimirQuery;
+		if (Ambientes.ORCOM_DESENVOLVIMENTO.equals(ambiente)) {
+			conexaoORCOM = new ConnectionORCOMPrefeituraDesenvolvimento();
+		} else if (Ambientes.ORCOM_HOMOLOGACAO.equals(ambiente)) {
+			conexaoORCOM = new ConnectionORCOMPrefeituraHomologacao();
+		} else if (Ambientes.ORCOM_PRODUCAO.equals(ambiente)) {
+			conexaoORCOM = new ConnectionORCOMPrefeituraProducao();
+		} else {
+			throw new ConexoesException("nao foi definido um ambiente");
+		}
+	}
+
+	public OrcomTFornModel buscaFornecedorPorCNPJ(String cpfCnpj) {
+		OrcomTFornModel retorno = null;
+		try {
+			conexaoORCOM.conecta();
+			orcomEmpresaDAO = new OrcomTFornDAO(conexaoORCOM.getConnection(), imprimirQuery);
+			retorno = orcomEmpresaDAO.buscaPorCNPJ(cpfCnpj);
+
+		} catch (Exception e) {
+			retorno = new OrcomTFornModel();
+		//	System.out.println(e);
+		}
+
+		conexaoORCOM.fecha();
+		return retorno;
+	}
+
+	public boolean marcaFornecedorComoWBCNoORCOM(String cpfCnpj) {
+		boolean retorno = false;
+		try {
+			conexaoORCOM.conecta();
+			orcomEmpresaDAO = new OrcomTFornDAO(conexaoORCOM.getConnection(), imprimirQuery);
+			orcomEmpresaDAO.atualizaTipoWBCPorCNPJ(cpfCnpj, true);
+			OrcomTFornModel empresa = orcomEmpresaDAO.buscaPorCNPJ(cpfCnpj);
+			retorno = "S".equals(empresa.getWBC());
+
+		} catch (Exception e) {
+			retorno = false;
+			System.out.println(e);
+		}
+
+		conexaoORCOM.fecha();
+		return retorno;
+	}
+
+	public boolean desmarcaFornecedorComoWBCNoORCOM(String cpfCnpj) {
+		boolean retorno = false;
+		try {
+			conexaoORCOM.conecta();
+			orcomEmpresaDAO = new OrcomTFornDAO(conexaoORCOM.getConnection(), imprimirQuery);
+			orcomEmpresaDAO.atualizaTipoWBCPorCNPJ(cpfCnpj, false);
+			OrcomTFornModel empresa = orcomEmpresaDAO.buscaPorCNPJ(cpfCnpj);
+			retorno = "N".equals(empresa.getWBC());
+
+		} catch (Exception e) {
+			retorno = false;
+			System.out.println(e);
+		}
+
+		conexaoORCOM.fecha();
+		return retorno;
+	}
+
+}

@@ -1,0 +1,28 @@
+package br.gov.sp.saobernardo.webservice.paradigma.orcom.controller;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+import br.gov.sp.saobernardo.webservice.orcom.controller.OrcomEdit3Controller;
+import br.gov.sp.saobernardo.webservice.orcom.model.OrcomEdit3Model;
+import br.gov.sp.saobernardo.webservice.paradigma.dao.Ambientes;
+
+public class TestPrimeiroPregaoNoORCOM {
+	private static final Integer NUMERO1 = 201700367;
+	
+	private boolean imprimirQuery = true;
+
+	@Test
+	public void testaSelecaoDeFornecedorNoOrcomPorCnpj() throws Exception {
+
+		OrcomEdit3Controller edit3 = new OrcomEdit3Controller(Ambientes.ORCOM_DESENVOLVIMENTO, imprimirQuery);
+		OrcomEdit3Model modelo = edit3.buscaPrimeiroItemDoPregaoEletronico(NUMERO1);
+
+		edit3.abreConexao();
+		assertEquals(NUMERO1, modelo.getNUMERO1());
+		System.out.println(modelo.getNUMERO1());
+		edit3.fechaConexao();
+	}
+
+}

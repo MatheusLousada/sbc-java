@@ -1,0 +1,117 @@
+Select * from cotacao where sCdProcesso = '00469/2020';
+--nCdCotacao = 3522 00334/2020
+--nCdCotacao = 3543 00463/2020
+--nCdCotacao = 3542 00469/2020
+
+-- Item da Cotacao
+Select * from cotacao_item where nCdCotacao = 3545 ;
+--nCdItem = 13925
+
+-- Propostas por Item da cotação
+Select * from cotacao_proposta 
+ where nCdItem in ( SELECT nCdItem FROM cotacao_item WHERE nCdCotacao = 3545 )
+;
+
+Select * from P_compra_direta
+--WHERE sNrEdital LIKE '%CE%20'
+WHERE sNrEdital = 'CE 057/2020' order by sNrEdital desc ;
+Select * from P_compra_direta_lance WHERE nCdCompraDireta = 2296 order by nCdLance ;
+Select * from P_compra_direta_item WHERE nCditem = 13925 order by nCdLance ;
+
+SELECT C.scdprocesso + '-' + C.SDSCOTACAO as processo
+  from (
+  
+  SELECT cast( SUBSTRING( c1.scdprocesso, 1, CHARINDEX('/', c1.scdprocesso)-1 )  AS INT ) nprocesso,
+       SUBSTRING( c1.scdprocesso, CHARINDEX('/', c1.scdprocesso)+1, LEN( c1.scdprocesso ) - CHARINDEX('/', c1.scdprocesso) ) ano
+       , c1.sCdProcesso
+        , c1.SDSCOTACAO
+        , s1.sDsSituacao
+       -- , ci.dvlreferencia, CI.DQTITEM 
+        
+  from COTACAO C1
+       INNER JOIN COTACAO_ITEM CI1 ON CI1.NCDCOTACAO = c1.NCDCOTACAO
+       JOIN COTACAO_SITUACAO S1 on c1.ncdsituacao = s1.ncdsituacao
+ WHERE /*NCDSITUACAO = 7
+   and*/ c1.scdprocesso like '%/2019%'
+ GROUP BY c1.SCDPROCESSO, c1.SDSCOTACAO, s1.sDsSituacao
+
+  ) c
+
+ ---WHERE --NCDSITUACAO = 7
+   --AND sCdProcesso = '00334/2020' and
+ --  c.ano = 2020
+ GROUP BY C.SCDPROCESSO, C.SDSCOTACAO, c.nprocesso
+--HAVING SUM(CI.DVLREFERENCIA * CI.DQTITEM )> 8000
+ ORDER BY c.nProcesso DESC
+;
+
+
+
+SELECT cast( SUBSTRING( C.scdprocesso, 1, CHARINDEX('/', C.scdprocesso)-1 )  AS INT ) processo,
+       SUBSTRING( C.scdprocesso, CHARINDEX('/', C.scdprocesso)+1, LEN(C.scdprocesso)-CHARINDEX('/', C.scdprocesso) ) ano
+        , C.SDSCOTACAO
+        , s.sDsSituacao
+        ,C.NCDCOTACAO
+       -- , ci.dvlreferencia, CI.DQTITEM 
+        
+  from COTACAO C
+       INNER JOIN COTACAO_ITEM CI ON CI.NCDCOTACAO = C.NCDCOTACAO
+       JOIN COTACAO_SITUACAO S on c.ncdsituacao = s.ncdsituacao
+ WHERE /*NCDSITUACAO = 7
+   and*/ c.scdprocesso like '%459/2020%'
+ GROUP BY C.SCDPROCESSO, C.SDSCOTACAO, s.sDsSituacao, C.NCDCOTACAO
+--HAVING SUM(CI.DVLREFERENCIA * CI.DQTITEM )> 8000
+ ORDER BY 1 DESC
+;
+
+
+SELECT C.scdprocesso + '-' + C.SDSCOTACAO as processo
+  FROM ( SELECT cast( SUBSTRING( c1.scdprocesso, 1, CHARINDEX('/', c1.scdprocesso)-1 )  AS INT ) nprocesso,
+                SUBSTRING( c1.scdprocesso, CHARINDEX('/', c1.scdprocesso)+1, LEN( c1.scdprocesso ) - CHARINDEX('/', c1.scdprocesso) ) ano, c1.sCdProcesso, c1.SDSCOTACAO, s1.sDsSituacao
+                from COTACAO C1
+                     INNER JOIN COTACAO_ITEM CI1 ON CI1.NCDCOTACAO = c1.NCDCOTACAO
+                     JOIN COTACAO_SITUACAO S1 on c1.ncdsituacao = s1.ncdsituacao
+         WHERE c1.scdprocesso like '%459/2020%'
+  GROUP BY c1.SCDPROCESSO, c1.SDSCOTACAO, s1.sDsSituacao   ) c
+ GROUP BY C.SCDPROCESSO, C.SDSCOTACAO, c.nprocesso
+ ORDER BY c.nProcesso DESC
+ 
+; 
+SELECT count( c.ncdsituacao ) situacao --, scdprocesso
+  FROM COTACAO C --join cotacao_situacao cs ON c.ncdsituacao = cs.ncdsituacao
+ --WHERE c.scdprocesso like '30459/2020%' -- nao existente
+ --WHERE c.scdprocesso = '02409/2018' -- situacao 7
+ --WHERE c.scdprocesso = '00291/2020' -- situacao 6
+ --WHERE c.scdprocesso = '00714/2020' -- situacao 3
+ WHERE c.scdprocesso = '00459/2020' --
+  and ncdsituacao <> 7
+ --group by ncdsituacao --, scdprocesso
+ --ORDER BY C.nCdCotacao DESC
+;
+SELECT ncdsituacao x, scdprocesso
+  FROM COTACAO C --join cotacao_situacao cs ON c.ncdsituacao = cs.ncdsituacao
+ --WHERE c.scdprocesso like '30459/2020%'
+ where ncdsituacao <> 7
+ --group by scdprocesso
+ --having count( scdprocesso ) > 3
+ --ORDER BY C.nCdCotacao DESC
+;
+Select * from cotacao_situacao;
+
+Select * from  P_compra_direta
+WHERE   sNrProcessoDisplay in ( '30459/2020' -- nao existente
+                       , '02409/2018' -- situacao 7
+                       , '00459/2020'
+                       , '00291/2020' -- situacao 6
+                       , '00714/2020' -- situacao 3
+ )
+ ;
+ Select * from  P_compra_direta
+WHERE   sNrProcessoDisplay like  '00459%' -- situacao 7
+;
+
+
+SELECT count( c.ncdsituacao ) situacao  FROM COTACAO C  WHERE c.scdprocesso = '00459/2020'  and ncdsituacao <> 7
+--group by ncdsituacao
+;
+SELECT count( c.ncdsituacao ) situacao		  FROM COTACAO C  WHERE c.scdprocesso = '00459/2020'

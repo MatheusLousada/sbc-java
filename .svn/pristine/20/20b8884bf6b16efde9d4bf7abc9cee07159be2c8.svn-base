@@ -1,0 +1,359 @@
+package br.gov.sp.saobernardo.webservice.paradigma.modelos.cotacao;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import br.gov.sp.saobernardo.webservice.paradigma.utils.Validadores;
+
+public class CotacaoItemModel {
+	Validadores validador;
+	/**
+	 * sCdItemWbc
+	 * 
+	 * String 50
+	 * 
+	 * Nao obrigatorio.
+	 * 
+	 * Codigo do item da cotacao no WBC E-Procurement
+	 */
+	private String codigoItemWbc;
+
+	/**
+	 * sCdItemEmpresa
+	 * 
+	 * String 50
+	 * 
+	 * Codigo do item (sequencial) no ERP
+	 */
+	private String codigoItemEmpresa;
+
+	/**
+	 * sCdCotacao
+	 * 
+	 * String 16
+	 * 
+	 * Codigo da cotacao no WBC.
+	 */
+	private String codigoCotacaoWBC;
+
+	/**
+	 * sCdProduto
+	 * 
+	 * String 50
+	 * 
+	 * Nao obrigatorio. Codigo do produto (item) no ERP
+	 */
+	private String codigoProdutoERP;
+
+	/**
+	 * sCdClasse
+	 * 
+	 * String 50
+	 * 
+	 * Codigo da categoria de produto no ERP
+	 */
+	private String codigoClasse;
+
+	/**
+	 * sDsItem
+	 * 
+	 * String 4000
+	 * 
+	 * Descricao do item da cotacao
+	 */
+	private String descricaoItem;
+
+	/**
+	 * sCdUnidadeMedida
+	 * 
+	 * String 3
+	 * 
+	 * Sigla da unidade de medida do item no ERP
+	 */
+	private String codigoUnidadeMedida;
+
+	/**
+	 * dQtItem
+	 * 
+	 * Decimal 16,4
+	 * 
+	 * Quantidade do item
+	 */
+	private BigDecimal quantidadeItem;
+
+	/**
+	 * bFlCalculaReferencia
+	 * 
+	 * Int 1
+	 * 
+	 * Indica se o valor de referencia eh informado pelo sistema ou calculado: 0
+	 * = informado, 1 = calculado
+	 * 
+	 * private int referenciaCalculada;
+	 */
+	public static final int VALOR_REFERENCIA_INFORMADO_MANUAL = 0;
+	public static final int VALOR_REFERENCIA_CALCULADO_SISTEMA = 1;
+
+	/**
+	 * dVlReferencia
+	 * 
+	 * Decimal 16,4
+	 * 
+	 * Nao obrigatorio.
+	 * 
+	 * Valor de referencia. Caso o campo bFlCalculaReferencia esteja com valor
+	 * 1, este campo nao deve ser enviado pelo cliente.
+	 */
+	private BigDecimal valorReferencia;
+
+	/**
+	 * sDsJustificativa
+	 * 
+	 * String 500
+	 * 
+	 * Descricao da justificativa
+	 */
+	private String justificativa;
+
+	/**
+	 * nCdAplicacao
+	 * 
+	 * Int 2
+	 * 
+	 * Aplicacao do material no WBC. 1 Uso interno 2 Industrializacao 3
+	 * Comercializacao
+	 */
+	public static final int SEMPRE_USO_INTERNO = 1;
+
+	/**
+	 * sCdCondicaoPagamento
+	 * 
+	 * String 60
+	 * 
+	 * Codigo da condicao de pagamento no ERP
+	 */
+	private String codigoCondicaoPagamento;
+
+	/**
+	 * sDsObservacao
+	 *
+	 * String 2000
+	 *
+	 * Nao obrigatorio. Observacao do item da cotacao
+	 */
+	private String observacao;
+
+	/**
+	 * nCdSituacao
+	 * 
+	 * Int 1
+	 * 
+	 * Situacao do item: 1 = ativo
+	 */
+	private static final int ITEM_ATIVO = 1;
+
+	/**
+	 * sCdMarca
+	 * 
+	 * String 50
+	 * 
+	 * Nao obrigatorio.
+	 * 
+	 * Codigo da marca no ERP
+	 */
+	private String codigoMarca;
+
+	/**
+	 * sCdItemWbcPai
+	 * 
+	 * String 50
+	 * 
+	 * Nao obrigatorio.
+	 * 
+	 * Codigo do item de origem. Quando temos contra-oferta, ou seja, mais de
+	 * uma rodada na negociacao.
+	 */
+	private String codigoItemWbcPai;
+
+	/**
+	 * lstCotacaoItemEnderecoDTO
+	 * 
+	 * Array de cotacaoItemEnderecoDTO
+	 * 
+	 * Lista de enderecos e entregas do item da cotacao
+	 */
+	private List<CotacaoItemEnderecoModel> cotacaoItemEndereco;
+
+	/**
+	 * lstCotacaoItemParticipanteDTO
+	 * 
+	 * Array de cotacaoItemParticipanteDTO
+	 * 
+	 * Lista de participantes do item da cotacao
+	 */
+	private List<CotacaoItemParticipanteModel> cotacaoItemParticipante;
+
+	/**
+	 * lstCotacaoItemTaxaDTO
+	 * 
+	 * Array de cotacaoItemTaxaDTO
+	 * 
+	 * Lista de taxas do item da cotacao
+	 */
+	private List<CotacaoItemTaxaModel> cotacaoItemTaxa;
+
+	public CotacaoItemModel() {
+		super();
+		this.validador = new Validadores();
+	}
+
+	public String getCodigoItemEmpresa() {
+		return codigoItemEmpresa;
+	}
+
+	public void setCodigoItemEmpresa(String codigoItemEmpresa) {
+		this.codigoItemEmpresa = validador.maxLen(codigoItemEmpresa, 50);
+	}
+
+	public String getCodigoCotacaoWBC() {
+		return codigoCotacaoWBC;
+	}
+
+	public void setCodigoCotacaoWBC(String codigoCotacaoWBC) {
+		this.codigoCotacaoWBC = validador.maxLen(codigoCotacaoWBC, 50);
+	}
+
+	public String getCodigoClasse() {
+		return codigoClasse;
+	}
+
+	public void setCodigoClasse(String codigoClasse) {
+		this.codigoClasse = validador.maxLen(codigoClasse, 50);
+	}
+
+	public String getDescricaoItem() {
+		return descricaoItem;
+	}
+
+	public void setDescricaoItem(String descricaoItem) {
+		this.descricaoItem = validador.maxLen(descricaoItem, 4000);
+	}
+
+	public String getCodigoUnidadeMedida() {
+		return codigoUnidadeMedida;
+	}
+
+	public void setCodigoUnidadeMedida(String codigoUnidadeMedida) {
+		/** Documentacao nao esta correta */
+		this.codigoUnidadeMedida = validador.maxLen(codigoUnidadeMedida, 15);
+	}
+
+	public BigDecimal getQuantidadeItem() {
+		return quantidadeItem;
+	}
+
+	public void setQuantidadeItem(BigDecimal quantidadeItem) {
+		this.quantidadeItem = quantidadeItem;
+	}
+
+	public int getReferenciaCalculada() {
+		return VALOR_REFERENCIA_CALCULADO_SISTEMA;
+	}
+
+	public String getJustificativa() {
+		return justificativa;
+	}
+
+	public void setJustificativa(String justificativa) {
+		this.justificativa = validador.maxLen(justificativa, 500);
+	}
+
+	public int getCodigoAplicacao() {
+		return CotacaoItemModel.SEMPRE_USO_INTERNO;
+	}
+
+	public String getCodigoCondicaoPagamento() {
+		return codigoCondicaoPagamento;
+	}
+
+	public void setCodigoCondicaoPagamento(String codigoCondicaoPagamento) {
+		this.codigoCondicaoPagamento = validador.maxLen(codigoCondicaoPagamento, 60);
+	}
+
+	public int getCodigoSituacao() {
+		return CotacaoItemModel.ITEM_ATIVO;
+	}
+
+	public List<CotacaoItemEnderecoModel> getCotacaoItemEndereco() {
+		return cotacaoItemEndereco;
+	}
+
+	public void setCotacaoItemEndereco(List<CotacaoItemEnderecoModel> cotacaoItemEndereco) {
+		this.cotacaoItemEndereco = cotacaoItemEndereco;
+	}
+
+	public List<CotacaoItemParticipanteModel> getCotacaoItemParticipante() {
+		return cotacaoItemParticipante;
+	}
+
+	public void setCotacaoItemParticipante(List<CotacaoItemParticipanteModel> cotacaoItemParticipante) {
+		this.cotacaoItemParticipante = cotacaoItemParticipante;
+	}
+
+	public List<CotacaoItemTaxaModel> getCotacaoItemTaxa() {
+		return cotacaoItemTaxa;
+	}
+
+	public void setCotacaoItemTaxa(List<CotacaoItemTaxaModel> cotacaoItemTaxa) {
+		this.cotacaoItemTaxa = cotacaoItemTaxa;
+	}
+
+	public String getCodigoProdutoERP() {
+		return codigoProdutoERP;
+	}
+
+	public void setCodigoProdutoERP(String codigoProdutoERP) {
+		this.codigoProdutoERP = validador.maxLen(codigoProdutoERP, 50);
+	}
+
+	public String getCodigoMarca() {
+		return codigoMarca;
+	}
+
+	public void setCodigoMarca(String codigoMarca) {
+		this.codigoMarca = validador.maxLen(codigoMarca, 50);
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = validador.maxLen(observacao, 2000);
+	}
+
+	public BigDecimal getValorReferencia() {
+		return valorReferencia;
+	}
+
+	public void setValorReferencia(BigDecimal valorReferencia) {
+		this.valorReferencia = valorReferencia;
+	}
+
+	public String getCodigoItemWbcPai() {
+		return codigoItemWbcPai;
+	}
+
+	public void setCodigoItemWbcPai(String codigoItemWbcPai) {
+		this.codigoItemWbcPai = validador.maxLen(codigoItemWbcPai, 50);
+	}
+
+	public String getCodigoItemWbc() {
+		return codigoItemWbc;
+	}
+
+	public void setCodigoItemWbc(String codigoItemWbc) {
+		this.codigoItemWbc = validador.maxLen(codigoItemWbc, 50);
+	}
+
+}

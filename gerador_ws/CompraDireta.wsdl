@@ -1,0 +1,397 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://tempuri.org/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" name="CompraDireta" targetNamespace="http://tempuri.org/">
+<wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+<xs:import namespace="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO"/>
+<xs:element name="RetornarCompraDireta">
+<xs:complexType>
+<xs:sequence/>
+</xs:complexType>
+</xs:element>
+<xs:element name="RetornarCompraDiretaResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" minOccurs="0" name="RetornarCompraDiretaResult" nillable="true" type="q1:ArrayOfCompraDiretaDTO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="ProcessarCompraDireta">
+<xs:complexType>
+<xs:sequence>
+<xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" minOccurs="0" name="lstCompraDireta" nillable="true" type="q2:ArrayOfCompraDiretaDTO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="ProcessarCompraDiretaResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" minOccurs="0" name="ProcessarCompraDiretaResult" nillable="true" type="q3:RetornoDTO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="HabilitarRetornarCompraDireta">
+<xs:complexType>
+<xs:sequence>
+<xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" minOccurs="0" name="lstCompraDiretaHabilitar" nillable="true" type="q4:ArrayOfHabilitarCompraDiretaDTO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+<xs:element name="HabilitarRetornarCompraDiretaResponse">
+<xs:complexType>
+<xs:sequence>
+<xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" minOccurs="0" name="HabilitarRetornarCompraDiretaResult" nillable="true" type="q5:RetornoDTO"/>
+</xs:sequence>
+</xs:complexType>
+</xs:element>
+</xs:schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/">
+<xs:element name="anyType" nillable="true" type="xs:anyType"/>
+<xs:element name="anyURI" nillable="true" type="xs:anyURI"/>
+<xs:element name="base64Binary" nillable="true" type="xs:base64Binary"/>
+<xs:element name="boolean" nillable="true" type="xs:boolean"/>
+<xs:element name="byte" nillable="true" type="xs:byte"/>
+<xs:element name="dateTime" nillable="true" type="xs:dateTime"/>
+<xs:element name="decimal" nillable="true" type="xs:decimal"/>
+<xs:element name="double" nillable="true" type="xs:double"/>
+<xs:element name="float" nillable="true" type="xs:float"/>
+<xs:element name="int" nillable="true" type="xs:int"/>
+<xs:element name="long" nillable="true" type="xs:long"/>
+<xs:element name="QName" nillable="true" type="xs:QName"/>
+<xs:element name="short" nillable="true" type="xs:short"/>
+<xs:element name="string" nillable="true" type="xs:string"/>
+<xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte"/>
+<xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt"/>
+<xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong"/>
+<xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort"/>
+<xs:element name="char" nillable="true" type="tns:char"/>
+<xs:simpleType name="char">
+<xs:restriction base="xs:int"/>
+</xs:simpleType>
+<xs:element name="duration" nillable="true" type="tns:duration"/>
+<xs:simpleType name="duration">
+<xs:restriction base="xs:duration">
+<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:element name="guid" nillable="true" type="tns:guid"/>
+<xs:simpleType name="guid">
+<xs:restriction base="xs:string">
+<xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}"/>
+</xs:restriction>
+</xs:simpleType>
+<xs:attribute name="FactoryType" type="xs:QName"/>
+<xs:attribute name="Id" type="xs:ID"/>
+<xs:attribute name="Ref" type="xs:IDREF"/>
+</xs:schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Paradigma.Wbc.Servico.DTO">
+<xs:import namespace="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core"/>
+<xs:complexType name="ArrayOfCompraDiretaDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaDTO" nillable="true" type="tns:CompraDiretaDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaDTO" nillable="true" type="tns:ArrayOfCompraDiretaDTO"/>
+<xs:complexType name="CompraDiretaDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q1="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q1:DtoBase">
+<xs:sequence>
+<xs:element name="bFlChatBilateral" type="xs:int"/>
+<xs:element name="bFlChatBilateralRestrito" type="xs:int"/>
+<xs:element name="bFlDesativarAutoEncerramento" type="xs:int"/>
+<xs:element name="bFlMostraReferencia" type="xs:int"/>
+<xs:element minOccurs="0" name="bFlObrigarDeclaracaoVendedor" nillable="true" type="xs:int"/>
+<xs:element name="bFlPermiteInvalidar" type="xs:int"/>
+<xs:element minOccurs="0" name="bFlPermitirLance" nillable="true" type="xs:int"/>
+<xs:element name="bFlProrroga" type="xs:int"/>
+<xs:element name="bFlPublicarEdital" type="xs:int"/>
+<xs:element name="bFlRestrito" type="xs:int"/>
+<xs:element name="bFlTermo" type="xs:int"/>
+<xs:element name="bFlVariacao" type="xs:int"/>
+<xs:element minOccurs="0" name="dVlVariacaoMax" type="xs:decimal"/>
+<xs:element minOccurs="0" name="dVlVariacaoMin" type="xs:decimal"/>
+<xs:element minOccurs="0" name="lstCompraDiretaComissao" nillable="true" type="tns:ArrayOfComissaoDTO"/>
+<xs:element name="lstCompraDiretaItem" nillable="true" type="tns:ArrayOfCompraDiretaItemDTO"/>
+<xs:element minOccurs="0" name="lstCompraDiretaLote" nillable="true" type="tns:ArrayOfCompraDiretaLoteDTO"/>
+<xs:element name="nCdMoeda" type="xs:long"/>
+<xs:element name="nCdSituacao" type="xs:long"/>
+<xs:element name="nCdTemplate" type="xs:long"/>
+<xs:element minOccurs="0" name="nCdTipoCompraDireta" nillable="true" type="xs:long"/>
+<xs:element name="nIdAvaliacao" type="xs:int"/>
+<xs:element name="nIdEstilo" type="xs:int"/>
+<xs:element name="nIdLanceMarca" type="xs:int"/>
+<xs:element name="nIdLanceProcedencia" type="xs:int"/>
+<xs:element name="nIdTipoApuracao" type="xs:int"/>
+<xs:element minOccurs="0" name="nIdTipoLanceInicial" nillable="true" type="xs:int"/>
+<xs:element name="nNrCasasDecimais" type="xs:int"/>
+<xs:element name="nQtItensPagina" type="xs:long"/>
+<xs:element minOccurs="0" name="nVlProrroga" type="xs:int"/>
+<xs:element minOccurs="0" name="nVlProrrogaCondicao" type="xs:int"/>
+<xs:element name="sCdComprador" nillable="true" type="xs:string"/>
+<xs:element name="sCdCondicaoPagamento" nillable="true" type="xs:string"/>
+<xs:element name="sCdPrazoEntrega" nillable="true" type="xs:string"/>
+<xs:element name="sCdUsuarioCriador" nillable="true" type="xs:string"/>
+<xs:element name="sDsObjeto" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sDsObservacoes" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sDsTermo" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sNrEdital" nillable="true" type="xs:string"/>
+<xs:element name="sNrProcessoDisplay" nillable="true" type="xs:string"/>
+<xs:element name="tDtFinal" type="xs:dateTime"/>
+<xs:element name="tDtInicial" type="xs:dateTime"/>
+<xs:element minOccurs="0" name="tDtPublicacao" nillable="true" type="xs:dateTime"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaDTO" nillable="true" type="tns:CompraDiretaDTO"/>
+<xs:complexType name="ArrayOfComissaoDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="ComissaoDTO" nillable="true" type="tns:ComissaoDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfComissaoDTO" nillable="true" type="tns:ArrayOfComissaoDTO"/>
+<xs:complexType name="ComissaoDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q2="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q2:DtoBase">
+<xs:sequence>
+<xs:element name="nIdPerfil" type="xs:int"/>
+<xs:element name="sCdUsuario" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="ComissaoDTO" nillable="true" type="tns:ComissaoDTO"/>
+<xs:complexType name="ArrayOfCompraDiretaItemDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaItemDTO" nillable="true" type="tns:CompraDiretaItemDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaItemDTO" nillable="true" type="tns:ArrayOfCompraDiretaItemDTO"/>
+<xs:complexType name="CompraDiretaItemDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q3="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q3:DtoBase">
+<xs:sequence>
+<xs:element name="dQtItem" type="xs:decimal"/>
+<xs:element name="dVlReferencia" type="xs:decimal"/>
+<xs:element name="lstCompraDiretaItemEndereco" nillable="true" type="tns:ArrayOfCompraDiretaItemEnderecoDTO"/>
+<xs:element minOccurs="0" name="lstCompraDiretaItemLance" nillable="true" type="tns:ArrayOfCompraDiretaItemLanceDTO"/>
+<xs:element minOccurs="0" name="lstCompraDiretaItemTaxa" nillable="true" type="tns:ArrayOfCompraDiretaItemTaxaDTO"/>
+<xs:element name="nCdItemSequencial" type="xs:int"/>
+<xs:element name="nStItem" type="xs:int"/>
+<xs:element name="sCdClasse" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sCdItemLegado" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sCdLoteLegado" nillable="true" type="xs:string"/>
+<xs:element name="sCdProduto" nillable="true" type="xs:string"/>
+<xs:element name="sCdUnidadeMedida" nillable="true" type="xs:string"/>
+<xs:element name="sDsItem" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaItemDTO" nillable="true" type="tns:CompraDiretaItemDTO"/>
+<xs:complexType name="ArrayOfCompraDiretaItemEnderecoDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaItemEnderecoDTO" nillable="true" type="tns:CompraDiretaItemEnderecoDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaItemEnderecoDTO" nillable="true" type="tns:ArrayOfCompraDiretaItemEnderecoDTO"/>
+<xs:complexType name="CompraDiretaItemEnderecoDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q4="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q4:DtoBase">
+<xs:sequence>
+<xs:element name="dQtItem" type="xs:decimal"/>
+<xs:element name="sCdEmpresaCobrancaEndereco" nillable="true" type="xs:string"/>
+<xs:element name="sCdEmpresaEntregaEndereco" nillable="true" type="xs:string"/>
+<xs:element name="sCdEmpresaFaturamentoEndereco" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaItemEnderecoDTO" nillable="true" type="tns:CompraDiretaItemEnderecoDTO"/>
+<xs:complexType name="ArrayOfCompraDiretaItemLanceDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaItemLanceDTO" nillable="true" type="tns:CompraDiretaItemLanceDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaItemLanceDTO" nillable="true" type="tns:ArrayOfCompraDiretaItemLanceDTO"/>
+<xs:complexType name="CompraDiretaItemLanceDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q5="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q5:DtoBase">
+<xs:sequence>
+<xs:element minOccurs="0" name="bFlVencedor" type="xs:long"/>
+<xs:element minOccurs="0" name="dVlLance" type="xs:decimal"/>
+<xs:element minOccurs="0" name="nNrRanking" type="xs:long"/>
+<xs:element minOccurs="0" name="sCdEmpresa" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="tDtLance" type="xs:dateTime"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaItemLanceDTO" nillable="true" type="tns:CompraDiretaItemLanceDTO"/>
+<xs:complexType name="ArrayOfCompraDiretaItemTaxaDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaItemTaxaDTO" nillable="true" type="tns:CompraDiretaItemTaxaDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaItemTaxaDTO" nillable="true" type="tns:ArrayOfCompraDiretaItemTaxaDTO"/>
+<xs:complexType name="CompraDiretaItemTaxaDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q6="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q6:DtoBase">
+<xs:sequence>
+<xs:element name="bFlIncluso" type="xs:int"/>
+<xs:element name="nCdTaxa" type="xs:long"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaItemTaxaDTO" nillable="true" type="tns:CompraDiretaItemTaxaDTO"/>
+<xs:complexType name="ArrayOfCompraDiretaLoteDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="CompraDiretaLoteDTO" nillable="true" type="tns:CompraDiretaLoteDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfCompraDiretaLoteDTO" nillable="true" type="tns:ArrayOfCompraDiretaLoteDTO"/>
+<xs:complexType name="CompraDiretaLoteDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q7="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q7:DtoBase">
+<xs:sequence>
+<xs:element name="dVlReferencia" type="xs:decimal"/>
+<xs:element name="nCdLoteSequencial" type="xs:int"/>
+<xs:element name="nStLote" type="xs:int"/>
+<xs:element name="sCdLoteLegado" nillable="true" type="xs:string"/>
+<xs:element name="sDsLote" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="CompraDiretaLoteDTO" nillable="true" type="tns:CompraDiretaLoteDTO"/>
+<xs:complexType name="RetornoDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q8="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q8:DtoBase">
+<xs:sequence>
+<xs:element name="lstWbtLogDTO" nillable="true" type="tns:ArrayOfWbtLogDTO"/>
+<xs:element name="nIdRetorno" type="xs:long"/>
+<xs:element minOccurs="0" name="sNrToken" nillable="true" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="RetornoDTO" nillable="true" type="tns:RetornoDTO"/>
+<xs:complexType name="ArrayOfWbtLogDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="WbtLogDTO" nillable="true" type="tns:WbtLogDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfWbtLogDTO" nillable="true" type="tns:ArrayOfWbtLogDTO"/>
+<xs:complexType name="WbtLogDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q9="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q9:DtoBase">
+<xs:sequence>
+<xs:element minOccurs="0" name="nIdRetorno" type="xs:long"/>
+<xs:element minOccurs="0" name="sCdOrigem" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sDsLog" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="sNrToken" nillable="true" type="xs:string"/>
+<xs:element minOccurs="0" name="tDtLog" type="xs:dateTime"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="WbtLogDTO" nillable="true" type="tns:WbtLogDTO"/>
+<xs:complexType name="ArrayOfHabilitarCompraDiretaDTO">
+<xs:sequence>
+<xs:element minOccurs="0" maxOccurs="unbounded" name="HabilitarCompraDiretaDTO" nillable="true" type="tns:HabilitarCompraDiretaDTO"/>
+</xs:sequence>
+</xs:complexType>
+<xs:element name="ArrayOfHabilitarCompraDiretaDTO" nillable="true" type="tns:ArrayOfHabilitarCompraDiretaDTO"/>
+<xs:complexType name="HabilitarCompraDiretaDTO">
+<xs:complexContent mixed="false">
+<xs:extension xmlns:q10="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" base="q10:DtoBase">
+<xs:sequence>
+
+<!-- Alterado -->
+<xs:element minOccurs="0" name="sCdComprador" nillable="false" type="xs:string"/>
+<xs:element minOccurs="0" name="sNrEdital" nillable="true" type="xs:string"/>
+
+<!-- Alterado -->
+<xs:element minOccurs="0" name="sNrProcessoDisplay" nillable="false" type="xs:string"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<xs:element name="HabilitarCompraDiretaDTO" nillable="true" type="tns:HabilitarCompraDiretaDTO"/>
+</xs:schema>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Paradigma.Framework.Servico.Core">
+<xs:complexType name="DtoBase">
+<xs:sequence/>
+</xs:complexType>
+<xs:element name="DtoBase" nillable="true" type="tns:DtoBase"/>
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="ICompraDireta_RetornarCompraDireta_InputMessage">
+<wsdl:part name="parameters" element="tns:RetornarCompraDireta"/>
+</wsdl:message>
+<wsdl:message name="ICompraDireta_RetornarCompraDireta_OutputMessage">
+<wsdl:part name="parameters" element="tns:RetornarCompraDiretaResponse"/>
+</wsdl:message>
+<wsdl:message name="ICompraDireta_ProcessarCompraDireta_InputMessage">
+<wsdl:part name="parameters" element="tns:ProcessarCompraDireta"/>
+</wsdl:message>
+<wsdl:message name="ICompraDireta_ProcessarCompraDireta_OutputMessage">
+<wsdl:part name="parameters" element="tns:ProcessarCompraDiretaResponse"/>
+</wsdl:message>
+<wsdl:message name="ICompraDireta_HabilitarRetornarCompraDireta_InputMessage">
+<wsdl:part name="parameters" element="tns:HabilitarRetornarCompraDireta"/>
+</wsdl:message>
+<wsdl:message name="ICompraDireta_HabilitarRetornarCompraDireta_OutputMessage">
+<wsdl:part name="parameters" element="tns:HabilitarRetornarCompraDiretaResponse"/>
+</wsdl:message>
+<wsdl:portType name="ICompraDireta">
+<wsdl:operation name="RetornarCompraDireta">
+<wsdl:input wsaw:Action="http://tempuri.org/ICompraDireta/RetornarCompraDireta" message="tns:ICompraDireta_RetornarCompraDireta_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICompraDireta/RetornarCompraDiretaResponse" message="tns:ICompraDireta_RetornarCompraDireta_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="ProcessarCompraDireta">
+<wsdl:input wsaw:Action="http://tempuri.org/ICompraDireta/ProcessarCompraDireta" message="tns:ICompraDireta_ProcessarCompraDireta_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICompraDireta/ProcessarCompraDiretaResponse" message="tns:ICompraDireta_ProcessarCompraDireta_OutputMessage"/>
+</wsdl:operation>
+<wsdl:operation name="HabilitarRetornarCompraDireta">
+<wsdl:input wsaw:Action="http://tempuri.org/ICompraDireta/HabilitarRetornarCompraDireta" message="tns:ICompraDireta_HabilitarRetornarCompraDireta_InputMessage"/>
+<wsdl:output wsaw:Action="http://tempuri.org/ICompraDireta/HabilitarRetornarCompraDiretaResponse" message="tns:ICompraDireta_HabilitarRetornarCompraDireta_OutputMessage"/>
+</wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="BasicHttpBinding_ICompraDireta" type="tns:ICompraDireta">
+<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+<wsdl:operation name="RetornarCompraDireta">
+<soap:operation soapAction="http://tempuri.org/ICompraDireta/RetornarCompraDireta" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="ProcessarCompraDireta">
+<soap:operation soapAction="http://tempuri.org/ICompraDireta/ProcessarCompraDireta" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+<wsdl:operation name="HabilitarRetornarCompraDireta">
+<soap:operation soapAction="http://tempuri.org/ICompraDireta/HabilitarRetornarCompraDireta" style="document"/>
+<wsdl:input>
+<soap:body use="literal"/>
+</wsdl:input>
+<wsdl:output>
+<soap:body use="literal"/>
+</wsdl:output>
+</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="CompraDireta">
+<wsdl:port name="BasicHttpBinding_ICompraDireta" binding="tns:BasicHttpBinding_ICompraDireta">
+<soap:address location="http://10.1.0.160/services/CompraDireta.svc"/>
+</wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

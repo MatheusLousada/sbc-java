@@ -1,0 +1,50 @@
+package br.gov.sp.saobernardo.webservice.classes.modelos;
+
+import br.gov.sp.saobernardo.webservice.classes.modelos.telefone.NumeroComDdd;
+import br.gov.sp.saobernardo.webservice.classes.modelos.telefone.NumeroComDddDuplicado;
+import br.gov.sp.saobernardo.webservice.classes.modelos.telefone.NumeroSemDdd;
+
+public class TelefoneFactory {
+
+	private NumeroTelefonico telefone1;
+	private NumeroTelefonico telefone2;
+
+	//TODO: Verificar quando houver mudança no SECOM. Sinalizada por Claudio Silva em 08/JAN/2020
+	public TelefoneFactory(String numeroCompleto) {
+
+		if (null != numeroCompleto) {
+			String numericos = removeNaoNumericos(numeroCompleto);
+
+			if (numericos.length() == 7 || numericos.length() == 8) {
+				telefone1 = new NumeroSemDdd(numericos);
+			} else if (numericos.length() == 9 || numericos.length() == 10 || numericos.length() == 11) {
+				telefone1 = new NumeroComDdd(numericos);
+			} else if (numericos.length() == 12 || numericos.length() == 13 || numericos.length() == 14) {
+				telefone1 = new NumeroComDddDuplicado(numericos);
+			} else if (numericos.length() == 16) {
+				telefone1 = new NumeroSemDdd(numericos.substring(0, 8));
+				telefone2 = new NumeroSemDdd(numericos.substring(8, 16));
+			} else if (numericos.length() == 18) {
+				telefone1 = new NumeroComDdd(numericos.substring(0, 10));
+				telefone2 = new NumeroSemDdd(numericos.substring(10, 18));
+			} else if (numericos.length() == 20 || numericos.length() > 20) {
+				telefone1 = new NumeroComDdd(numericos.substring(0, 10));
+				telefone2 = new NumeroComDdd(numericos.substring(10, 20));
+			}
+
+		}
+	}
+
+	private String removeNaoNumericos(String numeroCompleto) {
+		return numeroCompleto.replaceFirst("^0+(?!$)", "").replaceAll("[^\\d]", "");
+	}
+
+	public NumeroTelefonico getTelefone1() {
+		return telefone1;
+	}
+
+	public NumeroTelefonico getTelefone2() {
+		return telefone2;
+	}
+
+}

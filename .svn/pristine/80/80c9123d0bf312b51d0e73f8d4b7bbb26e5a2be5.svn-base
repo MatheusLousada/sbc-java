@@ -1,0 +1,67 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.produtounidademedida.ArrayOfProdutoUnidadeMedidaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.produtounidademedida.IProdutoUnidadeMedida;
+import br.gov.sp.saobernardo.paradigma.ws.produtounidademedida.ProdutoUnidadeMedida;
+import br.gov.sp.saobernardo.paradigma.ws.produtounidademedida.ProdutoUnidadeMedidaDTO;
+import br.gov.sp.saobernardo.paradigma.ws.produtounidademedida.RetornoDTO;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.ProdutoUnidadeMedidaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.modelos.UnidadeDeMedidaModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.conversores.ProdutoUnidadeMedidaConversor;
+
+public class ProdutoUnidadeMedidaService implements ServiceGrava<ProdutoUnidadeMedidaModel> {
+
+	private ProdutoUnidadeMedida ss;
+	private ServicesName nomeServico;
+	private IProdutoUnidadeMedida servico;
+	private ProdutoUnidadeMedidaConversor conversor;
+
+	public ProdutoUnidadeMedidaService(WSDLs wsdls) {
+		conversor = new ProdutoUnidadeMedidaConversor();
+		try {
+			URL wsdlURL = new URL(wsdls.getValue());
+			nomeServico = ServicesName.PRODUTO_UNIDADE_MEDIDA;
+			QName serviceName = new QName(nomeServico.getUrl(), nomeServico.getServico());
+			ss = new ProdutoUnidadeMedida(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingIProdutoUnidadeMedida();
+		} catch (Exception e) {
+			System.console().writer().println(e);
+		}
+	}
+
+	@Override
+	public ProdutoUnidadeMedidaModel grava(ProdutoUnidadeMedidaModel relacionamento) {
+		ArrayOfProdutoUnidadeMedidaDTO lstProdutoUnidadeMedida = new ArrayOfProdutoUnidadeMedidaDTO();
+
+		ProdutoUnidadeMedidaDTO dto;
+		for (UnidadeDeMedidaModel um : relacionamento.getUnidadesMedida()) {
+			dto = new ProdutoUnidadeMedidaDTO();
+			dto.setSCdProduto(relacionamento.getProduto().getCodigo());
+			dto.setSCdUnidadeMedida(um.getCodigo());
+			lstProdutoUnidadeMedida.getProdutoUnidadeMedidaDTO().add(dto);
+		}
+		RetornoDTO retorno = servico.processarProdutoUnidadeMedida(lstProdutoUnidadeMedida);
+		return conversor.converteLogParaModel(retorno.getLstWbtLogDTO().getWbtLogDTO().get(0));
+
+	}
+
+	@Override
+	public List<ProdutoUnidadeMedidaModel> grava(List<ProdutoUnidadeMedidaModel> relacionamentos) {
+		List<ProdutoUnidadeMedidaModel> retorno = new ArrayList<ProdutoUnidadeMedidaModel>();
+		for (ProdutoUnidadeMedidaModel relacao : relacionamentos) {
+			retorno.add(this.grava(relacao));
+		}
+		return retorno;
+	}
+
+	public ServicesName getNomeServico() {
+		return nomeServico;
+	}
+
+}

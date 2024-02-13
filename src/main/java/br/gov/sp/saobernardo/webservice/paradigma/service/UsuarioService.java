@@ -1,0 +1,82 @@
+package br.gov.sp.saobernardo.webservice.paradigma.service;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import br.gov.sp.saobernardo.paradigma.ws.usuario.ArrayOfUsuarioDTO;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.IUsuario;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.RetornoDTO;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.RetornoListaX003CUsuarioDTOX003E;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.Usuario;
+import br.gov.sp.saobernardo.paradigma.ws.usuario.UsuarioDTO;
+import br.gov.sp.saobernardo.webservice.classes.modelos.EmpresaModel;
+import br.gov.sp.saobernardo.webservice.classes.modelos.UsuarioModel;
+import br.gov.sp.saobernardo.webservice.paradigma.service.conversores.UsuarioConversor;
+
+public class UsuarioService implements ServiceGrava<UsuarioModel> {
+	private IUsuario servico;
+	private UsuarioConversor conversor;
+
+	public UsuarioService(WSDLs wsdls) {
+		conversor = new UsuarioConversor();
+		try {
+			URL wsdlURL = new URL(wsdls.getValue());
+			QName serviceName = new QName(ServicesName.USUARIO.getUrl(), ServicesName.USUARIO.getServico());
+			Usuario ss = new Usuario(wsdlURL, serviceName);
+			servico = ss.getBasicHttpBindingIUsuario();
+		} catch (Exception e) {
+			System.console().writer().println(e);
+		}
+	}
+
+	@Override
+	public List<UsuarioModel> grava(List<UsuarioModel> usuarios) {
+		List<UsuarioModel> retorno = new ArrayList<UsuarioModel>();
+		for (UsuarioModel usuario : usuarios) {
+			retorno.add(this.grava(usuario));
+		}
+		return retorno;
+	}
+
+	@Override
+	public UsuarioModel grava(UsuarioModel usuario) {
+
+		ArrayOfUsuarioDTO dto = new ArrayOfUsuarioDTO();
+		List<UsuarioDTO> dtos = dto.getUsuarioDTO();
+		dtos.add(conversor.converteParaDTO(usuario));
+
+		RetornoDTO processados = servico.processarUsuario(dto);
+		return conversor.converteLogParaModel(processados.getLstWbtLogDTO().getWbtLogDTO().get(0));
+	}
+
+	public UsuarioModel retornarUsuario(String codigoUsuario) {
+		return conversor.converteParaModel(servico.retornarUsuario(codigoUsuario));
+	}
+
+	public List<UsuarioModel> retornarUsuarioComprador(String codigoEmpresa, String listaSituacaoUsuario,
+			Integer pagina) {
+		RetornoListaX003CUsuarioDTOX003E dto = servico.retornarUsuarioComprador(codigoEmpresa, listaSituacaoUsuario,
+				pagina);
+		ArrayOfUsuarioDTO compradoresDaEmpresa = dto.getLstObjetoRetorno();
+		return converteListaDTOParaUsuarioModel(compradoresDaEmpresa.getUsuarioDTO());
+	}
+
+	public List<UsuarioModel> retornarUsuarioPorEmpresa(EmpresaModel empresa) {
+		RetornoListaX003CUsuarioDTOX003E dto = servico.retornarUsuarioPorEmpresa(empresa.getCnpj());
+		ArrayOfUsuarioDTO listaUsuarios = dto.getLstObjetoRetorno();
+		return converteListaDTOParaUsuarioModel(listaUsuarios.getUsuarioDTO());
+	}
+
+	private List<UsuarioModel> converteListaDTOParaUsuarioModel(List<UsuarioDTO> usuariosDTO) {
+		List<UsuarioModel> lista = new ArrayList<UsuarioModel>();
+
+		for (UsuarioDTO dto : usuariosDTO) {
+			lista.add(conversor.converteParaModel(dto));
+		}
+		return lista;
+	}
+
+}
